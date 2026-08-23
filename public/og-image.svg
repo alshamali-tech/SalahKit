@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="SalahKit – Free Offline Islamic Tools">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#134e4a"/>
+      <stop offset="0.55" stop-color="#0f766e"/>
+      <stop offset="1" stop-color="#0b1512"/>
+    </linearGradient>
+    <pattern id="stars" x="0" y="0" width="84" height="84" patternUnits="userSpaceOnUse">
+      <path d="M42 10l6.2 14.6L63 31l-14.8 6.4L42 52l-6.2-14.6L21 31l14.8-6.4z" fill="none" stroke="#99f6e4" stroke-opacity="0.16" stroke-width="1.5"/>
+    </pattern>
+    <linearGradient id="dome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbbf24"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#sky)"/>
+  <rect width="1200" height="630" fill="url(#stars)"/>
+  <circle cx="930" cy="200" r="150" fill="#f59e0b" opacity="0.95"/>
+  <circle cx="985" cy="165" r="128" fill="#0f766e"/>
+  <path d="M1030 118l7 17 17 7-17 7-7 17-7-17-17-7 17-7z" fill="#fbbf24"/>
+  <g fill="#0b1512" opacity="0.9">
+    <path d="M120 630v-150a70 70 0 0 1 140 0v150z"/>
+    <path d="M300 630v-210a55 55 0 0 1 110 0v210z"/>
+    <rect x="230" y="380" width="26" height="250"/>
+    <path d="M217 380l26-46 26 46z"/>
+    <path d="M470 630v-120a90 90 0 0 1 180 0v120z"/>
+    <rect x="660" y="470" width="540" height="160"/>
+    <path d="M820 470a60 60 0 0 1 120 0z" fill="#134e4a"/>
+    <path d="M1000 470a60 60 0 0 1 120 0z" fill="#134e4a"/>
+  </g>
+  <rect x="120" y="182" width="86" height="8" rx="4" fill="url(#dome)"/>
+  <text x="118" y="268" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="84" font-weight="800" fill="#f0fdfa" letter-spacing="-1">SalahKit</text>
+  <text x="122" y="322" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="30" font-weight="500" fill="#99f6e4" letter-spacing="4">FREE OFFLINE ISLAMIC TOOLS</text>
+</svg>

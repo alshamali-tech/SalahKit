@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+# SalahKit push gate (S3: .husky/pre-push).
+# Runs the unit suite and typecheck before anything leaves the machine.
+npm run typecheck || exit 1
+npx --no-install vitest run --reporter=dot || {
+  echo "pre-push: unit tests failed."
+  exit 1
+}

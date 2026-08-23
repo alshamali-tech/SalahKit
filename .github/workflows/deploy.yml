@@ -1,0 +1,48 @@
+# SalahKit deploy (S13): static build to Vercel on main.
+# PRs get lint+test only (see ci.yml); main auto-deploys.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (static)
+        run: npm run build
+        env:
+          VITE_APP_URL: ${{ vars.VITE_APP_URL }}
+          VITE_APP_VERSION: ${{ vars.VITE_APP_VERSION }}
+
+      - name: Generate sitemap
+        run: node scripts/generate-sitemap.js
+
+      - name: Deploy to Vercel (production)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: --prod
+          working-directory: ./

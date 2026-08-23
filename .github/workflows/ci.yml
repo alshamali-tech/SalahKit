@@ -1,0 +1,48 @@
+# SalahKit CI (S3/S12/S13): lint + typecheck + unit tests + build.
+# Runs on every push to main and on all pull requests.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    name: Lint, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: ESLint
+        run: npx eslint "src/**/*.{ts,tsx}" --max-warnings=0
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit & integration tests
+        run: npx vitest run --coverage
+
+      - name: Build (static)
+        run: npm run build
+
+      - name: Bundle budget check (<200KB initial JS)
+        run: bash scripts/check-bundle.sh
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7

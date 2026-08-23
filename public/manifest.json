@@ -1,0 +1,19 @@
+{
+  "name": "SalahKit – Free Offline Islamic Tools",
+  "short_name": "SalahKit",
+  "description": "Free, offline-first Islamic toolkit: prayer times, Qibla, Hijri calendar, Quran, dhikr counter, Zakat calculator, duas and 99 names. No ads. No sign-up. No tracking.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b1512",
+  "theme_color": "#0f766e",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["lifestyle", "utilities", "education"],
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/favicon.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,5 @@
+# SalahKit robots policy (S10): index everything.
+User-agent: *
+Allow: /
+
+Sitemap: https://salahkit.app/sitemap.xml
