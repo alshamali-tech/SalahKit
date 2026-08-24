@@ -86,12 +86,27 @@ export default function App(): JSX.Element {
 
   useEffect(() => {
     document.title = view === 'landing' ? buildPageTitle() : buildPageTitle(module);
-    window.scrollTo({ top: 0 });
+    try {
+      window.scrollTo({ top: 0 });
+    } catch {
+      // Scroll APIs can be blocked in sandboxed embeds; non-fatal.
+    }
   }, [view, module]);
 
   useEffect(() => {
-    if ('serviceWorker' in navigator && import.meta.env.PROD) {
-      navigator.serviceWorker.register('/sw.js').catch(() => undefined);
+    // SW registration must never crash the app: in non-secure or
+    // sandboxed contexts the APIs can throw synchronously.
+    try {
+      if (
+        import.meta.env.PROD &&
+        'serviceWorker' in navigator &&
+        typeof window.isSecureContext === 'boolean' &&
+        window.isSecureContext
+      ) {
+        navigator.serviceWorker.register('/sw.js').catch(() => undefined);
+      }
+    } catch {
+      // Offline caching simply stays disabled.
     }
   }, []);
 

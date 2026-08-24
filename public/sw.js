@@ -1,19 +1,29 @@
 /**
  * SalahKit service worker (S3: public/sw.js).
- * Offline-first: precache the app shell, cache-first for static assets,
- * network-first with cache fallback for navigations. No analytics, no
- * third-party requests. Version the cache name to force refresh.
+ * Offline-first strategy:
+ *  - Navigations: network-first, cached shell as fallback (stale HTML
+ *    is never served while a fresh build exists).
+ *  - Same-origin assets: cache-first with background refresh.
+ * Bump CACHE_NAME on every deploy so activate() purges old caches.
  */
-const CACHE_NAME = 'salahkit-v1';
+const CACHE_NAME = 'salahkit-v3';
 
-/** App shell assets precached on install. */
+/** App shell precached on install (failures do not block install). */
 const PRECACHE_URLS = ['/', '/index.html', '/manifest.json', '/favicon.svg'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
-      .then((cache) => cache.addAll(PRECACHE_URLS))
+      .then((cache) =>
+        Promise.allSettled(
+          PRECACHE_URLS.map((url) =>
+            fetch(url, { cache: 'no-store' })
+              .then((res) => (res && res.ok ? cache.put(url, res.clone()) : undefined))
+              .catch(() => undefined)
+          )
+        )
+      )
       .then(() => self.skipWaiting())
   );
 });
@@ -28,14 +38,37 @@ self.addEventListener('activate', (event) => {
 });
 
 /**
- * Cache-first for same-origin GETs; stale entries are refreshed in the
- * background (stale-while-revalidate) so the app works fully offline.
- * @param {Request} request - Incoming request.
+ * Network-first for HTML navigations: always try the latest build,
+ * fall back to the cached shell when offline.
+ * @param {Request} request - Navigation request.
+ * @returns {Promise<Response>} Fresh shell or cached shell.
+ */
+async function networkFirstNavigation(request) {
+  try {
+    const response = await fetch(request, { cache: 'no-store' });
+    if (response && response.ok) {
+      const copy = response.clone();
+      const cache = await caches.open(CACHE_NAME);
+      await cache.put('/index.html', copy);
+    }
+    return response;
+  } catch (err) {
+    const cached =
+      (await caches.match(request)) ||
+      (await caches.match('/index.html')) ||
+      (await caches.match('/'));
+    return cached || Response.error();
+  }
+}
+
+/**
+ * Cache-first with stale-while-revalidate for same-origin assets.
+ * @param {Request} request - Asset request.
  * @returns {Promise<Response>} Cached or fresh response.
  */
-async function cacheFirst(request) {
+async function cacheFirstAsset(request) {
   const cached = await caches.match(request);
-  const network = fetch(request)
+  const refresh = fetch(request)
     .then((response) => {
       if (response && response.ok) {
         const copy = response.clone();
@@ -45,15 +78,23 @@ async function cacheFirst(request) {
     })
     .catch(() => null);
   if (cached) return cached;
-  const fresh = await network;
-  if (fresh) return fresh;
-  return Response.error();
+  const fresh = await refresh;
+  return fresh || Response.error();
 }
 
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   if (request.method !== 'GET') return;
-  const url = new URL(request.url);
+  let url;
+  try {
+    url = new URL(request.url);
+  } catch (err) {
+    return;
+  }
   if (url.origin !== self.location.origin) return;
-  event.respondWith(cacheFirst(request));
+  if (request.mode === 'navigate') {
+    event.respondWith(networkFirstNavigation(request));
+    return;
+  }
+  event.respondWith(cacheFirstAsset(request));
 });

@@ -72,7 +72,12 @@ export function routeToPath(route: Route): string {
  */
 export function navigate(path: string): void {
   if (typeof window === 'undefined') return;
-  window.location.hash = path;
+  try {
+    window.location.hash = path;
+  } catch {
+    // Sandboxed contexts may block location writes; routing degrades
+    // to in-memory state, which setModule already applied.
+  }
 }
 
 /**
