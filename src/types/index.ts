@@ -5,6 +5,9 @@ import type { CalcMethodId, Madhab, ThemeMode } from '../lib/core/types';
 
 export * from '../lib/core/types';
 
+/** Revelation place of a surah. */
+export type Revelation = 'Makkan' | 'Madinan';
+
 /** Tool modules available in the app shell. */
 export type ModuleId =
   | 'prayer'

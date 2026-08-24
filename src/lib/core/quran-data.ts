@@ -17,6 +17,9 @@ export const QURAN_SURAHS: readonly SurahMeta[] = [
   { num: 114, nameArabic: 'الناس', name: 'An-Nas', meaning: 'Mankind', ayahCount: 6, revelation: 'Makkan' },
 ];
 
+/** Surah numbers available fully offline in the bundled dataset. */
+export const LOCAL_SURAH_NUMS: readonly number[] = [1, 103, 108, 110, 112, 113, 114];
+
 /** Basmala, recited before every surah except At-Tawbah. */
 export const BASMALA = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
 
