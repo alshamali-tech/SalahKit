@@ -1,18 +1,17 @@
 import { useEffect } from 'react';
 import { useApp } from './store';
-import { STORAGE_KEYS } from './lib/core/constants';
-import { getFlags, saveFlags } from './lib/db/db';
-import { flagsAfterPromptShown, shouldShowDonationPrompt } from './lib/donation';
-import { isFeatureEnabled } from './lib/features';
-import { emitToast } from './lib/messaging';
-import { buildPageTitle } from './lib/seo';
+import { watchRoute } from './lib/router';
 import { isOnline, watchConnectivity } from './lib/utils/offline';
+import { buildPageTitle } from './lib/seo';
 import { SkipLink } from './components/ui/SkipLink';
 import { Header } from './components/ui/Header';
 import { Sidebar } from './components/ui/Sidebar';
 import { Footer } from './components/ui/Footer';
 import { ToastHost } from './components/ui/Toast';
 import { SettingsPanel } from './components/settings/SettingsPanel';
+import { Landing } from './components/landing/Landing';
+import { OfflineBanner } from './components/app/OfflineBanner';
+import { DonationToast } from './components/donation/DonationToast';
 import { PrayerTimes } from './components/app/PrayerTimes';
 import { QiblaCompass } from './components/app/QiblaCompass';
 import { HijriConverter } from './components/app/HijriConverter';
@@ -61,33 +60,24 @@ function ModuleView({ module }: { module: ModuleId }): JSX.Element {
   }
 }
 
-/** Slim offline notice shown while the browser has no connectivity. */
-function OfflineStrip(): JSX.Element {
-  return (
-    <div role="status" className="border-b border-[color-mix(in_srgb,var(--warning)_35%,transparent)] bg-[color-mix(in_srgb,var(--warning)_12%,transparent)]">
-      <p className="mx-auto max-w-7xl px-4 py-2 text-xs font-semibold text-[var(--warning)] flex items-center gap-2">
-        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-          <path d="M2.5 7.5a11 11 0 0 1 15 0M5.5 10.7a7 7 0 0 1 9 0M8.5 13.8a3 3 0 0 1 3 0M10 16.5v.01" strokeLinecap="round" />
-          <path d="M3 3l14 14" strokeLinecap="round" />
-        </svg>
-        You’re offline — every tool still works. Data never leaves this device.
-      </p>
-    </div>
-  );
-}
-
 /**
- * SalahKit application shell: ambient layered background, header,
- * collapsible sidebar, active tool module, footer, toasts, settings
- * dialog, donation timing (S11) and connectivity handling.
+ * SalahKit application shell (S8 routes via hash router): landing
+ * page at /, tool shell at /tools/[module], legal pages, ambient
+ * layered background, toasts, donation prompt and settings.
  * @returns The root component.
  */
 export default function App(): JSX.Element {
-  const { module, booted, boot, sidebarOpen, setSidebarOpen, online, setOnline } = useApp();
+  const { view, module, booted, boot, syncFromHash, sidebarOpen, setSidebarOpen, setOnline } =
+    useApp();
 
   useEffect(() => {
     void boot();
   }, [boot]);
+
+  useEffect(() => {
+    syncFromHash();
+    return watchRoute(syncFromHash);
+  }, [syncFromHash]);
 
   useEffect(() => {
     setOnline(isOnline());
@@ -95,44 +85,9 @@ export default function App(): JSX.Element {
   }, [setOnline]);
 
   useEffect(() => {
-    document.title = buildPageTitle(module);
-  }, [module]);
-
-  /* Donation prompt (S11): counts tool uses, never prompts on first
-     visits, max once per session and per day, 7-day dismissal cooldown. */
-  useEffect(() => {
-    if (module === 'privacy' || module === 'terms') return;
-    if (!isFeatureEnabled('donations')) return;
-    void (async () => {
-      try {
-        const flags = await getFlags();
-        const useCount = flags.useCount + 1;
-        await saveFlags({ useCount });
-        const sessionShown =
-          typeof sessionStorage !== 'undefined' &&
-          sessionStorage.getItem(STORAGE_KEYS.donationSessionShown) === '1';
-        const eligible = shouldShowDonationPrompt({
-          useCount,
-          donationDismissedAt: flags.donationDismissedAt,
-          lastToastDate: flags.lastToastDate,
-          sessionShown,
-          now: new Date(),
-        });
-        if (!eligible) return;
-        const updated = await getFlags();
-        await saveFlags(flagsAfterPromptShown(updated, new Date()));
-        sessionStorage.setItem(STORAGE_KEYS.donationSessionShown, '1');
-        emitToast({
-          title: 'SalahKit is free forever',
-          body: 'No ads, no tracking. If it helps you, consider a sadaqah — links under Support in Settings.',
-          tone: 'info',
-          durationMs: 9000,
-        });
-      } catch {
-        // IndexedDB unavailable: donation logic silently skipped.
-      }
-    })();
-  }, [module]);
+    document.title = view === 'landing' ? buildPageTitle() : buildPageTitle(module);
+    window.scrollTo({ top: 0 });
+  }, [view, module]);
 
   useEffect(() => {
     if ('serviceWorker' in navigator && import.meta.env.PROD) {
@@ -151,28 +106,40 @@ export default function App(): JSX.Element {
         <div className="absolute -bottom-40 -right-24 h-[28rem] w-[28rem] rounded-full bg-[color-mix(in_srgb,var(--accent)_10%,transparent)] blur-3xl" />
       </div>
 
-      <Header />
-      {!online ? <OfflineStrip /> : null}
-
-      <div className="mx-auto flex w-full max-w-7xl flex-1 items-start gap-6 px-4 py-6">
-        <Sidebar />
-        <main id="main-content" className="min-w-0 flex-1 scroll-mt-20">
-          {!booted ? (
-            <div className="flex items-center justify-center py-24" role="status" aria-label="Loading SalahKit">
-              <span className="h-8 w-8 rounded-full border-[3px] border-[var(--border)] border-t-[var(--primary)] animate-spin" />
-            </div>
-          ) : (
-            <div key={module} className="module-enter">
-              <ModuleView module={module} />
-            </div>
-          )}
-        </main>
-      </div>
+      {view === 'landing' ? (
+        <>
+          <Header />
+          <OfflineBanner />
+          <main id="main-content" className="min-w-0 flex-1">
+            <Landing />
+          </main>
+        </>
+      ) : (
+        <>
+          <Header />
+          <OfflineBanner />
+          <div className="mx-auto flex w-full max-w-7xl flex-1 items-start gap-6 px-4 py-6">
+            <Sidebar />
+            <main id="main-content" className="min-w-0 flex-1 scroll-mt-20">
+              {!booted ? (
+                <div className="flex items-center justify-center py-24" role="status" aria-label="Loading SalahKit">
+                  <span className="h-8 w-8 rounded-full border-[3px] border-[var(--border)] border-t-[var(--primary)] animate-spin" />
+                </div>
+              ) : (
+                <div key={module} className="module-enter">
+                  <ModuleView module={module} />
+                </div>
+              )}
+            </main>
+          </div>
+        </>
+      )}
 
       <Footer />
 
       {sidebarOpen ? <Sidebar onClose={() => setSidebarOpen(false)} /> : null}
       <SettingsPanel />
+      <DonationToast />
       <ToastHost />
     </div>
   );

@@ -1,25 +1,27 @@
 import { useEffect, useMemo, useState } from 'react';
-import { addDaysISO, computePrayerTimes, nextPrayer, previousPrayer } from '../../lib/core/prayer-engine';
+import { computePrayerTimes, nextPrayer } from '../../lib/core/prayer-engine';
 import { PRAYER_LABELS, PRAYER_LABELS_AR, PRAYER_ORDER, TICK_INTERVAL_MS } from '../../lib/core/constants';
-import { gregorianToHijri } from '../../lib/core/hijri';
 import { toISODate } from '../../lib/core/validator';
-import { CITIES } from '../../lib/core/geo';
-import { CALC_METHOD_LIST } from '../../lib/core/calc-methods';
-import { formatClockTime, formatCountdown, formatFullDate, formatHijriLong } from '../../lib/utils/format';
+import { findCity } from '../../lib/core/geo';
+import { formatClockTime } from '../../lib/utils/format';
 import { useApp } from '../../store';
 import { Badge } from '../ui/Badge';
+import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
-import { Select } from '../ui/Select';
-import type { Madhab } from '../../types';
+import { CountdownNext } from './CountdownNext';
+import { LocationPicker } from './LocationPicker';
+import { MethodSelector } from './MethodSelector';
+import type { CalcMethodId, Madhab } from '../../types';
 
 /**
- * Prayer times module: on-device astronomical computation (S5 offline
- * fallback is the default), live next-prayer countdown and progress.
+ * Prayer times module (S9): on-device astronomical computation with
+ * a live countdown, searchable city picker and method presets.
  * @returns The rendered module.
  */
 export function PrayerTimes(): JSX.Element {
   const { settings, updateSettings } = useApp();
   const [now, setNow] = useState(() => new Date());
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(new Date()), TICK_INTERVAL_MS);
@@ -31,73 +33,39 @@ export function PrayerTimes(): JSX.Element {
     () => computePrayerTimes(todayISO, settings.latitude, settings.longitude, settings.calcMethod, settings.madhab),
     [todayISO, settings.latitude, settings.longitude, settings.calcMethod, settings.madhab]
   );
-  const tomorrow = useMemo(
-    () =>
-      computePrayerTimes(
-        addDaysISO(todayISO, 1),
-        settings.latitude,
-        settings.longitude,
-        settings.calcMethod,
-        settings.madhab
-      ),
-    [todayISO, settings.latitude, settings.longitude, settings.calcMethod, settings.madhab]
-  );
+  const next = useMemo(() => nextPrayer(today, today, now), [today, now]);
+  const city = findCity(settings.city);
 
-  const next = useMemo(() => nextPrayer(today, tomorrow, now), [today, tomorrow, now]);
-  const prev = useMemo(() => previousPrayer(today, now), [today, now]);
-  const span = Math.max(1, next.at.getTime() - prev.at.getTime());
-  const progress = Math.min(100, Math.max(0, ((now.getTime() - prev.at.getTime()) / span) * 100));
-  const hijri = useMemo(() => gregorianToHijri(now), [todayISO]); // eslint-disable-line react-hooks/exhaustive-deps
+  /** Applies a calculation method. */
+  function onMethod(id: CalcMethodId): void {
+    void updateSettings({ calcMethod: id });
+  }
 
   return (
     <div className="space-y-5">
-      <Card tone="raised" className="overflow-hidden relative">
+      <Card tone="raised" className="relative overflow-hidden">
         <div className="bg-pattern drift-slow absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <div className="relative flex flex-col lg:flex-row gap-6 lg:items-end">
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--primary)]">
-              Next prayer · {PRAYER_LABELS[next.name]}
-            </p>
-            <div className="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-              <span className="text-5xl sm:text-6xl font-extrabold tracking-tight tnum text-[var(--fg)]">
-                {formatCountdown(next.at.getTime() - now.getTime())}
+        <div className="relative grid grid-cols-1 gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+          <CountdownNext />
+          <div className="space-y-3 min-w-0">
+            <button
+              type="button"
+              onClick={() => setPickerOpen(true)}
+              className="w-full flex items-center justify-between gap-3 rounded-lg border border-[var(--border)] bg-[var(--field)] px-3 py-2.5 text-left hover:border-[var(--primary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--primary)]"
+            >
+              <span className="min-w-0">
+                <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[var(--muted)]">City</span>
+                <span className="block truncate text-sm font-bold text-[var(--fg)]">
+                  {city.name}, {city.country}
+                </span>
               </span>
-              <span className="text-lg font-semibold text-[var(--muted)]">
-                at {formatClockTime(next.at)}
-              </span>
-            </div>
-            <div className="mt-4 h-1.5 w-full max-w-md rounded-full bg-[var(--hover)] overflow-hidden">
-              <div
-                className="h-full rounded-full bg-[var(--primary)] transition-[width] duration-1000 ease-linear"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <p className="mt-3 text-sm text-[var(--muted)]">
-              {formatFullDate(now)} · <span className="text-[var(--fg)] font-medium">{formatHijriLong(hijri)}</span>
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3 lg:w-56 shrink-0">
-            <Select
-              label="City"
-              id="prayer-city"
-              value={settings.city}
-              onChange={(e) => {
-                const city = CITIES.find((c) => c.id === e.target.value);
-                if (city) void updateSettings({ city: city.id, latitude: city.latitude, longitude: city.longitude });
-              }}
-              options={CITIES.map((c) => ({ value: c.id, label: `${c.name}, ${c.country}` }))}
-            />
-            <Select
-              label="Method"
-              id="prayer-method"
-              value={settings.calcMethod}
-              onChange={(e) => void updateSettings({ calcMethod: e.target.value as typeof settings.calcMethod })}
-              options={CALC_METHOD_LIST.map((m) => ({ value: m.id, label: m.name }))}
-            />
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="var(--primary)" strokeWidth="1.8" className="shrink-0" aria-hidden="true">
+                <path d="M10 17s-5.5-4.7-5.5-9a5.5 5.5 0 1 1 11 0c0 4.3-5.5 9-5.5 9z" strokeLinejoin="round" />
+                <circle cx="10" cy="8" r="2" />
+              </svg>
+            </button>
             <div>
-              <span className="block text-xs font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5">
-                Asr madhab
-              </span>
+              <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[var(--muted)] mb-1.5">Asr madhab</span>
               <div className="flex rounded-lg border border-[var(--border)] overflow-hidden">
                 {(['shafi', 'hanafi'] as const).map((m: Madhab) => (
                   <button
@@ -106,7 +74,7 @@ export function PrayerTimes(): JSX.Element {
                     aria-pressed={settings.madhab === m}
                     onClick={() => void updateSettings({ madhab: m })}
                     className={[
-                      'h-11 flex-1 text-sm font-semibold capitalize transition-colors duration-150',
+                      'h-10 flex-1 text-xs font-bold transition-colors duration-150',
                       'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[var(--primary)]',
                       settings.madhab === m
                         ? 'bg-[var(--primary)] text-[var(--primary-fg)]'
@@ -122,7 +90,7 @@ export function PrayerTimes(): JSX.Element {
         </div>
       </Card>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {PRAYER_ORDER.map((name) => {
           const at = today.times[name];
           const isNext = name === next.name;
@@ -154,11 +122,24 @@ export function PrayerTimes(): JSX.Element {
         })}
       </div>
 
-      <p className="text-xs text-[var(--muted)] flex items-center gap-2 flex-wrap">
+      <Card>
+        <h3 className="text-sm font-extrabold text-[var(--fg)] mb-3">Calculation method</h3>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr]">
+          <MethodSelector value={settings.calcMethod} onChange={onMethod} />
+          <div className="rounded-lg border border-[var(--border)] bg-[var(--field)] p-3 text-xs leading-relaxed text-[var(--muted)] min-w-0">
+            <p className="font-bold text-[var(--fg)] mb-1">Which one is right?</p>
+            Follow the authority your local masjid uses. Umm al-Qura sets Isha 90 minutes after
+            Maghrib; the others use twilight angles. All five are computed live on this device.
+          </div>
+        </div>
+      </Card>
+
+      <p className="flex flex-wrap items-center gap-2 text-xs text-[var(--muted)]">
         <Badge tone="success">100% on-device</Badge>
-        Times are computed locally with open astronomical math — they work with zero connectivity.
-        Verify critical timings with your local mosque.
+        Computed with open astronomical math — works with zero connectivity. Verify critical timings with your local mosque.
       </p>
+
+      <LocationPicker open={pickerOpen} onClose={() => setPickerOpen(false)} />
     </div>
   );
 }

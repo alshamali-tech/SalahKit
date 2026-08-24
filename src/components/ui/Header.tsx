@@ -1,6 +1,8 @@
 import { DONATION_LINKS } from '../../lib/donation';
+import { navigate } from '../../lib/router';
 import { useApp } from '../../store';
 import { Badge } from './Badge';
+import { ThemeToggle } from '../app/ThemeToggle';
 
 /**
  * App header: wordmark, connectivity status, theme toggle,
@@ -8,7 +10,7 @@ import { Badge } from './Badge';
  * @returns The rendered header bar.
  */
 export function Header(): JSX.Element {
-  const { theme, setTheme, online, setSettingsOpen, setSidebarOpen, module } = useApp();
+  const { view, online, setSettingsOpen, setSidebarOpen, module } = useApp();
   const kofi = DONATION_LINKS.find((l) => l.primary) ?? DONATION_LINKS[0];
 
   return (
@@ -25,12 +27,17 @@ export function Header(): JSX.Element {
           </svg>
         </button>
 
-        <a href="#main-content" className="flex items-center gap-2.5 min-w-0" aria-label="SalahKit home">
+        <button
+          type="button"
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2.5 min-w-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
+          aria-label="SalahKit home"
+        >
           <img src="/favicon.svg" alt="" width="30" height="30" className="shrink-0 rounded-lg" />
           <span className="text-lg font-extrabold tracking-tight text-[var(--fg)] whitespace-nowrap">
             Salah<span className="text-[var(--primary)]">Kit</span>
           </span>
-        </a>
+        </button>
 
         <span className="ml-2 hidden sm:inline-flex">
           <Badge tone={online ? 'success' : 'warning'}>
@@ -58,23 +65,7 @@ export function Header(): JSX.Element {
             <span className="hidden sm:inline">Support</span>
           </a>
 
-          <button
-            type="button"
-            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-            aria-label={theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-[var(--fg)] hover:bg-[var(--hover)] focus-visible:outline-2 focus-visible:outline-[var(--primary)] transition-colors"
-          >
-            {theme === 'light' ? (
-              <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-                <path d="M16.5 11.5A7 7 0 0 1 8.5 3.5a7 7 0 1 0 8 8z" strokeLinejoin="round" />
-              </svg>
-            ) : (
-              <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-                <circle cx="10" cy="10" r="4" />
-                <path d="M10 1.5v2M10 16.5v2M1.5 10h2M16.5 10h2M4 4l1.4 1.4M14.6 14.6L16 16M16 4l-1.4 1.4M5.4 14.6L4 16" strokeLinecap="round" />
-              </svg>
-            )}
-          </button>
+          <ThemeToggle />
 
           <button
             type="button"

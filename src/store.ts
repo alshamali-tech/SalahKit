@@ -1,14 +1,17 @@
 /**
  * Global app state (S2: Zustand client store).
  * Settings persist to IndexedDB (optimistic); theme lives in
- * localStorage only (S6). No server state anywhere.
+ * localStorage only (S6). Route state mirrors location.hash (S8).
  */
 import { create } from 'zustand';
 import { DEFAULT_SETTINGS, getSettings, saveSettings } from './lib/db/db';
 import { applyThemeToDocument, getStoredTheme, setStoredTheme } from './lib/utils/storage';
+import { navigate, parseHash, routeToPath } from './lib/router';
 import type { ModuleId, SettingsRow, ThemeMode } from './types';
 
 export interface AppState {
+  /** 'landing' (route /) or 'tools' (routes /tools, /privacy, /terms). */
+  view: 'landing' | 'tools';
   /** Active tool module. */
   module: ModuleId;
   /** Persisted user settings (defaults until boot completes). */
@@ -23,6 +26,7 @@ export interface AppState {
   settingsOpen: boolean;
   /** True once settings/theme finished loading. */
   booted: boolean;
+  syncFromHash: () => void;
   setModule: (module: ModuleId) => void;
   boot: () => Promise<void>;
   updateSettings: (patch: Partial<SettingsRow>) => Promise<void>;
@@ -36,7 +40,11 @@ export interface AppState {
  * Root Zustand store.
  */
 export const useApp = create<AppState>((set, get) => ({
-  module: 'prayer',
+  view: typeof window !== 'undefined' ? parseHash(window.location.hash).view : 'landing',
+  module:
+    typeof window !== 'undefined'
+      ? (parseHash(window.location.hash) as { module?: ModuleId }).module ?? 'prayer'
+      : 'prayer',
   settings: { ...DEFAULT_SETTINGS },
   theme: 'light',
   online: true,
@@ -44,7 +52,21 @@ export const useApp = create<AppState>((set, get) => ({
   settingsOpen: false,
   booted: false,
 
-  setModule: (module) => set({ module, sidebarOpen: false }),
+  syncFromHash: () => {
+    const route = parseHash(window.location.hash);
+    if (route.view === 'landing') {
+      set({ view: 'landing' });
+      return;
+    }
+    set({ view: 'tools', module: route.module, sidebarOpen: false });
+  },
+
+  setModule: (module) => {
+    const current = get();
+    if (current.view === 'tools' && current.module === module) return;
+    set({ module, view: 'tools', sidebarOpen: false });
+    navigate(routeToPath({ view: 'tools', module }));
+  },
 
   boot: async () => {
     if (get().booted) return;

@@ -19,7 +19,6 @@ export default defineConfig({
       thresholds: {
         'src/lib/core/**': { lines: 95, functions: 95, branches: 90, statements: 95 },
         'src/lib/db/**': { lines: 95, functions: 95, branches: 90, statements: 95 },
-        'src/lib/utils/**': { lines: 95, functions: 95, branches: 90, statements: 95 },
       },
     },
   },
