@@ -141,6 +141,41 @@ export type DuaCategory =
   | 'hardship'
   | 'sleep';
 
+/** A narration (hadith) from the Sahihayn. */
+export interface Hadith {
+  /** Stable identifier. */
+  id: string;
+  /** Which canonical collections record it. */
+  books: readonly HadithBook[];
+  /** Full citation, e.g. "Bukhari 1 · Muslim 1907". */
+  source: string;
+  /** Companion who narrated it. */
+  narrator: string;
+  /** Topic for filtering. */
+  category: HadithCategory;
+  /** Arabic text of the matn. */
+  arabic: string;
+  /** English translation. */
+  translation: string;
+}
+
+/** Canonical collections represented in the dataset. */
+export type HadithBook = 'bukhari' | 'muslim';
+
+/** Hadith topics used by the dataset and UI. */
+export type HadithCategory =
+  | 'intention'
+  | 'character'
+  | 'worship'
+  | 'charity'
+  | 'patience'
+  | 'brotherhood'
+  | 'knowledge'
+  | 'heart'
+  | 'dhikr'
+  | 'hereafter'
+  | 'mercy';
+
 /** One of the 99 Names of Allah. */
 export interface DivineName {
   /** Ordinal position 1-99. */

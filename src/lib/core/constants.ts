@@ -38,10 +38,10 @@ export const DECLINATION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 export const API_FETCH_TIMEOUT_MS = 6000;
 
 /** IndexedDB database name and version.
- * v2 adds duaFavorites, v3 adds hifzProgress (additive; Dexie migrates
- * in place, legacy data untouched). */
+ * v2 adds duaFavorites, v3 adds hifzProgress, v4 adds hadithFavorites
+ * (all additive; Dexie migrates in place, legacy data untouched). */
 export const DB_NAME = 'salahkit-db';
-export const DB_VERSION = 3;
+export const DB_VERSION = 4;
 
 /** Hifz: interval (days) at which a chunk graduates to 'memorized'. */
 export const HIFZ_GRADUATION_INTERVAL_DAYS = 30;

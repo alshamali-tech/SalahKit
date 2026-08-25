@@ -23,6 +23,7 @@ const CalendarView = lazy(() => import('./components/app/CalendarView').then((m)
 const PrayerTracker = lazy(() => import('./components/app/PrayerTracker').then((m) => ({ default: m.PrayerTracker })));
 const QuranReader = lazy(() => import('./components/app/QuranReader').then((m) => ({ default: m.QuranReader })));
 const DuasList = lazy(() => import('./components/app/DuasList').then((m) => ({ default: m.DuasList })));
+const HadithList = lazy(() => import('./components/app/HadithList').then((m) => ({ default: m.HadithList })));
 const NamesList = lazy(() => import('./components/app/NamesList').then((m) => ({ default: m.NamesList })));
 const DhikrCounter = lazy(() => import('./components/app/DhikrCounter').then((m) => ({ default: m.DhikrCounter })));
 const ZakatCalc = lazy(() => import('./components/app/ZakatCalc').then((m) => ({ default: m.ZakatCalc })));
@@ -48,6 +49,8 @@ function ModuleView({ module }: { module: ModuleId }): JSX.Element {
       return <QuranReader />;
     case 'duas':
       return <DuasList />;
+    case 'hadith':
+      return <HadithList />;
     case 'names':
       return <NamesList />;
     case 'dhikr':

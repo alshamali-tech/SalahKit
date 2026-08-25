@@ -21,6 +21,7 @@ export type ModuleId =
   | 'tracker'
   | 'calendar'
   | 'hifz'
+  | 'hadith'
   | 'privacy'
   | 'terms';
 
@@ -124,6 +125,14 @@ export interface DuaFavoriteRow {
   addedAt: number;
 }
 
+/** Hadith favorites row: one per favorited hadith (schema v4). */
+export interface HadithFavoriteRow {
+  /** Hadith id (primary key). */
+  hadithId: string;
+  /** Epoch ms when favorited. */
+  addedAt: number;
+}
+
 /** Hifz self-grade options (spaced repetition). */
 export type HifzGrade = 'again' | 'hard' | 'good' | 'easy';
 
@@ -176,5 +185,7 @@ export interface BackupFile {
     duaFavorites?: DuaFavoriteRow[];
     /** Present in v3+ backups; absent in legacy exports. */
     hifzProgress?: HifzChunkRow[];
+    /** Present in v4+ backups; absent in legacy exports. */
+    hadithFavorites?: HadithFavoriteRow[];
   };
 }

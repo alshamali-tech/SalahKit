@@ -31,6 +31,7 @@ export async function exportBackup(): Promise<string> {
       userFlags: await db.userFlags.toArray(),
       duaFavorites: await db.duaFavorites.toArray(),
       hifzProgress: await db.hifzProgress.toArray(),
+      hadithFavorites: await db.hadithFavorites.toArray(),
     },
   };
   return JSON.stringify(backup, null, 2);
@@ -99,9 +100,12 @@ export async function importBackup(json: string): Promise<{ merged: number }> {
   const hifzRows = (parsed.tables.hifzProgress ?? []).filter(
     (row) => typeof row.id === 'string' && typeof row.surahNum === 'number'
   );
+  const hadithFavs = (parsed.tables.hadithFavorites ?? []).filter(
+    (row) => typeof row.hadithId === 'string' && row.hadithId.length > 0
+  );
   await db.transaction(
     'rw',
-    [db.settings, db.prayerLog, db.tasbih, db.zakatRecords, db.userFlags, db.duaFavorites, db.hifzProgress],
+    [db.settings, db.prayerLog, db.tasbih, db.zakatRecords, db.userFlags, db.duaFavorites, db.hifzProgress, db.hadithFavorites],
     async () => {
       merged += await mergeTable(db.settings, parsed.tables.settings);
       merged += await mergeTable(db.prayerLog, parsed.tables.prayerLog);
@@ -115,6 +119,10 @@ export async function importBackup(json: string): Promise<{ merged: number }> {
       if (hifzRows.length > 0) {
         await db.hifzProgress.bulkPut(hifzRows);
         merged += hifzRows.length;
+      }
+      if (hadithFavs.length > 0) {
+        await db.hadithFavorites.bulkPut(hadithFavs);
+        merged += hadithFavs.length;
       }
     }
   );

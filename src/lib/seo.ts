@@ -32,6 +32,7 @@ export const MODULE_TITLES: Readonly<Record<ModuleId, string>> = {
   tracker: 'Prayer Tracker',
   calendar: 'Hijri Calendar',
   hifz: 'Hifz Trainer',
+  hadith: 'Hadith Library',
   privacy: 'Privacy Policy',
   terms: 'Terms of Service',
 };
@@ -92,6 +93,7 @@ export const SITEMAP_PATHS: readonly string[] = [
   '/tools/tracker',
   '/tools/calendar',
   '/tools/hifz',
+  '/tools/hadith',
   '/privacy',
   '/terms',
 ];

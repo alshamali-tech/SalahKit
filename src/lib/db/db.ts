@@ -8,6 +8,7 @@ import { uuid } from '../utils/uuid';
 import { toISODate, sanitizeCount } from '../core/validator';
 import { DEFAULT_CITY_ID } from '../core/geo';
 import type {
+  HadithFavoriteRow,
   HifzChunkRow,
   PrayerLogRow,
   SettingsRow,
@@ -280,4 +281,33 @@ export async function listHifzDue(todayISO: string): Promise<HifzChunkRow[]> {
 export async function upsertHifzChunk(chunk: HifzChunkRow): Promise<HifzChunkRow> {
   await getDb().hifzProgress.put(chunk);
   return chunk;
+}
+
+/**
+ * Loads the set of favorited hadith ids.
+ * @returns Set of hadith ids the user has favorited.
+ */
+export async function getFavoriteHadithIds(): Promise<Set<string>> {
+  try {
+    const rows = await getDb().hadithFavorites.toArray();
+    return new Set(rows.map((r) => r.hadithId));
+  } catch {
+    return new Set();
+  }
+}
+
+/**
+ * Toggles a hadith in the favorites list (optimistic-UI friendly).
+ * @param hadithId - Hadith identifier.
+ * @returns True when the hadith is now favorited, false when removed.
+ */
+export async function toggleHadithFavorite(hadithId: string): Promise<boolean> {
+  const db = getDb();
+  const existing = await db.hadithFavorites.get(hadithId);
+  if (existing) {
+    await db.hadithFavorites.delete(hadithId);
+    return false;
+  }
+  await db.hadithFavorites.put({ hadithId, addedAt: Date.now() });
+  return true;
 }
