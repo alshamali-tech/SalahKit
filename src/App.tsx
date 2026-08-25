@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useApp } from './store';
 import { watchRoute } from './lib/router';
 import { isOnline, watchConnectivity } from './lib/utils/offline';
@@ -12,18 +12,21 @@ import { SettingsPanel } from './components/settings/SettingsPanel';
 import { Landing } from './components/landing/Landing';
 import { OfflineBanner } from './components/app/OfflineBanner';
 import { DonationToast } from './components/donation/DonationToast';
-import { PrayerTimes } from './components/app/PrayerTimes';
-import { QiblaCompass } from './components/app/QiblaCompass';
-import { HijriConverter } from './components/app/HijriConverter';
-import { CalendarView } from './components/app/CalendarView';
-import { PrayerTracker } from './components/app/PrayerTracker';
-import { QuranReader } from './components/app/QuranReader';
-import { DuasList } from './components/app/DuasList';
-import { NamesList } from './components/app/NamesList';
-import { DhikrCounter } from './components/app/DhikrCounter';
-import { ZakatCalc } from './components/app/ZakatCalc';
-import { LegalPage } from './components/app/LegalPage';
 import type { ModuleId } from './types';
+
+/* Tool modules are code-split: the initial bundle carries only the
+   shell + landing (S13 <200KB budget); each tool streams in on demand. */
+const PrayerTimes = lazy(() => import('./components/app/PrayerTimes').then((m) => ({ default: m.PrayerTimes })));
+const QiblaCompass = lazy(() => import('./components/app/QiblaCompass').then((m) => ({ default: m.QiblaCompass })));
+const HijriConverter = lazy(() => import('./components/app/HijriConverter').then((m) => ({ default: m.HijriConverter })));
+const CalendarView = lazy(() => import('./components/app/CalendarView').then((m) => ({ default: m.CalendarView })));
+const PrayerTracker = lazy(() => import('./components/app/PrayerTracker').then((m) => ({ default: m.PrayerTracker })));
+const QuranReader = lazy(() => import('./components/app/QuranReader').then((m) => ({ default: m.QuranReader })));
+const DuasList = lazy(() => import('./components/app/DuasList').then((m) => ({ default: m.DuasList })));
+const NamesList = lazy(() => import('./components/app/NamesList').then((m) => ({ default: m.NamesList })));
+const DhikrCounter = lazy(() => import('./components/app/DhikrCounter').then((m) => ({ default: m.DhikrCounter })));
+const ZakatCalc = lazy(() => import('./components/app/ZakatCalc').then((m) => ({ default: m.ZakatCalc })));
+const LegalPage = lazy(() => import('./components/app/LegalPage').then((m) => ({ default: m.LegalPage })));
 
 /**
  * Renders the active tool module.
@@ -141,9 +144,17 @@ export default function App(): JSX.Element {
                   <span className="h-8 w-8 rounded-full border-[3px] border-[var(--border)] border-t-[var(--primary)] animate-spin" />
                 </div>
               ) : (
-                <div key={module} className="module-enter">
-                  <ModuleView module={module} />
-                </div>
+                <Suspense
+                  fallback={
+                    <div className="flex items-center justify-center py-24" role="status" aria-label="Loading tool">
+                      <span className="h-8 w-8 rounded-full border-[3px] border-[var(--border)] border-t-[var(--primary)] animate-spin" />
+                    </div>
+                  }
+                >
+                  <div key={module} className="module-enter">
+                    <ModuleView module={module} />
+                  </div>
+                </Suspense>
               )}
             </main>
           </div>

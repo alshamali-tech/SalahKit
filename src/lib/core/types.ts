@@ -127,8 +127,19 @@ export interface Dua {
   repeat?: number;
 }
 
-/** Dua categories used by the duas dataset and UI tabs. */
-export type DuaCategory = 'morning' | 'evening' | 'salah' | 'daily' | 'sleep';
+/** Dua categories used by the duas dataset and UI. */
+export type DuaCategory =
+  | 'morning'
+  | 'evening'
+  | 'salah'
+  | 'quran'
+  | 'prophetic'
+  | 'home'
+  | 'daily'
+  | 'travel'
+  | 'nature'
+  | 'hardship'
+  | 'sleep';
 
 /** One of the 99 Names of Allah. */
 export interface DivineName {
