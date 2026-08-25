@@ -6,6 +6,8 @@ import { chunkId, gradeChunk, intervalLabel, splitChunkRanges } from '../../../l
 import type { ChunkRange, GradeOutcome } from '../../../lib/core/hifz';
 import { listHifzChunksForSurah, upsertHifzChunk } from '../../../lib/db/db';
 import { toISODate } from '../../../lib/core/validator';
+import { rangeRefs } from '../../../lib/core/quran-audio';
+import { useQuranPlayer } from '../../../lib/quran-player-store';
 import { emitToast } from '../../../lib/messaging';
 import { Badge } from '../../ui/Badge';
 import { Button } from '../../ui/Button';
@@ -31,6 +33,7 @@ export interface HifzLearnProps {
  * @returns The rendered session or its setup screen.
  */
 export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Element {
+  const playQueue = useQuranPlayer((s) => s.playQueue);
   const [surahNum, setSurahNum] = useState(initialSurah ?? 1);
   const [chunkSize, setChunkSize] = useState(3);
   const [chunks, setChunks] = useState<HifzChunkRow[]>([]);
@@ -218,7 +221,21 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
         <p className="text-sm font-extrabold text-[var(--fg)]">
           {info.num}. {info.name} · ayahs {range.start}–{range.end}
         </p>
-        <Button variant="ghost" size="sm" onClick={() => setRange(null)}>← All chunks</Button>
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant="amber"
+            size="sm"
+            onClick={() => playQueue(rangeRefs(surahNum, range.start, range.end), 0)}
+            aria-label={`Listen to ayahs ${range.start} to ${range.end} of ${info.name}`}
+          >
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path d="M4 8v4h3l4 3.5v-11L7 8H4z" />
+              <path d="M13.5 7.5a4 4 0 0 1 0 5M15.5 5.5a7 7 0 0 1 0 9" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+            Listen to chunk
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => setRange(null)}>← All chunks</Button>
+        </div>
       </div>
 
       <ol className="flex items-center gap-1 sm:gap-2" aria-label="Memorization steps">

@@ -12,6 +12,7 @@ import { SettingsPanel } from './components/settings/SettingsPanel';
 import { Landing } from './components/landing/Landing';
 import { OfflineBanner } from './components/app/OfflineBanner';
 import { DonationToast } from './components/donation/DonationToast';
+import { QuranAudioDock } from './components/app/QuranAudioDock';
 import type { ModuleId } from './types';
 
 /* Tool modules are code-split: the initial bundle carries only the
@@ -172,6 +173,7 @@ export default function App(): JSX.Element {
       {sidebarOpen ? <Sidebar onClose={() => setSidebarOpen(false)} /> : null}
       <SettingsPanel />
       <DonationToast />
+      <QuranAudioDock />
       <ToastHost />
     </div>
   );

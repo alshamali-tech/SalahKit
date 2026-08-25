@@ -4,6 +4,8 @@ import { BASMALA, getAyahsForSurah, TRANSLATION_LABELS } from '../../lib/core/qu
 import { fetchFullSurah, QURAN_ATTRIBUTION } from '../../lib/external/quran';
 import { copyText } from '../../lib/utils/clipboard';
 import { emitToast } from '../../lib/messaging';
+import { rangeRefs, surahRefs } from '../../lib/core/quran-audio';
+import { useQuranPlayer } from '../../lib/quran-player-store';
 import { useApp } from '../../store';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
@@ -32,6 +34,7 @@ function Divider(): JSX.Element {
  */
 export function QuranReader(): JSX.Element {
   const online = useApp((s) => s.online);
+  const { queue, index, status, playQueue } = useQuranPlayer();
   const [surahNum, setSurahNum] = useState(1);
   const [lang, setLang] = useState<TranslationLang>('en');
   const [data, setData] = useState<FullSurah | null>(null);
@@ -76,6 +79,17 @@ export function QuranReader(): JSX.Element {
     }
   }
 
+  /** True when this ayah is the one currently sounding. */
+  const isSounding = (ayahNum: number): boolean => {
+    const cur = queue[index];
+    return (
+      cur !== undefined &&
+      cur.surah === surahNum &&
+      cur.ayah === ayahNum &&
+      (status === 'playing' || status === 'loading' || status === 'paused')
+    );
+  };
+
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[300px_1fr] lg:items-start">
       <div className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)]">
@@ -114,6 +128,19 @@ export function QuranReader(): JSX.Element {
         </Card>
 
         <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="amber"
+              size="sm"
+              onClick={() => playQueue(surahRefs(surahNum), 0)}
+              disabled={loading}
+              aria-label={`Listen to surah ${info.name}`}
+            >
+              <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path d="M6 4l10 6-10 6z" />
+              </svg>
+              Listen to surah
+            </Button>
           <div className="flex rounded-lg border border-[var(--border)] overflow-hidden">
             {LANGS.map((l) => (
               <button
@@ -130,6 +157,7 @@ export function QuranReader(): JSX.Element {
                 {TRANSLATION_LABELS[l]}
               </button>
             ))}
+          </div>
           </div>
           <p className="text-xs text-[var(--muted)] max-w-xs text-right">
             Reads offline once downloaded · {QURAN_ATTRIBUTION}
@@ -151,12 +179,39 @@ export function QuranReader(): JSX.Element {
               <p className="arabic text-center text-2xl text-[var(--muted)]">{BASMALA}</p>
             ) : null}
             <div className="space-y-3">
-              {data.ayahs.map((ayah) => (
-                <Card key={ayah.ayahNum} hover className="group">
+              {data.ayahs.map((ayah) => {
+                const sounding = isSounding(ayah.ayahNum);
+                return (
+                <Card
+                  key={ayah.ayahNum}
+                  hover
+                  className={[
+                    'group transition-all duration-200',
+                    sounding ? 'ring-2 ring-[var(--accent)] border-[color-mix(in_srgb,var(--accent)_50%,var(--border))] bg-[color-mix(in_srgb,var(--accent)_5%,var(--card))]' : '',
+                  ].join(' ')}
+                >
                   <div className="flex items-start gap-3">
-                    <span className="shrink-0 mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] text-xs font-extrabold text-[var(--primary)] tnum">
-                      {ayah.ayahNum}
-                    </span>
+                    <button
+                      type="button"
+                      onClick={() => playQueue(rangeRefs(surahNum, ayah.ayahNum, info.ayahCount), 0)}
+                      aria-label={sounding ? `Playing ayah ${ayah.ayahNum} of ${info.name}` : `Listen from ayah ${ayah.ayahNum} of ${info.name}`}
+                      className={[
+                        'shrink-0 mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full text-xs font-extrabold tnum transition-all duration-150',
+                        'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--accent)]',
+                        sounding
+                          ? 'bg-[var(--accent)] text-[#3b2305] animate-[pulseDot_1.4s_ease-in-out_infinite]'
+                          : 'bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] text-[var(--primary)] hover:bg-[var(--accent)] hover:text-[#3b2305]',
+                      ].join(' ')}
+                    >
+                      {sounding ? (
+                        <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path d="M4 8v4h3l4 3.5v-11L7 8H4z" />
+                          <path d="M13.5 7.5a4 4 0 0 1 0 5M15.5 5.5a7 7 0 0 1 0 9" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                        </svg>
+                      ) : (
+                        ayah.ayahNum
+                      )}
+                    </button>
                     <div className="min-w-0 flex-1">
                       <p className="arabic text-xl sm:text-2xl text-[var(--fg)] text-right">{ayah.arabic}</p>
                       <p
@@ -174,14 +229,14 @@ export function QuranReader(): JSX.Element {
                     >
                       <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                         <rect x="7" y="7" width="9" height="9" rx="2" />
-                        <path d="M13 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
-                      </svg>
-                    </button>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </>
+                          <path d="M13 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
+                        </svg>
+                      </button>
+                    </div>
+                  </Card>
+                );
+              })}
+              </div>          </>
         ) : (
           <Card tone="outline" className="py-12 text-center">
             <p className="text-sm font-bold text-[var(--fg)]">
