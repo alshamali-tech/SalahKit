@@ -33,6 +33,7 @@ export const MODULE_TITLES: Readonly<Record<ModuleId, string>> = {
   calendar: 'Hijri Calendar',
   hifz: 'Hifz Trainer',
   hadith: 'Hadith Library',
+  tajweed: 'Tajweed Trainer',
   privacy: 'Privacy Policy',
   terms: 'Terms of Service',
 };

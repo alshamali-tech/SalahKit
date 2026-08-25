@@ -18,6 +18,7 @@ export type FeatureName =
   | 'names'
   | 'tracker'
   | 'calendar'
+  | 'tajweed'
   | 'donations'
   | 'externalApi'
   | 'premiumStub';
@@ -34,6 +35,7 @@ export const DEFAULT_FEATURE_FLAGS: Readonly<Record<FeatureName, boolean>> = {
   names: true,
   tracker: true,
   calendar: true,
+  tajweed: true,
   donations: true,
   externalApi: true,
   premiumStub: true,

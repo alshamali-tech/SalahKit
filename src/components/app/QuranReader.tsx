@@ -3,8 +3,12 @@ import { getSurahInfo, showsBasmala } from '../../lib/core/quran-meta';
 import { BASMALA, getAyahsForSurah, TRANSLATION_LABELS } from '../../lib/core/quran-data';
 import { fetchFullSurah, QURAN_ATTRIBUTION } from '../../lib/external/quran';
 import { copyText } from '../../lib/utils/clipboard';
+import { getJSON, setJSON } from '../../lib/utils/storage';
+import { STORAGE_KEYS } from '../../lib/core/constants';
 import { emitToast } from '../../lib/messaging';
 import { ayahRef, surahRefs } from '../../lib/core/quran-audio';
+import { TajweedText } from '../tajweed/TajweedText';
+import { TajweedToggle } from '../tajweed/TajweedToggle';
 import { useQuranPlayer } from '../../lib/quran-player-store';
 import { listQuranBookmarks, toggleQuranBookmark } from '../../lib/db/db';
 import { useApp } from '../../store';
@@ -41,6 +45,13 @@ export function QuranReader(): JSX.Element {
   const [data, setData] = useState<FullSurah | null>(null);
   const [loading, setLoading] = useState(true);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [tajweedOn, setTajweedOn] = useState(() => getJSON(STORAGE_KEYS.tajweedOverlay, false));
+
+  /** Persists the tajweed overlay preference. */
+  function toggleTajweed(on: boolean): void {
+    setTajweedOn(on);
+    setJSON(STORAGE_KEYS.tajweedOverlay, on);
+  }
   const [bookmarks, setBookmarks] = useState<QuranBookmarkRow[]>([]);
   const [bookmarksOpen, setBookmarksOpen] = useState(false);
   /** Ayah to scroll to once the surah finishes loading. */
@@ -194,6 +205,7 @@ export function QuranReader(): JSX.Element {
               </svg>
               Bookmarks{bookmarks.length > 0 ? ` · ${bookmarks.length}` : ''}
             </Button>
+            <TajweedToggle on={tajweedOn} onChange={toggleTajweed} />
           <div className="flex rounded-lg border border-[var(--border)] overflow-hidden">
             {LANGS.map((l) => (
               <button
@@ -306,7 +318,9 @@ export function QuranReader(): JSX.Element {
                       {ayah.ayahNum}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="arabic text-xl sm:text-2xl text-[var(--fg)] text-right">{ayah.arabic}</p>
+                      <p className="arabic text-xl sm:text-2xl text-[var(--fg)] text-right">
+                        <TajweedText text={ayah.arabic} enabled={tajweedOn} />
+                      </p>
                       <p
                         className={['mt-2 text-sm leading-relaxed text-[var(--muted)]', lang === 'ur' ? 'arabic text-base' : ''].join(' ')}
                         dir={lang === 'ur' ? 'rtl' : 'ltr'}

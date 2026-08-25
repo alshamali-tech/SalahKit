@@ -1,0 +1,69 @@
+import { RULE_ORDER, TAJWEED_RULES } from '../../lib/core/tajweed';
+import type { TajweedRuleId } from '../../lib/core/tajweed';
+
+export interface TajweedLegendProps {
+  /** Per-rule counts; shown as badges when provided. */
+  counts?: Record<string, number>;
+  /** Currently focused rule (dims the others in paired text). */
+  focus?: TajweedRuleId | null;
+  /** Click handler; omit for a static legend. */
+  onFocus?: (id: TajweedRuleId | null) => void;
+  /** Only show rules present in counts (used by the Lab). */
+  onlyCounted?: boolean;
+}
+
+/**
+ * The rule legend — colored chips that double as focus filters when
+ * interactive (Tree-of-Thought style: pick a branch, see only it).
+ * @param props - counts/focus/onFocus/onlyCounted.
+ * @returns The rendered legend.
+ */
+export function TajweedLegend({ counts, focus = null, onFocus, onlyCounted = false }: TajweedLegendProps): JSX.Element {
+  const ids = onlyCounted && counts ? RULE_ORDER.filter((id) => (counts[id] ?? 0) > 0) : RULE_ORDER;
+
+  return (
+    <div className="flex flex-wrap gap-1.5" role={onFocus ? 'group' : undefined} aria-label="Tajweed rules">
+      {ids.map((id) => {
+        const rule = TAJWEED_RULES[id];
+        const active = focus === id;
+        const count = counts?.[id];
+        const chip = (
+          <>
+            <span
+              aria-hidden="true"
+              className="h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{ background: rule.color, boxShadow: active ? `0 0 0 3px color-mix(in srgb, ${rule.color} 30%, transparent)` : undefined }}
+            />
+            <span className="truncate">{rule.label}</span>
+            {count !== undefined ? <span className="tnum rounded bg-[var(--hover)] px-1 text-[10px] font-extrabold">{count}</span> : null}
+          </>
+        );
+        const classes = [
+          'inline-flex items-center gap-1.5 rounded-full border px-2.5 h-7 text-[11px] font-bold transition-all duration-150 min-w-0',
+          active
+            ? 'border-transparent text-white shadow-sm'
+            : 'border-[var(--border)] bg-[var(--card)] text-[var(--fg)]',
+          onFocus ? 'cursor-pointer hover:-translate-y-px hover:shadow-sm focus-visible:outline-2 focus-visible:outline-[var(--primary)]' : 'cursor-default',
+        ].join(' ');
+        const style = active ? { background: rule.color } : undefined;
+        return onFocus ? (
+          <button
+            key={id}
+            type="button"
+            onClick={() => onFocus(active ? null : id)}
+            aria-pressed={active}
+            title={rule.desc}
+            className={classes}
+            style={style}
+          >
+            {chip}
+          </button>
+        ) : (
+          <span key={id} className={classes} title={rule.desc}>
+            {chip}
+          </span>
+        );
+      })}
+    </div>
+  );
+}

@@ -29,6 +29,11 @@ const FEATURES: readonly Feature[] = [
     span: '', accent: 'primary',
   },
   {
+    module: 'tajweed', title: 'Tajweed Trainer', icon: 'M4 4h12v12H4zM7 7.4c1 1 2.5 1 3 0M11.5 7.4c.5 1 2 1 3 0M7.5 11h5M8.5 13.4h3',
+    blurb: 'A guided path, the interactive noon tree and a live lab that color-codes any ayah you paste.',
+    span: '', accent: 'amber',
+  },
+  {
     module: 'hijri', title: 'Hijri Calendar', icon: 'M15 12.8A6.2 6.2 0 0 1 7.2 5a6.2 6.2 0 1 0 7.8 7.8z',
     blurb: 'Two-way Gregorian ↔ Hijri conversion plus a full month calendar, refined online via AlAdhan when you are connected.',
     span: '', accent: 'amber',
@@ -72,7 +77,7 @@ export function Features(): JSX.Element {
         <div>
           <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[var(--primary)]">Ten tools, one place</p>
           <h2 id="features-title" className="mt-2 text-3xl font-extrabold tracking-tight text-[var(--fg)] sm:text-4xl">
-            Everything between Fajr and sleep
+            Everything between Fajr and sleep — recited right
           </h2>
         </div>
         <p className="max-w-xs text-sm text-[var(--muted)]">Tap any tile to open the tool — no install, no login.</p>

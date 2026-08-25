@@ -57,6 +57,8 @@ export const STORAGE_KEYS = {
   declinationCallCounts: 'salahkit:declination-calls',
   donationSessionShown: 'salahkit:donation-session',
   settingsCache: 'salahkit:settings-cache',
+  tajweedProgress: 'salahkit:tajweed-progress',
+  tajweedOverlay: 'salahkit:tajweed-overlay',
 } as const;
 
 /** Ordered prayer names used across the app. */

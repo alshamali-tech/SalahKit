@@ -9,6 +9,10 @@ import { toISODate } from '../../../lib/core/validator';
 import { rangeRefs } from '../../../lib/core/quran-audio';
 import { useQuranPlayer } from '../../../lib/quran-player-store';
 import { emitToast } from '../../../lib/messaging';
+import { getJSON, setJSON } from '../../../lib/utils/storage';
+import { STORAGE_KEYS } from '../../../lib/core/constants';
+import { TajweedText } from '../../tajweed/TajweedText';
+import { TajweedToggle } from '../../tajweed/TajweedToggle';
 import { Badge } from '../../ui/Badge';
 import { Button } from '../../ui/Button';
 import { Card } from '../../ui/Card';
@@ -44,6 +48,13 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
   const [showAll, setShowAll] = useState(false);
   const [outcome, setOutcome] = useState<GradeOutcome | null>(null);
+  const [tajweedOn, setTajweedOn] = useState(() => getJSON(STORAGE_KEYS.tajweedOverlay, false));
+
+  /** Persists the tajweed overlay preference (shared with the Reader). */
+  function toggleTajweed(on: boolean): void {
+    setTajweedOn(on);
+    setJSON(STORAGE_KEYS.tajweedOverlay, on);
+  }
 
   const info = getSurahInfo(surahNum);
   const ranges = useMemo(() => splitChunkRanges(info.ayahCount, chunkSize), [info.ayahCount, chunkSize]);
@@ -234,6 +245,7 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
             </svg>
             Listen to chunk
           </Button>
+          <TajweedToggle on={tajweedOn} onChange={toggleTajweed} />
           <Button variant="ghost" size="sm" onClick={() => setRange(null)}>← All chunks</Button>
         </div>
       </div>
@@ -271,7 +283,9 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
               <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">Step 1 · Understand before you memorize</p>
               {ayahs.map((a) => (
                 <div key={a.ayahNum} className="rounded-lg border border-[var(--border)] bg-[var(--field)] p-3">
-                  <p className="arabic text-xl text-[var(--fg)] text-right">{a.arabic}</p>
+                  <p className="arabic text-xl text-[var(--fg)] text-right">
+                    <TajweedText text={a.arabic} enabled={tajweedOn} />
+                  </p>
                   <p className="mt-1.5 text-sm text-[var(--muted)] leading-relaxed">{a.en}</p>
                 </div>
               ))}
@@ -294,7 +308,9 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
                       : 'border-[var(--border)] bg-[var(--field)] hover:border-[var(--primary)]',
                   ].join(' ')}
                 >
-                  <p className="arabic text-xl text-[var(--fg)]">{a.arabic}</p>
+                  <p className="arabic text-xl text-[var(--fg)]">
+                    <TajweedText text={a.arabic} enabled={tajweedOn} />
+                  </p>
                   <span className="mt-1.5 inline-flex items-center gap-1" aria-label={`${reads[i]} of ${READS_NEEDED} reads`}>
                     {Array.from({ length: READS_NEEDED }, (_, d) => (
                       <span
@@ -324,7 +340,7 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
                   className="w-full text-right rounded-lg border border-[var(--border)] bg-[var(--field)] p-3 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--primary)]"
                 >
                   <p className={['arabic text-xl text-[var(--fg)] transition-all duration-250', revealed.has(a.ayahNum) ? '' : 'blur-[7px] select-none'].join(' ')}>
-                    {a.arabic}
+                    <TajweedText text={a.arabic} enabled={tajweedOn} />
                   </p>
                   <p className="mt-1 text-[11px] font-bold text-[var(--muted)]">
                     {revealed.has(a.ayahNum) ? 'Checked ✓' : 'Recite it, then tap to check'}
@@ -339,11 +355,15 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="rounded-lg border border-[var(--border)] bg-[var(--field)] p-3">
                     <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--muted)]">End of previous chunk · ayah {prevAyah.ayahNum}</p>
-                    <p className="arabic mt-1.5 text-lg text-[var(--fg)] text-right">{prevAyah.arabic}</p>
+                    <p className="arabic mt-1.5 text-lg text-[var(--fg)] text-right">
+                      <TajweedText text={prevAyah.arabic} enabled={tajweedOn} />
+                    </p>
                   </div>
                   <div className="rounded-lg border-2 border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_8%,transparent)] p-3">
                     <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--accent-strong)]">Start of this chunk · ayah {ayahs[0].ayahNum}</p>
-                    <p className="arabic mt-1.5 text-lg text-[var(--fg)] text-right">{ayahs[0].arabic}</p>
+                    <p className="arabic mt-1.5 text-lg text-[var(--fg)] text-right">
+                      {ayahs[0] ? <TajweedText text={ayahs[0].arabic} enabled={tajweedOn} /> : null}
+                    </p>
                   </div>
                 </div>
               ) : (
@@ -366,7 +386,8 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
               <div className={['rounded-lg border border-[var(--border)] bg-[var(--field)] p-4 transition-all duration-300', showAll ? '' : 'blur-[9px] select-none'].join(' ')}>
                 {ayahs.map((a) => (
                   <p key={a.ayahNum} className="arabic text-xl text-[var(--fg)] text-right leading-loose">
-                    {a.arabic} <span className="text-[var(--accent-strong)]">﴿{a.ayahNum}﴾</span>
+                    <TajweedText text={a.arabic} enabled={tajweedOn} />{' '}
+                    <span className="text-[var(--accent-strong)]">﴿{a.ayahNum}﴾</span>
                   </p>
                 ))}
               </div>

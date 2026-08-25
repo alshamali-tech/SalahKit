@@ -22,6 +22,7 @@ export type ModuleId =
   | 'calendar'
   | 'hifz'
   | 'hadith'
+  | 'tajweed'
   | 'privacy'
   | 'terms';
 

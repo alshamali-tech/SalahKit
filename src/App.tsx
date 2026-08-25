@@ -29,6 +29,7 @@ const NamesList = lazy(() => import('./components/app/NamesList').then((m) => ({
 const DhikrCounter = lazy(() => import('./components/app/DhikrCounter').then((m) => ({ default: m.DhikrCounter })));
 const ZakatCalc = lazy(() => import('./components/app/ZakatCalc').then((m) => ({ default: m.ZakatCalc })));
 const HifzTrainer = lazy(() => import('./components/app/HifzTrainer').then((m) => ({ default: m.HifzTrainer })));
+const TajweedModule = lazy(() => import('./components/app/TajweedModule').then((m) => ({ default: m.TajweedModule })));
 const LegalPage = lazy(() => import('./components/app/LegalPage').then((m) => ({ default: m.LegalPage })));
 
 /**
@@ -60,6 +61,8 @@ function ModuleView({ module }: { module: ModuleId }): JSX.Element {
       return <ZakatCalc />;
     case 'hifz':
       return <HifzTrainer />;
+    case 'tajweed':
+      return <TajweedModule />;
     case 'privacy':
       return <LegalPage kind="privacy" />;
     case 'terms':
