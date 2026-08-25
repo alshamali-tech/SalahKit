@@ -8,6 +8,7 @@ import { uuid } from '../utils/uuid';
 import { toISODate, sanitizeCount } from '../core/validator';
 import { DEFAULT_CITY_ID } from '../core/geo';
 import type {
+  HifzChunkRow,
   PrayerLogRow,
   SettingsRow,
   TasbihRow,
@@ -229,4 +230,54 @@ export async function toggleDuaFavorite(duaId: string): Promise<boolean> {
   }
   await db.duaFavorites.put({ duaId, addedAt: Date.now() });
   return true;
+}
+
+/**
+ * Lists all hifz chunk rows.
+ * @returns Every memorization chunk, any order.
+ */
+export async function listHifzChunks(): Promise<HifzChunkRow[]> {
+  try {
+    return await getDb().hifzProgress.toArray();
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Lists hifz chunks for one surah, ordered by ayah start.
+ * @param surahNum - Surah number.
+ * @returns Chunks sorted ascending.
+ */
+export async function listHifzChunksForSurah(surahNum: number): Promise<HifzChunkRow[]> {
+  try {
+    const rows = await getDb().hifzProgress.where('surahNum').equals(surahNum).toArray();
+    return rows.sort((a, b) => a.ayahStart - b.ayahStart);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Lists chunks due for review on or before a date.
+ * @param todayISO - Cutoff date YYYY-MM-DD.
+ * @returns Due chunks, earliest due date first.
+ */
+export async function listHifzDue(todayISO: string): Promise<HifzChunkRow[]> {
+  try {
+    const rows = await getDb().hifzProgress.where('dueISO').belowOrEqual(todayISO).toArray();
+    return rows.sort((a, b) => (a.dueISO < b.dueISO ? -1 : a.dueISO > b.dueISO ? 1 : 0));
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Upserts a hifz chunk row (optimistic-UI friendly).
+ * @param chunk - Complete chunk row.
+ * @returns The stored row.
+ */
+export async function upsertHifzChunk(chunk: HifzChunkRow): Promise<HifzChunkRow> {
+  await getDb().hifzProgress.put(chunk);
+  return chunk;
 }

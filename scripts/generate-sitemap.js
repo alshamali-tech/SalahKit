@@ -15,7 +15,7 @@ const PATHS = [
   '/', '/tools',
   '/tools/prayer', '/tools/qibla', '/tools/hijri', '/tools/quran',
   '/tools/dhikr', '/tools/zakat', '/tools/duas', '/tools/names',
-  '/tools/tracker', '/tools/calendar',
+  '/tools/tracker', '/tools/calendar', '/tools/hifz',
   '/privacy', '/terms',
 ];
 

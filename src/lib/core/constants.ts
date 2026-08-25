@@ -38,9 +38,16 @@ export const DECLINATION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 export const API_FETCH_TIMEOUT_MS = 6000;
 
 /** IndexedDB database name and version.
- * v2 adds the duaFavorites table (additive; Dexie migrates in place). */
+ * v2 adds duaFavorites, v3 adds hifzProgress (additive; Dexie migrates
+ * in place, legacy data untouched). */
 export const DB_NAME = 'salahkit-db';
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
+
+/** Hifz: interval (days) at which a chunk graduates to 'memorized'. */
+export const HIFZ_GRADUATION_INTERVAL_DAYS = 30;
+
+/** Hifz: hard ceiling for review intervals. */
+export const HIFZ_MAX_INTERVAL_DAYS = 90;
 
 /** localStorage / sessionStorage keys (single source of truth). */
 export const STORAGE_KEYS = {

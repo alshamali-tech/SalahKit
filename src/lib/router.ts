@@ -16,6 +16,7 @@ const MODULE_IDS: readonly ModuleId[] = [
   'names',
   'tracker',
   'calendar',
+  'hifz',
   'privacy',
   'terms',
 ];

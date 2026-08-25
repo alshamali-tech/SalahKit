@@ -7,6 +7,7 @@ import { DB_NAME, DB_VERSION } from '../core/constants';
 import type {
   DuaFavoriteRow,
   ExtCacheRow,
+  HifzChunkRow,
   PrayerLogRow,
   QuranCacheRow,
   SettingsRow,
@@ -25,6 +26,7 @@ export const TABLE_NAMES = {
   extCache: 'extCache',
   userFlags: 'userFlags',
   duaFavorites: 'duaFavorites',
+  hifzProgress: 'hifzProgress',
 } as const;
 
 /** Tables that must exist in every backup file (v1+). */
@@ -52,6 +54,7 @@ export class SalahKitDB extends Dexie {
   public extCache!: Table<ExtCacheRow, string>;
   public userFlags!: Table<UserFlagsRow, string>;
   public duaFavorites!: Table<DuaFavoriteRow, string>;
+  public hifzProgress!: Table<HifzChunkRow, string>;
 
   /** Creates the schema definition. Called once by the db singleton.
    * Versions are declared explicitly so v1 databases upgrade in place
@@ -70,6 +73,11 @@ export class SalahKitDB extends Dexie {
     if (DB_VERSION >= 2) {
       this.version(2).stores({
         [TABLE_NAMES.duaFavorites]: 'duaId',
+      });
+    }
+    if (DB_VERSION >= 3) {
+      this.version(3).stores({
+        [TABLE_NAMES.hifzProgress]: 'id, surahNum, dueISO, status',
       });
     }
   }

@@ -39,6 +39,7 @@ const SECTIONS: readonly NavSection[] = [
     items: [
       { module: 'dhikr', label: 'Dhikr Counter', d: 'M10 2.8a7.2 7.2 0 1 0 0 14.4 7.2 7.2 0 0 0 0-14.4zM10 7.6a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8z' },
       { module: 'zakat', label: 'Zakat Calculator', d: 'M10 2.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15zM10 6v8M7.7 8h3.6a1.6 1.6 0 0 1 0 3.2H8.7a1.6 1.6 0 0 0 0 3.2h3.6' },
+      { module: 'hifz', label: 'Hifz Trainer', d: 'M10 4.6C8.2 3.3 5.6 3 3.5 3.5v12c2.1-.5 4.7-.2 6.5 1.1 1.8-1.3 4.4-1.6 6.5-1.1v-12c-2.1-.5-4.7-.2-6.5 1.1zM10 4.6v12M7 9l2 2 4-4.6' },
     ],
   },
   {

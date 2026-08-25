@@ -20,6 +20,7 @@ export type ModuleId =
   | 'names'
   | 'tracker'
   | 'calendar'
+  | 'hifz'
   | 'privacy'
   | 'terms';
 
@@ -123,6 +124,37 @@ export interface DuaFavoriteRow {
   addedAt: number;
 }
 
+/** Hifz self-grade options (spaced repetition). */
+export type HifzGrade = 'again' | 'hard' | 'good' | 'easy';
+
+/** Memorization stage of a chunk. */
+export type HifzStatus = 'learning' | 'memorized';
+
+/** Hifz chunk row: one memorization unit of consecutive ayahs. */
+export interface HifzChunkRow {
+  /** Stable id `${surahNum}:${ayahStart}-${ayahEnd}`. */
+  id: string;
+  surahNum: number;
+  /** First ayah of the chunk (1-based). */
+  ayahStart: number;
+  /** Last ayah of the chunk (inclusive). */
+  ayahEnd: number;
+  status: HifzStatus;
+  /** Current review interval in days. */
+  intervalDays: number;
+  /** Successful review count. */
+  reps: number;
+  /** Times the chunk was forgotten (graded "again"). */
+  lapses: number;
+  /** Next review date YYYY-MM-DD (indexed). */
+  dueISO: string;
+  /** ISO datetime the chunk first reached 'memorized', or null. */
+  memorizedAt: string | null;
+  /** ISO datetime of the last grade, or null. */
+  lastGradedISO: string | null;
+  updatedAt: number;
+}
+
 /** Backup file envelope produced by backup.ts. */
 export interface BackupFile {
   /** Always the DB name, used for validation. */
@@ -142,5 +174,7 @@ export interface BackupFile {
     userFlags: UserFlagsRow[];
     /** Present in v2+ backups; absent in legacy v1 exports. */
     duaFavorites?: DuaFavoriteRow[];
+    /** Present in v3+ backups; absent in legacy exports. */
+    hifzProgress?: HifzChunkRow[];
   };
 }
