@@ -6,7 +6,7 @@ import { Card } from '../ui/Card';
 const FACTS: readonly string[] = [
   'No account, no cookies, no analytics — there is nothing to collect.',
   'All data lives in your browser’s IndexedDB; only the theme preference uses localStorage.',
-  'The only optional network call is the keyless, free AlAdhan API for Hijri refinement.',
+  'The only optional network calls are keyless public APIs — AlAdhan (Hijri dates), AlQuran Cloud (full Quran text) and NOAA Geomag (compass declination).',
   'Export, import or wipe everything below, anytime, with one tap.',
 ];
 

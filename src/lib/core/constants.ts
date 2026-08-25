@@ -31,6 +31,8 @@ export const API_MAX_CALLS_PER_DAY = 3;
 /** External API cache TTLs (S5). */
 export const API_TTL_PRAYER_MS = 24 * 60 * 60 * 1000;
 export const API_TTL_HIJRI_MS = 30 * 24 * 60 * 60 * 1000;
+/** Declination drifts slowly; a month of cache is ample. */
+export const DECLINATION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 /** Fetch timeout for external calls, in milliseconds. */
 export const API_FETCH_TIMEOUT_MS = 6000;
@@ -45,6 +47,7 @@ export const STORAGE_KEYS = {
   theme: 'salahkit:theme',
   featureFlags: 'salahkit:features',
   apiCallCounts: 'salahkit:api-calls',
+  declinationCallCounts: 'salahkit:declination-calls',
   donationSessionShown: 'salahkit:donation-session',
   settingsCache: 'salahkit:settings-cache',
 } as const;

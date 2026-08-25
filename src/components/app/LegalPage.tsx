@@ -41,7 +41,7 @@ const PRIVACY: LegalContent = {
     {
       heading: '4. Optional external data',
       body: [
-        'When you are online, SalahKit may call the free, keyless AlAdhan API (aladhan.com) to refine Hijri dates. Requests contain only the date and coordinates you selected — never any personal identifier. Responses are cached locally and the feature degrades gracefully to the built-in offline algorithm.',
+        'When you are online, SalahKit may call free, keyless public APIs: AlAdhan (aladhan.com) to refine Hijri dates, AlQuran Cloud (alquran.cloud) to stream Quran text you open, and NOAA Geomag (ngdc.noaa.gov) for local magnetic declination in the smart Qibla compass. Requests contain only the date or coordinates you selected — never any personal identifier. Responses are cached locally (Quran text permanently) and every feature degrades gracefully to the built-in offline equivalents.',
       ],
     },
     {

@@ -1,48 +1,60 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { compassPoint, distanceToKaabaKm, qiblaBearingDeg } from '../../lib/core/qibla';
 import { CITIES, findCity } from '../../lib/core/geo';
 import { formatDistanceKm } from '../../lib/utils/format';
+import {
+  angleLerp,
+  normalizeDeg360,
+  orientationPermissionRequired,
+  requestOrientationPermission,
+  shortestDelta,
+  subscribeHeading,
+  supportsOrientation,
+} from '../../lib/utils/heading';
+import { fetchDeclination } from '../../lib/external/declination';
+import type { DeclinationResult } from '../../lib/external/declination';
 import { useApp } from '../../store';
 import { Badge } from '../ui/Badge';
+import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { Select } from '../ui/Select';
+import { QiblaDial } from './QiblaDial';
 
-const CX = 100;
-const CY = 100;
+type CompassStatus = 'manual' | 'request-permission' | 'denied' | 'starting' | 'calibrating' | 'live' | 'stale';
 
-/**
- * Polar to cartesian helper for dial geometry (0deg = up/north).
- * @param angleDeg - Angle clockwise from north.
- * @param radius - Distance from center.
- * @returns [x, y] coordinates.
- */
-function point(angleDeg: number, radius: number): [number, number] {
-  const rad = (angleDeg * Math.PI) / 180;
-  return [CX + radius * Math.sin(rad), CY - radius * Math.cos(rad)];
-}
+/** Alignment tolerance in degrees. */
+const ALIGNED_TOLERANCE_DEG = 5;
 
-/** Tick marks every 5 degrees; longer every 15. */
-const TICKS: ReadonlyArray<{ deg: number; major: boolean }> = Array.from({ length: 72 }, (_, i) => ({
-  deg: i * 5,
-  major: i % 3 === 0,
-}));
-
-const CARDINALS: ReadonlyArray<{ deg: number; label: string }> = [
-  { deg: 0, label: 'N' },
-  { deg: 90, label: 'E' },
-  { deg: 180, label: 'S' },
-  { deg: 270, label: 'W' },
-];
+const STATUS_HINTS: Readonly<Record<CompassStatus, string>> = {
+  manual: 'No motion sensors on this device — showing the fixed bearing as a needle.',
+  'request-permission': 'Compass is ready — tap the button to allow motion & orientation access.',
+  denied: 'Permission denied. Enable “Motion & Orientation” for this site in browser settings.',
+  starting: 'Waiting for the compass sensors…',
+  calibrating: 'Getting a fix — move your phone slowly in a figure-8.',
+  live: 'Hold the phone flat and rotate until the amber marker reaches the top index.',
+  stale: 'Compass paused — move your device gently to resume.',
+};
 
 /**
- * Qibla module: great-circle bearing from the selected city to the
- * Kaaba, rendered as an animated compass dial.
+ * Smart Qibla module: live tilt-compensated magnetic heading, NOAA
+ * declination applied for true north, alignment feedback with haptics,
+ * and a manual needle fallback for sensor-less devices.
  * @returns The rendered module.
  */
 export function QiblaCompass(): JSX.Element {
   const { settings, updateSettings } = useApp();
-  const city = findCity(settings.city);
+  const [status, setStatus] = useState<CompassStatus>('starting');
+  const [heading, setHeading] = useState<number | null>(null);
+  const [declination, setDeclination] = useState<DeclinationResult | null>(null);
+  const [permissionAsked, setPermissionAsked] = useState(false);
+  const smoothedRef = useRef<number | null>(null);
+  const lastEventRef = useRef(0);
+  const alignedRef = useRef(false);
+  const declinationRef = useRef(0);
+  const statusRef = useRef<CompassStatus>('starting');
+  statusRef.current = status;
 
+  const city = findCity(settings.city);
   const bearing = useMemo(
     () => qiblaBearingDeg(settings.latitude, settings.longitude),
     [settings.latitude, settings.longitude]
@@ -52,66 +64,149 @@ export function QiblaCompass(): JSX.Element {
     [settings.latitude, settings.longitude]
   );
 
+  useEffect(() => {
+    let cancelled = false;
+    void fetchDeclination(settings.latitude, settings.longitude).then((d) => {
+      if (cancelled) return;
+      declinationRef.current = d.value;
+      setDeclination(d);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [settings.latitude, settings.longitude]);
+
+  useEffect(() => {
+    if (!supportsOrientation()) {
+      setStatus('manual');
+      return;
+    }
+    if (orientationPermissionRequired() && !permissionAsked) {
+      setStatus('request-permission');
+      return;
+    }
+    setStatus('starting');
+    smoothedRef.current = null;
+    const startedAt = Date.now();
+    const unsubscribe = subscribeHeading((sample) => {
+      lastEventRef.current = Date.now();
+      if (sample.headingMagnetic === null) {
+        setStatus((s) => (s === 'live' ? s : 'calibrating'));
+        return;
+      }
+      const trueNorth = normalizeDeg360(sample.headingMagnetic + declinationRef.current);
+      const smoothed =
+        smoothedRef.current === null ? trueNorth : angleLerp(smoothedRef.current, trueNorth, 0.22);
+      smoothedRef.current = smoothed;
+      setHeading(smoothed);
+      setStatus('live');
+    });
+    const watchdog = window.setInterval(() => {
+      const current = statusRef.current;
+      const idle = Date.now() - lastEventRef.current;
+      if ((current === 'live' || current === 'starting') && lastEventRef.current > 0 && idle > 2000) {
+        setStatus('stale');
+      } else if (current === 'stale' && idle < 2000) {
+        setStatus('live');
+      } else if (current === 'starting' && lastEventRef.current === 0 && idle > 0 && Date.now() - startedAt > 2500) {
+        setStatus('calibrating');
+      }
+    }, 700);
+    return () => {
+      unsubscribe();
+      window.clearInterval(watchdog);
+    };
+  }, [permissionAsked]);
+
+  const delta = heading === null ? null : shortestDelta(heading, bearing);
+  const aligned = delta !== null && Math.abs(delta) <= ALIGNED_TOLERANCE_DEG;
+
+  useEffect(() => {
+    if (aligned && !alignedRef.current) {
+      alignedRef.current = true;
+      try {
+        if ('vibrate' in navigator) navigator.vibrate(60);
+      } catch {
+        // Haptics unavailable; the visual glow already confirms.
+      }
+    }
+    if (!aligned) alignedRef.current = false;
+  }, [aligned]);
+
+  /** iOS gesture-gated sensor unlock. */
+  async function enableCompass(): Promise<void> {
+    setPermissionAsked(true);
+    const result = await requestOrientationPermission();
+    if (result === 'denied') setStatus('denied');
+  }
+
+  const sensorLive = status === 'live' || status === 'stale' || status === 'calibrating';
+  const hub = buildHub(status, aligned, delta, bearing);
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5 items-start">
-      <Card className="flex flex-col items-center py-8">
-        <svg viewBox="0 0 200 200" className="w-full max-w-[340px]" role="img" aria-label={`Qibla compass pointing ${Math.round(bearing)} degrees from north`}>
-          <circle cx={CX} cy={CY} r="96" fill="var(--field)" stroke="var(--border)" strokeWidth="1.5" />
-          <circle cx={CX} cy={CY} r="70" fill="none" stroke="var(--border)" strokeWidth="1" strokeDasharray="2 4" />
-          {TICKS.map((t) => {
-            const [x1, y1] = point(t.deg, t.major ? 84 : 89);
-            const [x2, y2] = point(t.deg, 94);
-            return (
-              <line
-                key={t.deg}
-                x1={x1}
-                y1={y1}
-                x2={x2}
-                y2={y2}
-                stroke={t.major ? 'var(--fg)' : 'var(--muted)'}
-                strokeWidth={t.major ? 2 : 1}
-                opacity={t.major ? 0.7 : 0.45}
-              />
-            );
-          })}
-          {CARDINALS.map((c) => {
-            const [x, y] = point(c.deg, 76);
-            return (
-              <text
-                key={c.label}
-                x={x}
-                y={y}
-                textAnchor="middle"
-                dominantBaseline="central"
-                fontSize="13"
-                fontWeight="800"
-                fill={c.label === 'N' ? 'var(--primary)' : 'var(--muted)'}
-              >
-                {c.label}
-              </text>
-            );
-          })}
-          <g
-            style={{
-              transform: `rotate(${bearing}deg)`,
-              transformOrigin: '100px 100px',
-              transition: 'transform 300ms ease-out',
-            }}
-          >
-            <path d="M100 26L90 100h20z" fill="var(--accent)" />
-            <path d="M100 174l-8-74h16z" fill="var(--border)" />
-            <rect x="93" y="30" width="14" height="14" rx="2.5" fill="#1c1917" stroke="var(--accent)" strokeWidth="1.5" />
-            <line x1="93" y1="35" x2="107" y2="35" stroke="var(--accent)" strokeWidth="1.5" />
-          </g>
-          <circle cx={CX} cy={CY} r="7" fill="var(--card)" stroke="var(--primary)" strokeWidth="2.5" />
-        </svg>
-        <p className="mt-4 text-center text-sm text-[var(--muted)]">
-          Face the amber needle. Showing <strong className="text-[var(--fg)]">true north</strong> —
-          adjust for your local magnetic declination.
-        </p>
+    <div className="space-y-5">
+      <Card className="relative overflow-hidden">
+        <div className="bg-pattern drift-slow absolute inset-0 pointer-events-none" aria-hidden="true" />
+        <div className="relative flex flex-col items-center gap-4 px-4 py-7">
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {status === 'live' ? (
+              <Badge tone="success">
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--success)] animate-[pulseDot_1.6s_ease-in-out_infinite]" aria-hidden="true" />
+                Live compass
+              </Badge>
+            ) : status === 'manual' ? (
+              <Badge tone="neutral">Manual dial</Badge>
+            ) : status === 'denied' ? (
+              <Badge tone="danger">Sensor blocked</Badge>
+            ) : (
+              <Badge tone="warning">{status === 'stale' ? 'Paused' : 'Acquiring…'}</Badge>
+            )}
+            {sensorLive && declination ? (
+              <Badge tone="primary">
+                True north {declination.value >= 0 ? '+' : ''}
+                {declination.value.toFixed(1)}°
+              </Badge>
+            ) : null}
+          </div>
+
+          <QiblaDial
+            rotationDeg={heading === null || status === 'manual' ? 0 : -heading}
+            bearingDeg={bearing}
+            manual={status === 'manual'}
+            aligned={aligned}
+            hub={hub}
+          />
+
+          <div className="text-center min-w-0">
+            {aligned ? (
+              <p className="text-2xl sm:text-3xl font-extrabold text-[var(--success)] animate-[fadeIn_200ms_ease-out]">
+                Facing the Qibla
+              </p>
+            ) : delta !== null ? (
+              <p className="text-2xl sm:text-3xl font-extrabold text-[var(--fg)]">
+                Turn {delta > 0 ? 'right' : 'left'} · <span className="tnum">{Math.abs(Math.round(delta))}°</span> to go
+              </p>
+            ) : (
+              <p className="text-lg font-bold text-[var(--fg)]">
+                Qibla is at <span className="tnum">{Math.round(bearing)}°</span> from north
+              </p>
+            )}
+            <p className="mt-1.5 text-xs text-[var(--muted)] max-w-sm">{STATUS_HINTS[status]}</p>
+          </div>
+
+          {status === 'request-permission' ? (
+            <Button variant="amber" onClick={() => void enableCompass()}>
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <circle cx="10" cy="10" r="7" />
+                <path d="M13 7l-2.2 5.2L5.6 14l1.8-4.8z" strokeLinejoin="round" />
+              </svg>
+              Enable compass
+            </Button>
+          ) : null}
+        </div>
       </Card>
 
-      <div className="space-y-4 min-w-0">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card tone="raised">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--primary)]">Qibla bearing</p>
           <p className="mt-1 text-4xl font-extrabold tnum text-[var(--fg)]">
@@ -123,7 +218,20 @@ export function QiblaCompass(): JSX.Element {
             <Badge tone="neutral">{formatDistanceKm(distance)} to Kaaba</Badge>
           </div>
         </Card>
-        <Card>
+
+        <Card hover>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--primary)]">Magnetic declination</p>
+          <p className="mt-1 text-2xl font-extrabold tnum text-[var(--fg)]">
+            {declination ? `${declination.value >= 0 ? '+' : '−'}${Math.abs(declination.value).toFixed(1)}°` : '…'}
+          </p>
+          <p className="mt-1.5 text-xs leading-relaxed text-[var(--muted)]">
+            {declination?.source === 'unavailable'
+              ? 'Unavailable offline — compass points magnetic north until NOAA is reachable.'
+              : `Applied for true north · source: ${declination?.source === 'noaa' ? 'NOAA Geomag (live)' : 'NOAA Geomag (cached 30d)'}.`}
+          </p>
+        </Card>
+
+        <Card hover>
           <Select
             label="Your city"
             id="qibla-city"
@@ -134,12 +242,66 @@ export function QiblaCompass(): JSX.Element {
             }}
             options={CITIES.map((c) => ({ value: c.id, label: `${c.name}, ${c.country}` }))}
           />
-          <p className="mt-3 text-xs text-[var(--muted)]">
-            Bearing is the great-circle direction from {city.name} ({city.latitude.toFixed(2)}°,{' '}
-            {city.longitude.toFixed(2)}°) to the Kaaba in Masjid al-Haram, Makkah.
+          <p className="mt-2.5 text-xs leading-relaxed text-[var(--muted)]">
+            Great-circle direction from {city.name} to the Kaaba in Masjid al-Haram. Bearing is
+            true north; sensor readings are corrected with local declination.
           </p>
         </Card>
       </div>
     </div>
+  );
+}
+
+/**
+ * Builds the hub readout content for a compass state.
+ * @param status - Compass state machine value.
+ * @param aligned - Within tolerance of the Qibla.
+ * @param delta - Signed degrees to the Qibla (null when heading unknown).
+ * @param bearing - Static bearing for manual mode.
+ * @returns Hub JSX.
+ */
+function buildHub(
+  status: CompassStatus,
+  aligned: boolean,
+  delta: number | null,
+  bearing: number
+): JSX.Element {
+  if (status === 'manual') {
+    return (
+      <>
+        <span className="text-2xl font-extrabold tnum text-[var(--fg)]">{Math.round(bearing)}°</span>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">needle</span>
+      </>
+    );
+  }
+  if (status === 'starting' || status === 'request-permission' || status === 'denied') {
+    return (
+      <span className="h-6 w-6 rounded-full border-[3px] border-[var(--border)] border-t-[var(--primary)] animate-spin" aria-hidden="true" />
+    );
+  }
+  if (aligned) {
+    return (
+      <span className="flex flex-col items-center gap-0.5 animate-[fadeIn_180ms_ease-out]">
+        <svg width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="var(--success)" strokeWidth="2.4" aria-hidden="true">
+          <path d="M4 10.5l4 4L16 6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <span className="text-sm font-extrabold text-[var(--success)]">Qibla</span>
+      </span>
+    );
+  }
+  if (delta !== null) {
+    return (
+      <>
+        <span className="text-3xl font-extrabold tnum text-[var(--fg)]">{Math.abs(Math.round(delta))}°</span>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">
+          {status === 'stale' ? 'paused' : delta > 0 ? 'turn right ↻' : 'turn left ↺'}
+        </span>
+      </>
+    );
+  }
+  return (
+    <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)] text-center px-2">
+      calibrating
+    </span>
   );
 }

@@ -101,7 +101,7 @@ export function Footer(): JSX.Element {
         <div className="mx-auto max-w-7xl px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-3 text-xs text-[var(--muted)]">
           <p>© {year} SalahKit. Built with ihsan.</p>
           <p className="sm:ml-auto">
-            Prayer times computed on-device · optional Hijri refinement via the free{' '}
+            Prayer times computed on-device · optional refinement via the free{' '}
             <a
               href="https://aladhan.com"
               target="_blank"
@@ -109,7 +109,8 @@ export function Footer(): JSX.Element {
               className="underline hover:text-[var(--primary)]"
             >
               AlAdhan API
-            </a>
+            </a>{' '}
+            and NOAA Geomag (compass declination)
           </p>
         </div>
       </div>
