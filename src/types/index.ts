@@ -133,6 +133,18 @@ export interface HadithFavoriteRow {
   addedAt: number;
 }
 
+/** Quran reading bookmark: a saved surah:ayah position (schema v5). */
+export interface QuranBookmarkRow {
+  /** Stable id `${surahNum}:${ayahNum}` (primary key). */
+  id: string;
+  /** Surah number. */
+  surahNum: number;
+  /** Ayah number within the surah (1-based). */
+  ayahNum: number;
+  /** Epoch ms when bookmarked (used for "continue reading"). */
+  addedAt: number;
+}
+
 /** Hifz self-grade options (spaced repetition). */
 export type HifzGrade = 'again' | 'hard' | 'good' | 'easy';
 
@@ -187,5 +199,7 @@ export interface BackupFile {
     hifzProgress?: HifzChunkRow[];
     /** Present in v4+ backups; absent in legacy exports. */
     hadithFavorites?: HadithFavoriteRow[];
+    /** Present in v5+ backups; absent in legacy exports. */
+    quranBookmarks?: QuranBookmarkRow[];
   };
 }

@@ -32,6 +32,7 @@ export async function exportBackup(): Promise<string> {
       duaFavorites: await db.duaFavorites.toArray(),
       hifzProgress: await db.hifzProgress.toArray(),
       hadithFavorites: await db.hadithFavorites.toArray(),
+      quranBookmarks: await db.quranBookmarks.toArray(),
     },
   };
   return JSON.stringify(backup, null, 2);
@@ -103,9 +104,12 @@ export async function importBackup(json: string): Promise<{ merged: number }> {
   const hadithFavs = (parsed.tables.hadithFavorites ?? []).filter(
     (row) => typeof row.hadithId === 'string' && row.hadithId.length > 0
   );
+  const bookmarkRows = (parsed.tables.quranBookmarks ?? []).filter(
+    (row) => typeof row.id === 'string' && typeof row.surahNum === 'number' && typeof row.ayahNum === 'number'
+  );
   await db.transaction(
     'rw',
-    [db.settings, db.prayerLog, db.tasbih, db.zakatRecords, db.userFlags, db.duaFavorites, db.hifzProgress, db.hadithFavorites],
+    [db.settings, db.prayerLog, db.tasbih, db.zakatRecords, db.userFlags, db.duaFavorites, db.hifzProgress, db.hadithFavorites, db.quranBookmarks],
     async () => {
       merged += await mergeTable(db.settings, parsed.tables.settings);
       merged += await mergeTable(db.prayerLog, parsed.tables.prayerLog);
@@ -123,6 +127,10 @@ export async function importBackup(json: string): Promise<{ merged: number }> {
       if (hadithFavs.length > 0) {
         await db.hadithFavorites.bulkPut(hadithFavs);
         merged += hadithFavs.length;
+      }
+      if (bookmarkRows.length > 0) {
+        await db.quranBookmarks.bulkPut(bookmarkRows);
+        merged += bookmarkRows.length;
       }
     }
   );

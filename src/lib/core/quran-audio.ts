@@ -39,7 +39,6 @@ export const RECITERS: readonly Reciter[] = [
   { id: 'ar.alafasy', name: 'Mishary Rashid Alafasy', style: 'Clear · most popular', bitrate: 128 },
   { id: 'ar.husary', name: 'Mahmoud Khalil Al-Husary', style: 'Tajwid · ideal for hifz', bitrate: 128 },
   { id: 'ar.minshawi', name: 'Mohamed Siddiq El-Minshawi', style: 'Murattal · measured', bitrate: 128 },
-  { id: 'ar.abdurrahmaansudais', name: 'Abdur-Rahman As-Sudais', style: 'Imam of the Haram', bitrate: 128 },
   { id: 'ar.muhammadayyoub', name: 'Muhammad Ayyoub', style: 'Gentle · easy pace', bitrate: 128 },
   { id: 'ar.mahermuaiqly', name: 'Maher Al-Muaiqly', style: 'Melodic · warm', bitrate: 128 },
 ];
@@ -104,7 +103,9 @@ export function surahRefs(surah: number): AyahRef[] {
  * @returns Stored reciter id, or Alafasy when unset.
  */
 export function getStoredReciter(): string {
-  return getJSON<string>(RECITER_STORAGE_KEY, (RECITERS[0] as Reciter).id);
+  const stored = getJSON<string>(RECITER_STORAGE_KEY, (RECITERS[0] as Reciter).id);
+  // Fall back when the stored id is no longer offered (e.g. a reciter was removed).
+  return RECITERS.some((r) => r.id === stored) ? stored : (RECITERS[0] as Reciter).id;
 }
 
 /**

@@ -106,11 +106,21 @@ export function QuranAudioDock(): JSX.Element | null {
                 })}
               </div>
             ) : (
-              <div className="mt-2 h-1.5 w-full rounded-full bg-[var(--hover)] overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-[var(--primary)] transition-[width] duration-300 ease-out"
-                  style={{ width: `${((index + 1) / queue.length) * 100}%` }}
+              <div className="mt-1.5">
+                <input
+                  type="range"
+                  min={0}
+                  max={queue.length - 1}
+                  step={1}
+                  value={index}
+                  onChange={(e) => seekIndex(Number(e.target.value))}
+                  aria-label="Seek ayah in surah"
+                  aria-valuetext={label}
+                  className="w-full h-2 cursor-pointer accent-[var(--primary)]"
                 />
+                <p className="mt-0.5 text-[10px] font-bold tnum text-[var(--muted)]">
+                  Ayah {index + 1} of {queue.length}
+                </p>
               </div>
             )}
           </div>

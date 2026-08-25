@@ -10,6 +10,7 @@ import type {
   HadithFavoriteRow,
   HifzChunkRow,
   PrayerLogRow,
+  QuranBookmarkRow,
   QuranCacheRow,
   SettingsRow,
   TasbihRow,
@@ -29,6 +30,7 @@ export const TABLE_NAMES = {
   duaFavorites: 'duaFavorites',
   hifzProgress: 'hifzProgress',
   hadithFavorites: 'hadithFavorites',
+  quranBookmarks: 'quranBookmarks',
 } as const;
 
 /** Tables that must exist in every backup file (v1+). */
@@ -58,6 +60,7 @@ export class SalahKitDB extends Dexie {
   public duaFavorites!: Table<DuaFavoriteRow, string>;
   public hifzProgress!: Table<HifzChunkRow, string>;
   public hadithFavorites!: Table<HadithFavoriteRow, string>;
+  public quranBookmarks!: Table<QuranBookmarkRow, string>;
 
   /** Creates the schema definition. Called once by the db singleton.
    * Versions are declared explicitly so v1 databases upgrade in place
@@ -86,6 +89,11 @@ export class SalahKitDB extends Dexie {
     if (DB_VERSION >= 4) {
       this.version(4).stores({
         [TABLE_NAMES.hadithFavorites]: 'hadithId',
+      });
+    }
+    if (DB_VERSION >= 5) {
+      this.version(5).stores({
+        [TABLE_NAMES.quranBookmarks]: 'id, surahNum, addedAt',
       });
     }
   }

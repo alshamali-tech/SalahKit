@@ -11,6 +11,7 @@ import type {
   HadithFavoriteRow,
   HifzChunkRow,
   PrayerLogRow,
+  QuranBookmarkRow,
   SettingsRow,
   TasbihRow,
   UserFlagsRow,
@@ -309,5 +310,36 @@ export async function toggleHadithFavorite(hadithId: string): Promise<boolean> {
     return false;
   }
   await db.hadithFavorites.put({ hadithId, addedAt: Date.now() });
+  return true;
+}
+
+/**
+ * Lists all Quran reading bookmarks, most recent first.
+ * @returns Bookmarks sorted by addedAt descending.
+ */
+export async function listQuranBookmarks(): Promise<QuranBookmarkRow[]> {
+  try {
+    const rows = await getDb().quranBookmarks.toArray();
+    return rows.sort((a, b) => b.addedAt - a.addedAt);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Toggles a bookmark for a surah:ayah position.
+ * @param surahNum - Surah number.
+ * @param ayahNum - Ayah number (1-based).
+ * @returns True when now bookmarked, false when removed.
+ */
+export async function toggleQuranBookmark(surahNum: number, ayahNum: number): Promise<boolean> {
+  const db = getDb();
+  const id = `${surahNum}:${ayahNum}`;
+  const existing = await db.quranBookmarks.get(id);
+  if (existing) {
+    await db.quranBookmarks.delete(id);
+    return false;
+  }
+  await db.quranBookmarks.put({ id, surahNum, ayahNum, addedAt: Date.now() });
   return true;
 }

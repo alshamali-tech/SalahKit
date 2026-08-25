@@ -131,7 +131,9 @@ export const useQuranPlayer = create<QuranPlayerState>((set, get) => ({
 
   stop: () => {
     getAudio().pause();
-    set({ status: 'idle', index: 0, played: [] });
+    getAudio().removeAttribute('src');
+    // Clear the queue so the dock (rendered while queue.length > 0) unmounts.
+    set({ queue: [], status: 'idle', index: 0, played: [] });
   },
 
   handleAudioEvent: (type) => {
