@@ -3,11 +3,15 @@ import { analyzeTajweed, countByRule } from '../../lib/core/tajweed';
 import type { TajweedRuleId } from '../../lib/core/tajweed';
 import { TajweedText } from './TajweedText';
 import { TajweedLegend } from './TajweedLegend';
+import { TajweedAudio } from './TajweedAudio';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 
 const DEFAULT_TEXT =
-  'لِإِيلَافِ قُرَيْشٍ ۝ إِيلَافِهِمْ رِحْلَةَ الشِّتَاءِ وَالصَّيْفِ ۝ فَلْيَعْبُدُوا رَبَّ هَٰذَا الْبَيْتِ ۝ الَّذِي أَطْعَمَهُم مِّن جُوعٍ وَآمَنَهُم مِّنْ خَوْفٍ';
+  'أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَابِ الْفِيلِ ۝ أَلَمْ يَجْعَلْ كَيْدَهُمْ فِي تَضْلِيلٍ ۝ وَأَرْسَلَ عَلَيْهِمْ طَيْرًا أَبَابِيلَ ۝ تَرْمِيهِم بِحِجَارَةٍ مِّن سِجِّيلٍ ۝ فَجَعَلَهُمْ كَعَصْفٍ مَّأْكُولٍ';
+
+/** The sample is Surah al-Fil — this range is what "Listen" recites. */
+const DEFAULT_AUDIO = { surah: 105, from: 1, to: 5 };
 
 /**
  * The Tajweed Lab: paste any ayah and watch the engine annotate it
@@ -57,7 +61,15 @@ export function TajweedLab(): JSX.Element {
         <div className="relative">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-xs font-extrabold uppercase tracking-wider text-[var(--primary)]">Live annotation</p>
-            <p className="text-xs font-bold tnum text-[var(--muted)]">{total} rules found</p>
+            <div className="flex items-center gap-2.5">
+              <TajweedAudio
+                surah={DEFAULT_AUDIO.surah}
+                from={DEFAULT_AUDIO.from}
+                to={DEFAULT_AUDIO.to}
+                label="Listen to the sample recited"
+              />
+              <p className="text-xs font-bold tnum text-[var(--muted)]">{total} rules found</p>
+            </div>
           </div>
           <p className="arabic mt-3 text-2xl sm:text-[1.7rem] leading-[2.3] text-[var(--fg)] text-right" key={`${text}-${focus ?? 'all'}`}>
             <TajweedText text={text} focus={focus} />

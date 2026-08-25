@@ -14,9 +14,10 @@ export interface TajweedTextProps {
 }
 
 /**
- * Renders Arabic text with live tajweed coloring. Each detected rule
- * gets its color, a tinted background and a hover tooltip naming the
- * rule — the same overlay used by the Quran Reader and Hifz Trainer.
+ * Renders Arabic text with live tajweed coloring, exactly like a
+ * color-coded mushaf: articulation rules recolour the GLYPHS themselves
+ * (never boxes or bold — those break Arabic letter-joining), while madd
+ * and waqf get a soft underline. Hovering names the rule.
  * @param props - text/enabled/focus/className.
  * @returns The annotated inline element.
  */
@@ -28,7 +29,7 @@ export function TajweedText({
 }: TajweedTextProps): JSX.Element {
   const segments = useMemo(() => (enabled ? analyzeTajweed(text) : []), [text, enabled]);
 
-  if (!enabled) return <span className={className}>{text}</span>;
+  if (!enabled || segments.length === 0) return <span className={className}>{text}</span>;
 
   return (
     <span className={className}>
@@ -36,18 +37,24 @@ export function TajweedText({
         if (!seg.rule) return <span key={i}>{seg.text}</span>;
         const rule = TAJWEED_RULES[seg.rule];
         const dimmed = focus !== null && focus !== seg.rule;
+        const style = rule.underline
+          ? {
+              textDecorationLine: 'underline' as const,
+              textDecorationColor: rule.color,
+              textDecorationThickness: '0.14em',
+              textUnderlineOffset: '0.22em',
+              opacity: dimmed ? 0.25 : 1,
+            }
+          : {
+              color: rule.color,
+              opacity: dimmed ? 0.25 : 1,
+            };
         return (
           <span
             key={i}
             title={`${rule.label} (${rule.arabic}) — ${rule.desc}`}
             className="transition-opacity duration-200 ease-out"
-            style={{
-              color: rule.color,
-              fontWeight: 700,
-              background: `color-mix(in srgb, ${rule.color} 13%, transparent)`,
-              borderRadius: 4,
-              opacity: dimmed ? 0.22 : 1,
-            }}
+            style={style}
           >
             {seg.text}
           </span>

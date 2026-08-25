@@ -4,6 +4,7 @@ import { getJSON } from '../../lib/utils/storage';
 import { STORAGE_KEYS } from '../../lib/core/constants';
 import { TajweedText } from '../tajweed/TajweedText';
 import { TajweedLegend } from '../tajweed/TajweedLegend';
+import { TajweedAudio } from '../tajweed/TajweedAudio';
 import { TajweedPath } from '../tajweed/TajweedPath';
 import { NoonTree } from '../tajweed/NoonTree';
 import { LetterMap } from '../tajweed/LetterMap';
@@ -64,11 +65,15 @@ export function TajweedModule(): JSX.Element {
             <div className="mt-3 flex flex-wrap justify-center lg:justify-start gap-2">
               <Badge tone="success">100% on-device</Badge>
               <Badge tone="primary">{masteredCount}/6 concepts mastered</Badge>
-              <Badge tone="neutral">11 rules detected</Badge>
+              <Badge tone="neutral">{RULE_ORDER.length} rules detected</Badge>
             </div>
           </div>
           <div className="min-w-0 lg:w-[46%]">
             <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-inner">
+              <div className="mb-2.5 flex items-center justify-between gap-2">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-[var(--primary)]">Surah al-Falaq · live</span>
+                <TajweedAudio compact surah={113} from={1} to={2} label="Listen to Surah al-Falaq, ayahs 1 to 2" />
+              </div>
               <p className="arabic text-xl sm:text-2xl text-[var(--fg)] text-right leading-[2.2]" aria-label="Annotated opening ayah">
                 <TajweedText text={OPENING_LINE} focus={focus} />
               </p>

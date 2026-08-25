@@ -3,6 +3,7 @@ import { TAJWEED_CONCEPTS } from '../../lib/core/tajweed-data';
 import { STORAGE_KEYS } from '../../lib/core/constants';
 import { getJSON, setJSON } from '../../lib/utils/storage';
 import { TajweedText } from './TajweedText';
+import { TajweedAudio } from './TajweedAudio';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -132,7 +133,18 @@ export function TajweedPath(): JSX.Element {
                     </div>
                   ) : null}
                   <div className="rounded-lg border border-[var(--border)] bg-[var(--field)] p-4">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--muted)] mb-2">Practice — the colors show the rule at work</p>
+                    <div className="mb-2 flex items-center justify-between gap-2">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--muted)]">Practice — the colors show the rule at work</p>
+                      {concept.audio ? (
+                        <TajweedAudio
+                          compact
+                          surah={concept.audio.surah}
+                          from={concept.audio.ayah}
+                          to={concept.audio.to}
+                          label={`Hear the ${concept.title} rule recited`}
+                        />
+                      ) : null}
+                    </div>
                     <p className="arabic text-2xl text-[var(--fg)] text-right">
                       <TajweedText text={concept.practice} />
                     </p>

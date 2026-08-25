@@ -27,6 +27,8 @@ export interface TajweedConcept {
   practice: string;
   /** What to listen for in the practice text. */
   practiceHint: string;
+  /** A recited ayah that demonstrates the rule (for the Listen button). */
+  audio?: { surah: number; ayah: number; to?: number };
 }
 
 /** The six-link mastery chain, in order. */
@@ -48,6 +50,7 @@ export const TAJWEED_CONCEPTS: readonly TajweedConcept[] = [
     ],
     practice: 'خَلَقَ الْإِنسَانَ مِنْ عَلَقٍ',
     practiceHint: 'Feel خ then ق deep in the throat, then the clear noon of مِنْ before ع.',
+    audio: { surah: 96, ayah: 2 },
   },
   {
     id: 'noon', order: 2, title: 'The Noon Tree', arabic: 'النون الساكنة', minutes: 12,
@@ -60,6 +63,7 @@ export const TAJWEED_CONCEPTS: readonly TajweedConcept[] = [
     ],
     practice: 'مِن نَّعِيمٍ ۝ مِنْ خَوْفٍ ۝ مِن رَّبِّهِمْ ۝ مِن قَبْلُ',
     practiceHint: 'Same noon, four colors: merge, clear, merge-clean, hide.',
+    audio: { surah: 36, ayah: 58 },
   },
   {
     id: 'ghunna', order: 3, title: 'Ghunna', arabic: 'الغنة', minutes: 6,
@@ -72,6 +76,7 @@ export const TAJWEED_CONCEPTS: readonly TajweedConcept[] = [
     ],
     practice: 'إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ ۝ ثُمَّ كَانَ مِنَ الَّذِينَ آمَنُوا',
     practiceHint: 'Hold the hum on إِنَّا and ثُمَّ — count one-two before moving on.',
+    audio: { surah: 108, ayah: 1 },
   },
   {
     id: 'qalqalah', order: 4, title: 'Qalqalah', arabic: 'القلقلة', minutes: 6,
@@ -88,6 +93,7 @@ export const TAJWEED_CONCEPTS: readonly TajweedConcept[] = [
     ],
     practice: 'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ',
     practiceHint: 'قُلْ and الْفَلَقِ — one bounce mid-flow, one big bounce at the stop.',
+    audio: { surah: 113, ayah: 1 },
   },
   {
     id: 'madd', order: 5, title: 'Madd', arabic: 'المد', minutes: 10,
@@ -100,6 +106,7 @@ export const TAJWEED_CONCEPTS: readonly TajweedConcept[] = [
     ],
     practice: 'جَاءَ نَصْرُ اللَّهِ ۝ وَلَا الضَّالِّينَ',
     practiceHint: 'جَاءَ carries a connected obligatory madd; الضَّالِّينَ ends with a lazy six-count madd.',
+    audio: { surah: 110, ayah: 1 },
   },
   {
     id: 'waqf', order: 6, title: 'Waqf', arabic: 'الوقف', minutes: 7,
@@ -112,6 +119,7 @@ export const TAJWEED_CONCEPTS: readonly TajweedConcept[] = [
     ],
     practice: 'ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًى لِّلْمُتَّقِينَ',
     practiceHint: 'The paired ۛ marks are mu’anaqah — rest at the first or the second, not both.',
+    audio: { surah: 2, ayah: 2 },
   },
 ];
 
