@@ -35,9 +35,10 @@ export const API_TTL_HIJRI_MS = 30 * 24 * 60 * 60 * 1000;
 /** Fetch timeout for external calls, in milliseconds. */
 export const API_FETCH_TIMEOUT_MS = 6000;
 
-/** IndexedDB database name and version. */
+/** IndexedDB database name and version.
+ * v2 adds the duaFavorites table (additive; Dexie migrates in place). */
 export const DB_NAME = 'salahkit-db';
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
 /** localStorage / sessionStorage keys (single source of truth). */
 export const STORAGE_KEYS = {

@@ -3,13 +3,13 @@
  * validated import with merge semantics.
  */
 import { getDb } from './db';
-import { TABLE_NAMES } from './schema';
+import { REQUIRED_BACKUP_TABLES } from './schema';
 import { DB_NAME, DB_VERSION } from '../core/constants';
 import { uuid } from '../utils/uuid';
-import type { BackupFile } from '../../types';
+import type { BackupFile, DuaFavoriteRow } from '../../types';
 
-/** Table keys expected in a backup file. */
-const BACKUP_TABLE_KEYS = Object.values(TABLE_NAMES) as (keyof BackupFile['tables'])[];
+/** Table keys that every valid backup must contain (v1-compatible). */
+const BACKUP_TABLE_KEYS = REQUIRED_BACKUP_TABLES as unknown as (keyof BackupFile['tables'])[];
 
 /**
  * Exports every table to a JSON string.
@@ -29,6 +29,7 @@ export async function exportBackup(): Promise<string> {
       quranCache: await db.quranCache.toArray(),
       extCache: await db.extCache.toArray(),
       userFlags: await db.userFlags.toArray(),
+      duaFavorites: await db.duaFavorites.toArray(),
     },
   };
   return JSON.stringify(backup, null, 2);
@@ -91,15 +92,22 @@ export async function importBackup(json: string): Promise<{ merged: number }> {
   }
   const db = getDb();
   let merged = 0;
+  const favorites: DuaFavoriteRow[] = (parsed.tables.duaFavorites ?? []).filter(
+    (row) => typeof row.duaId === 'string' && row.duaId.length > 0
+  );
   await db.transaction(
     'rw',
-    [db.settings, db.prayerLog, db.tasbih, db.zakatRecords, db.userFlags],
+    [db.settings, db.prayerLog, db.tasbih, db.zakatRecords, db.userFlags, db.duaFavorites],
     async () => {
       merged += await mergeTable(db.settings, parsed.tables.settings);
       merged += await mergeTable(db.prayerLog, parsed.tables.prayerLog);
       merged += await mergeTable(db.tasbih, parsed.tables.tasbih);
       merged += await mergeTable(db.zakatRecords, parsed.tables.zakatRecords);
       merged += await mergeTable(db.userFlags, parsed.tables.userFlags);
+      if (favorites.length > 0) {
+        await db.duaFavorites.bulkPut(favorites);
+        merged += favorites.length;
+      }
     }
   );
   return { merged };

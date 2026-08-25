@@ -86,9 +86,9 @@ export const PRAYER_DUAS: readonly Dua[] = [
   },
   {
     id: 'p-ayat-kursi', category: 'salah', repeat: 1, source: 'Nasa’i, Ibn Hibban',
-    arabic: 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ... (آيَةُ الْكُرْسِيِّ كَامِلَةً)',
-    transliteration: 'Ayat al-Kursi (Quran 2:255) in full',
-    translation: 'Whoever recites Ayat al-Kursi after every obligatory prayer, nothing stands between him and Paradise except death.',
+    arabic: 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ ﴿٢٥٥﴾',
+    transliteration: 'Allahu la ilaha illa Huwal-Hayyul-Qayyum, la ta’khudhuhu sinatun wa nawm... (Ayat al-Kursi, Quran 2:255)',
+    translation: 'Ayat al-Kursi (Quran 2:255) in full. Whoever recites it after every obligatory prayer, nothing stands between him and Paradise except death.',
   },
   {
     id: 'p-a’inni', category: 'salah', repeat: 1, source: 'Abu Dawud, Nasa’i',

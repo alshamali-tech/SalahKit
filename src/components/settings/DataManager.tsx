@@ -25,6 +25,7 @@ export function DataManager(): JSX.Element {
           prayerLog: await db.prayerLog.count(),
           tasbih: await db.tasbih.count(),
           zakatRecords: await db.zakatRecords.count(),
+          duaFavorites: await db.duaFavorites.count(),
           extCache: await db.extCache.count(),
         };
         if (!cancelled) setCounts(rows);

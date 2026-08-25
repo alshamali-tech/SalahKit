@@ -5,6 +5,7 @@
 import Dexie, { type Table } from 'dexie';
 import { DB_NAME, DB_VERSION } from '../core/constants';
 import type {
+  DuaFavoriteRow,
   ExtCacheRow,
   PrayerLogRow,
   QuranCacheRow,
@@ -23,7 +24,19 @@ export const TABLE_NAMES = {
   quranCache: 'quranCache',
   extCache: 'extCache',
   userFlags: 'userFlags',
+  duaFavorites: 'duaFavorites',
 } as const;
+
+/** Tables that must exist in every backup file (v1+). */
+export const REQUIRED_BACKUP_TABLES = [
+  'settings',
+  'prayerLog',
+  'tasbih',
+  'zakatRecords',
+  'quranCache',
+  'extCache',
+  'userFlags',
+] as const;
 
 /**
  * SalahKit IndexedDB schema.
@@ -38,11 +51,14 @@ export class SalahKitDB extends Dexie {
   public quranCache!: Table<QuranCacheRow, [number, number]>;
   public extCache!: Table<ExtCacheRow, string>;
   public userFlags!: Table<UserFlagsRow, string>;
+  public duaFavorites!: Table<DuaFavoriteRow, string>;
 
-  /** Creates the schema definition. Called once by the db singleton. */
+  /** Creates the schema definition. Called once by the db singleton.
+   * Versions are declared explicitly so v1 databases upgrade in place
+   * (v2 only adds the duaFavorites table). */
   public constructor() {
     super(DB_NAME);
-    this.version(DB_VERSION).stores({
+    this.version(1).stores({
       [TABLE_NAMES.settings]: 'id',
       [TABLE_NAMES.prayerLog]: 'id, dateISO',
       [TABLE_NAMES.tasbih]: 'id, timestamp',
@@ -51,5 +67,10 @@ export class SalahKitDB extends Dexie {
       [TABLE_NAMES.extCache]: 'key',
       [TABLE_NAMES.userFlags]: 'id',
     });
+    if (DB_VERSION >= 2) {
+      this.version(2).stores({
+        [TABLE_NAMES.duaFavorites]: 'duaId',
+      });
+    }
   }
 }

@@ -1,6 +1,7 @@
 /**
  * Duas of sleep and waking — the complete bedtime and night adab
- * (Bukhari, Muslim, Abu Dawud). Public-domain texts.
+ * (Bukhari, Muslim, Abu Dawud). Full surah texts carry numbered
+ * verses in the traditional ﴿١﴾ style. Public-domain texts.
  */
 import type { Dua } from '../types';
 
@@ -13,22 +14,40 @@ export const SLEEP_DUAS: readonly Dua[] = [
     translation: 'In Your Name, O Allah, I die and I live. (Before sleeping)',
   },
   {
-    id: 's-three-quls', category: 'sleep', repeat: 3, source: 'Bukhari, Muslim',
-    arabic: 'قُلْ هُوَ اللَّهُ أَحَدٌ ۝ قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ قُلْ أَعُوذُ بِرَبِّ النَّاسِ',
-    transliteration: 'Surah al-Ikhlas, al-Falaq and an-Nas',
-    translation: 'Cup your hands, blow lightly into them, recite the three surahs, and wipe over your body starting with the head and face — three times.',
+    id: 's-ikhlas', category: 'sleep', repeat: 3, source: 'Bukhari, Muslim',
+    arabic: 'قُلْ هُوَ اللَّهُ أَحَدٌ ﴿١﴾ اللَّهُ الصَّمَدُ ﴿٢﴾ لَمْ يَلِدْ وَلَمْ يُولَدْ ﴿٣﴾ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ ﴿٤﴾',
+    transliteration: 'Qul Huwallahu Ahad ﴿1﴾ Allahus-Samad ﴿2﴾ Lam yalid wa lam yulad ﴿3﴾ Wa lam yakun lahu kufuwan Ahad ﴿4﴾',
+    translation: 'Surah al-Ikhlas (112), verses 1–4: “Say: He is Allah, Who is One. Allah, the Eternal Refuge. He neither begets nor is born, nor is there to Him any equivalent.” Recite three times.',
+  },
+  {
+    id: 's-falaq', category: 'sleep', repeat: 3, source: 'Bukhari, Muslim',
+    arabic: 'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ﴿١﴾ مِن شَرِّ مَا خَلَقَ ﴿٢﴾ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ﴿٣﴾ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ﴿٤﴾ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ ﴿٥﴾',
+    transliteration: 'Qul a’udhu bi-Rabbil-falaq ﴿1﴾ Min sharri ma khalaq ﴿2﴾ Wa min sharri ghasiqin idha waqab ﴿3﴾ Wa min sharri an-naffathati fil-’uqad ﴿4﴾ Wa min sharri hasidin idha hasad ﴿5﴾',
+    translation: 'Surah al-Falaq (113), verses 1–5: “Say: I seek refuge in the Lord of daybreak, from the evil of what He created, from the evil of darkness when it settles, from the evil of the blowers in knots, and from the evil of an envier when he envies.” Recite three times.',
+  },
+  {
+    id: 's-nas', category: 'sleep', repeat: 3, source: 'Bukhari, Muslim',
+    arabic: 'قُلْ أَعُوذُ بِرَبِّ النَّاسِ ﴿١﴾ مَلِكِ النَّاسِ ﴿٢﴾ إِلَٰهِ النَّاسِ ﴿٣﴾ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ﴿٤﴾ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ﴿٥﴾ مِنَ الْجِنَّةِ وَالنَّاسِ ﴿٦﴾',
+    transliteration: 'Qul a’udhu bi-Rabbin-nas ﴿1﴾ Malikin-nas ﴿2﴾ Ilahin-nas ﴿3﴾ Min sharril-waswasil-khannas ﴿4﴾ Alladhi yuwaswisu fi sudurin-nas ﴿5﴾ Minal-jinnati wan-nas ﴿6﴾',
+    translation: 'Surah an-Nas (114), verses 1–6: “Say: I seek refuge in the Lord of mankind, the Sovereign of mankind, the God of mankind, from the evil of the retreating whisperer, who whispers into the breasts of mankind, among jinn and among men.” Recite three times.',
+  },
+  {
+    id: 's-three-quls-adab', category: 'sleep', repeat: 3, source: 'Bukhari, Muslim',
+    arabic: 'يَجْمَعُ كَفَّيْهِ ثُمَّ يَنْفُثُ فِيهِمَا فَيَقْرَأُ: الْإِخْلَاصَ وَالْفَلَقَ وَالنَّاسَ، ثُمَّ يَمْسَحُ بِهِمَا مَا اسْتَطَاعَ مِنْ جَسَدِهِ، يَبْدَأُ بِهِمَا عَلَى رَأْسِهِ وَوَجْهِهِ',
+    transliteration: 'Cup the palms, blow lightly into them, recite al-Ikhlas, al-Falaq and an-Nas, then wipe over the body starting with the head and face',
+    translation: 'The manner of the three quls: cup your hands, blow lightly into them, recite the three surahs (each three times), and wipe over as much of your body as you can, beginning with the head and face. They suffice against everything.',
   },
   {
     id: 's-ayat-kursi', category: 'sleep', repeat: 1, source: 'Bukhari',
-    arabic: 'آيَةُ الْكُرْسِيِّ (الْبَقَرَةُ ٢٥٥)',
-    transliteration: 'Ayat al-Kursi (Quran 2:255)',
-    translation: 'Whoever recites it when lying down, a guardian from Allah remains with him and no devil comes near him until morning.',
+    arabic: 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ ﴿٢٥٥﴾',
+    transliteration: 'Allahu la ilaha illa Huwal-Hayyul-Qayyum, la ta’khudhuhu sinatun wa la nawm...',
+    translation: 'Ayat al-Kursi (Quran 2:255) in full. Whoever recites it when lying down, a guardian from Allah remains with him and no devil comes near him until morning.',
   },
   {
     id: 's-baqara-end', category: 'sleep', repeat: 1, source: 'Bukhari, Muslim',
-    arabic: 'آمَنَ الرَّسُولُ بِمَا أُنزِلَ إِلَيْهِ مِن رَّبِّهِ وَالْمُؤْمِنُونَ... (خَاتِمَةُ الْبَقَرَةِ: ٢٨٥–٢٨٦)',
-    transliteration: 'The last two verses of Surah al-Baqarah (2:285-286)',
-    translation: 'Whoever recites the last two verses of al-Baqarah at night, they will suffice him.',
+    arabic: 'آمَنَ الرَّسُولُ بِمَا أُنزِلَ إِلَيْهِ مِن رَّبِّهِ وَالْمُؤْمِنُونَ ۚ كُلٌّ آمَنَ بِاللَّهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ لَا نُفَرِّقُ بَيْنَ أَحَدٍ مِّن رُّسُلِهِ ۚ وَقَالُوا سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ الْمَصِيرُ ﴿٢٨٥﴾ لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا اكْتَسَبَتْ ۗ رَبَّنَا لَا تُؤَاخِذْنَا إِن نَّسِينَا أَوْ أَخْطَأْنَا ۚ رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَا إِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِينَ مِن قَبْلِنَا ۚ رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِ ۖ وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا ۚ أَنتَ مَوْلَانَا فَانصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ ﴿٢٨٦﴾',
+    transliteration: 'Amanar-Rasulu bima unzila ilayhi min Rabbihi wal-mu’minun... [2:285] La yukallifullahu nafsan illa wus’aha... [2:286]',
+    translation: 'The last two verses of Surah al-Baqarah (2:285–286) in full. Whoever recites them at night, they will suffice him.',
   },
   {
     id: 's-aslamtu', category: 'sleep', repeat: 1, source: 'Bukhari, Muslim',

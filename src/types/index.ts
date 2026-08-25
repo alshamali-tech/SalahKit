@@ -115,6 +115,14 @@ export interface UserFlagsRow {
   lastToastDate: string | null;
 }
 
+/** Dua favorites row: one per favorited dua (schema v2). */
+export interface DuaFavoriteRow {
+  /** Dua id (primary key). */
+  duaId: string;
+  /** Epoch ms when favorited. */
+  addedAt: number;
+}
+
 /** Backup file envelope produced by backup.ts. */
 export interface BackupFile {
   /** Always the DB name, used for validation. */
@@ -132,5 +140,7 @@ export interface BackupFile {
     quranCache: QuranCacheRow[];
     extCache: ExtCacheRow[];
     userFlags: UserFlagsRow[];
+    /** Present in v2+ backups; absent in legacy v1 exports. */
+    duaFavorites?: DuaFavoriteRow[];
   };
 }

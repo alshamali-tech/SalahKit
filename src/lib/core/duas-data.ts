@@ -75,15 +75,16 @@ export function getDuas(category: DuaCategory | 'all'): readonly Dua[] {
 }
 
 /**
- * Searches the collection across Arabic, transliteration, translation,
- * source and category label (case-insensitive).
- * @param query - Search text.
- * @returns Matching duas; the full set when query is empty.
+ * Filters any subset of duas by a text query across Arabic,
+ * transliteration, translation, source and category label.
+ * @param duas - Source list (e.g. one category or favorites).
+ * @param query - Search text (case-insensitive).
+ * @returns Matching duas; the input list when query is empty.
  */
-export function searchDuas(query: string): readonly Dua[] {
+export function filterDuas(duas: readonly Dua[], query: string): readonly Dua[] {
   const q = query.trim().toLowerCase();
-  if (q === '') return DUAS;
-  return DUAS.filter(
+  if (q === '') return duas;
+  return duas.filter(
     (d) =>
       d.arabic.includes(q) ||
       d.transliteration.toLowerCase().includes(q) ||
@@ -91,6 +92,15 @@ export function searchDuas(query: string): readonly Dua[] {
       d.source.toLowerCase().includes(q) ||
       DUA_CATEGORY_LABELS[d.category].toLowerCase().includes(q)
   );
+}
+
+/**
+ * Searches the full collection (all categories).
+ * @param query - Search text.
+ * @returns Matching duas; the full set when query is empty.
+ */
+export function searchDuas(query: string): readonly Dua[] {
+  return filterDuas(DUAS, query);
 }
 
 /**

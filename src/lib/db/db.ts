@@ -201,3 +201,32 @@ export async function listZakatRecords(): Promise<ZakatRecordRow[]> {
 export async function deleteZakatRecord(id: string): Promise<void> {
   await getDb().zakatRecords.delete(id);
 }
+
+/**
+ * Loads the set of favorited dua ids.
+ * @returns Set of dua ids the user has favorited.
+ */
+export async function getFavoriteDuaIds(): Promise<Set<string>> {
+  try {
+    const rows = await getDb().duaFavorites.toArray();
+    return new Set(rows.map((r) => r.duaId));
+  } catch {
+    return new Set();
+  }
+}
+
+/**
+ * Toggles a dua in the favorites list (optimistic-UI friendly).
+ * @param duaId - Dua identifier.
+ * @returns True when the dua is now favorited, false when removed.
+ */
+export async function toggleDuaFavorite(duaId: string): Promise<boolean> {
+  const db = getDb();
+  const existing = await db.duaFavorites.get(duaId);
+  if (existing) {
+    await db.duaFavorites.delete(duaId);
+    return false;
+  }
+  await db.duaFavorites.put({ duaId, addedAt: Date.now() });
+  return true;
+}
