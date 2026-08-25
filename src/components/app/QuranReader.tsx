@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getSurahInfo, showsBasmala } from '../../lib/core/quran-meta';
 import { BASMALA, getAyahsForSurah, TRANSLATION_LABELS } from '../../lib/core/quran-data';
 import { fetchFullSurah, QURAN_ATTRIBUTION } from '../../lib/external/quran';
+import { copyText } from '../../lib/utils/clipboard';
 import { emitToast } from '../../lib/messaging';
 import { useApp } from '../../store';
 import { Badge } from '../ui/Badge';
@@ -67,11 +68,11 @@ export function QuranReader(): JSX.Element {
 
   /** Copies one ayah with its active translation. */
   async function copyAyah(ayah: ResolvedAyah): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(`${ayah.arabic}\n\n${ayah[lang]}`);
+    const ok = await copyText(`${ayah.arabic}\n\n${ayah[lang]}`);
+    if (ok) {
       emitToast({ title: `Ayah ${ayah.ayahNum} copied`, tone: 'success' });
-    } catch {
-      emitToast({ title: 'Copy unavailable', tone: 'warning' });
+    } else {
+      emitToast({ title: 'Copy unavailable', body: 'Select the text manually to copy it.', tone: 'warning' });
     }
   }
 

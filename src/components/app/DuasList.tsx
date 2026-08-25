@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { DUA_CATEGORY_LABELS, getDuas } from '../../lib/core/duas-data';
+import { copyText } from '../../lib/utils/clipboard';
 import { emitToast } from '../../lib/messaging';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
@@ -19,11 +20,11 @@ export function DuasList(): JSX.Element {
 
   /** Copies the full dua text. */
   async function copy(arabic: string, transliteration: string, translation: string): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(`${arabic}\n\n${transliteration}\n\n${translation}`);
+    const ok = await copyText(`${arabic}\n\n${transliteration}\n\n${translation}`);
+    if (ok) {
       emitToast({ title: 'Dua copied', tone: 'success' });
-    } catch {
-      emitToast({ title: 'Copy unavailable', tone: 'warning' });
+    } else {
+      emitToast({ title: 'Copy unavailable', body: 'Select the text manually to copy it.', tone: 'warning' });
     }
   }
 

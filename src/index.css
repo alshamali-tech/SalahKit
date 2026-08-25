@@ -65,13 +65,16 @@ body {
   scrollbar-color: var(--border) transparent;
 }
 
-/* Arabic scripture: RTL, generous leading, serif fallback stack */
+/* Arabic scripture: RTL, generous leading. Amiri Quran first — it is
+   purpose-built for Uthmani text and covers every Quranic annotation
+   mark (U+0600–U+08FF), so no glyph renders as a square. */
 .arabic {
   direction: rtl;
-  font-family: "Scheherazade New", "Amiri", "Traditional Arabic", "Geeza Pro",
-    "Arabic Typesetting", Georgia, serif;
+  font-family: "Amiri Quran", "Scheherazade New", "Amiri", "Traditional Arabic",
+    "Geeza Pro", "Arabic Typesetting", Georgia, serif;
   line-height: 2.15;
   letter-spacing: 0;
+  font-feature-settings: "liga" 1, "calt" 1;
 }
 
 .tnum {

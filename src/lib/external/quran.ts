@@ -20,6 +20,20 @@ export const QURAN_EDITIONS = 'quran-uthmani,en.sahih,ur.jalandhry,fr.hamidullah
 export const QURAN_ATTRIBUTION =
   'Uthmani text with Sahih International (EN), Fateh Muhammad Jalandhry (UR) and Muhammad Hamidullah (FR) meanings, via the free AlQuran Cloud API.';
 
+/**
+ * Strips supplementary-plane decorative marks (U+10EC0-U+10EFF word
+ * signs and U+10E60-U+10E7F Rumi numerals) that no system font covers
+ * — they render as empty squares. Every standard Quranic annotation
+ * mark in U+0600-U+08FF is preserved untouched.
+ * @param text - Raw Uthmani text.
+ * @returns Font-safe text.
+ */
+export function normalizeUthmani(text: string): string {
+  return text
+    .replace(/[\u{10EC0}-\u{10EFF}]/gu, '')
+    .replace(/[\u{10E60}-\u{10E7F}]/gu, '');
+}
+
 /** One resolved verse. */
 export interface ResolvedAyah {
   /** Verse number within the surah (1-based). */
@@ -74,7 +88,7 @@ export async function getCachedSurah(num: number): Promise<FullSurah | null> {
       source: 'cache',
       ayahs: rows.slice(0, expected).map((row: QuranCacheRow) => ({
         ayahNum: row.ayahNum,
-        arabic: row.arabic,
+        arabic: normalizeUthmani(row.arabic),
         en: row.translationEN,
         ur: row.translationUR,
         fr: row.translationFR,
@@ -151,7 +165,7 @@ async function storeSurah(num: number, body: ApiResponse): Promise<void> {
   const rows: QuranCacheRow[] = arabic.map((ayah, i) => ({
     surahNum: num,
     ayahNum: ayah.numberInSurah ?? i + 1,
-    arabic: ayah.text ?? '',
+    arabic: normalizeUthmani(ayah.text ?? ''),
     translationEN: en[i]?.text ?? '',
     translationUR: ur[i]?.text ?? '',
     translationFR: fr[i]?.text ?? '',
@@ -178,7 +192,7 @@ function mapResponse(num: number, body: ApiResponse): FullSurah | null {
     source: 'network',
     ayahs: arabic.map((ayah, i) => ({
       ayahNum: ayah.numberInSurah ?? i + 1,
-      arabic: ayah.text ?? '',
+      arabic: normalizeUthmani(ayah.text ?? ''),
       en: editions[1]?.ayahs?.[i]?.text ?? '',
       ur: editions[2]?.ayahs?.[i]?.text ?? '',
       fr: editions[3]?.ayahs?.[i]?.text ?? '',
