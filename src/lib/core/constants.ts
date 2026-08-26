@@ -55,6 +55,7 @@ export const STORAGE_KEYS = {
   featureFlags: 'salahkit:features',
   apiCallCounts: 'salahkit:api-calls',
   declinationCallCounts: 'salahkit:declination-calls',
+  hadithCallCounts: 'salahkit:hadith-calls',
   donationSessionShown: 'salahkit:donation-session',
   settingsCache: 'salahkit:settings-cache',
   tajweedProgress: 'salahkit:tajweed-progress',
