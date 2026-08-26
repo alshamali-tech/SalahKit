@@ -84,20 +84,20 @@ export const TAJWEED_CONCEPTS: readonly TajweedConcept[] = [
   },
   {
     id: 'qalqalah', order: 4, title: 'Qalqalah', arabic: 'القلقلة', minutes: 7,
-    tagline: 'The bounce of the five echoing letters — in three strengths.',
+    tagline: 'The bounce of the five echoing letters — in three ranks.',
     points: [
       'Gather them in “Qutb Jad” — ق ط ب ج د — the bounce only happens when the letter is sukūn.',
-      'Ṣughrā (weakest): an original sukūn mid-word or mid-speech, as you keep reciting — قَدْ, يَقْطَعُونَ.',
-      'Wusṭā (medium): you stop on the letter at a word’s end, no shaddah — the stopping makes it sākin — الْفَلَقِ, أَحَدْ.',
-      'Kubrā (strongest): you stop on a shaddah-ed letter — وَتَبَّ, الْحَقِّ — shaddah and the sukūn of stopping combine.',
+      'Al-ʿulyā / kubrā (strongest): the letter is MUSHADDAH at the end of a word — the بّ of الْحَجِّ, وَتَبَّ.',
+      'Al-wusṭā (middle): the letter is sākin in the MIDDLE of a word — the ط of يَقْطَعُونَ.',
+      'Al-dunyā / ṣughrā (lightest): the letter is sākin at the END of a word, no shaddah — the ق of الْفَلَقِ, أَحَدْ.',
       'It is an echo released from the makhraj — not a new vowel, never an extra harakah. Too hard adds a fake vowel; too soft and the letter dies.',
     ],
     letters: [
       { char: 'ق', name: 'Qaf' }, { char: 'ط', name: 'Ta' }, { char: 'ب', name: 'Ba' },
       { char: 'ج', name: 'Jim' }, { char: 'د', name: 'Dal' },
     ],
-    practice: 'قَدْ أَفْلَحَ ۝ قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ وَتَبَّ',
-    practiceHint: 'قَدْ bounces lightly mid-speech (ṣughrā); the final ق of الْفَلَقِ where you stop is wusṭā; and وَتَبَّ, stopped on a shaddah-ed ب, is the full kubrā.',
+    practice: 'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ وَلَا يَقْطَعُونَ ۝ وَتَبَّ',
+    practiceHint: 'The final ق of الْفَلَقِ is sākin at a word’s end (dunyā); the ط of يَقْطَعُونَ is mid-word (wusṭā); the shaddah-ed ب of وَتَبَّ is the full kubrā (ʿulyā).',
     audio: { surah: 113, ayah: 1 },
   },
   {

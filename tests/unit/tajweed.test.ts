@@ -57,24 +57,24 @@ describe('meem sakinah', () => {
   });
 });
 
-describe('qalqalah — three levels', () => {
-  it('ṣughrā: original sukūn mid-word or mid-speech (weakest)', () => {
-    expect(rulesIn('يَقْطَعُونَ')).toContain('qalqalah');
+describe('qalqalah — three ranks (Minhāj al-Dārisīn, Ch. 17)', () => {
+  it('dunyā/ṣughrā: sākin at the END of a word, no shaddah', () => {
+    expect(rulesIn('قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ')).toContain('qalqalah');
+    expect(rulesIn('قُلْ هُوَ اللَّهُ أَحَدٌ')).toContain('qalqalah');
     expect(rulesIn('قَدْ أَفْلَحَ الْمُؤْمِنُونَ')).toContain('qalqalah');
-    expect(rulesIn('قَدْ أَفْلَحَ الْمُؤْمِنُونَ').has('qalqalah-wusta')).toBe(false);
-    expect(rulesIn('قَدْ أَفْلَحَ الْمُؤْمِنُونَ').has('qalqalah-kubra')).toBe(false);
-  });
-  it('wusṭā: stopping on an end letter WITHOUT shaddah (medium)', () => {
-    expect(rulesIn('قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ')).toContain('qalqalah-wusta');
-    expect(rulesIn('قُلْ هُوَ اللَّهُ أَحَدٌ')).toContain('qalqalah-wusta');
     expect(rulesIn('قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ').has('qalqalah-kubra')).toBe(false);
   });
-  it('kubrā: stopping on a SHADDAH-ed end letter (strongest)', () => {
+  it('wusṭā: sākin in the MIDDLE of a word', () => {
+    expect(rulesIn('يَقْطَعُونَ')).toContain('qalqalah-wusta');
+    expect(rulesIn('يَقْطَعُونَ').has('qalqalah')).toBe(false);
+    expect(rulesIn('يَقْطَعُونَ').has('qalqalah-kubra')).toBe(false);
+  });
+  it('ʿulyā/kubrā: MUSHADDAH at the end of a word', () => {
     expect(rulesIn('تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ')).toContain('qalqalah-kubra');
     expect(rulesIn('الْحَقِّ')).toContain('qalqalah-kubra');
     expect(rulesIn('تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ').has('qalqalah-wusta')).toBe(false);
   });
-  it('a voweled qalqalah letter mid-speech gets no bounce', () => {
+  it('a voweled qalqalah letter gets no bounce', () => {
     expect(rulesIn('أَحَدُ ثُمَّ').has('qalqalah')).toBe(false);
   });
 });
@@ -148,6 +148,11 @@ describe('madd family', () => {
     expect(rulesIn('وَلَا الضَّالِّينَ')).toContain('madd-lazim');
     expect(rulesIn('وَمَا مِن دَابَّةٍ')).toContain('madd-lazim');
     expect(rulesIn('الَّذِينَ').has('madd-lazim')).toBe(false);
+  });
+  it('the ٓ-marked fawātiḥ are madd lāzim ḥarfī (6 counts)', () => {
+    expect(rulesIn('الٓمٓ')).toContain('madd-lazim');
+    expect(rulesIn('مٓ')).toContain('madd-lazim');
+    expect(rulesIn('نٓ')).toContain('madd-lazim');
   });
   it('arid when the madd sits before the final voweled letter', () => {
     expect(rulesIn('وَإِيَّاكَ نَسْتَعِينُ')).toContain('madd-arrid');

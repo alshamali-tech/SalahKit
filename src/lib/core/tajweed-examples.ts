@@ -70,19 +70,19 @@ export const RULE_EXAMPLES: readonly RuleExample[] = [
     why: 'The shaddah on the noon of إِنَّا means two noons merged — hold the nasal hum for two full counts.',
   },
   {
-    rule: 'qalqalah', label: 'Qalqalah ṣughrā — weakest bounce', surah: 23, ayahNum: 1,
-    ayah: 'قَدْ أَفْلَحَ الْمُؤْمِنُونَ',
-    why: 'The د of قَدْ carries an ORIGINAL sukūn in the middle of speech and you keep reciting — so it gets only the light ṣughrā bounce. Same for a mid-word sukūn as in يَقْطَعُونَ.',
-  },
-  {
-    rule: 'qalqalah-wusta', label: 'Qalqalah wusṭā — medium bounce', surah: 113, ayahNum: 1,
+    rule: 'qalqalah', label: 'Qalqalah ṣughrā (dunyā) — end of word', surah: 113, ayahNum: 1,
     ayah: 'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ',
-    why: 'You STOP on the final ق of الْفَلَقِ — the stopping itself makes it sākin. It has no shaddah, so the bounce is the medium wusṭā (as with أَحَدْ at the end of al-Ikhlāṣ). Note قُلْ earlier in the same ayah is only ṣughrā.',
+    why: 'The final ق of الْفَلَقِ is sākin at the END of its word with no shaddah — the lightest rank (al-dunyā) per Minhāj al-Dārisīn. Same for أَحَدْ in al-Ikhlāṣ.',
   },
   {
-    rule: 'qalqalah-kubra', label: 'Qalqalah kubrā — strongest bounce', surah: 111, ayahNum: 1,
+    rule: 'qalqalah-wusta', label: 'Qalqalah wusṭā — middle of word', surah: 9, ayahNum: 121,
+    ayah: 'وَلَا يَقْطَعُونَ وَادِيًا إِلَّا كُتِبَ لَهُمْ',
+    why: 'The ط of يَقْطَعُونَ is sākin in the MIDDLE of its word — the middle rank (wusṭā). Contrast it with a word-final letter.',
+  },
+  {
+    rule: 'qalqalah-kubra', label: 'Qalqalah kubrā (ʿulyā) — mushaddad', surah: 111, ayahNum: 1,
     ayah: 'تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ',
-    why: 'You stop on وَتَبَّ, whose ب carries a SHADDAH. Two causes combine — the qalqalah ṣifah plus the sukūn of stopping — giving the strongest kubrā bounce (also الْحَقِّ when stopped upon).',
+    why: 'The final ب of وَتَبَّ carries a SHADDAH at the end of its word — the highest rank (al-ʿulyā), the strongest bounce. Also الْحَجِّ.',
   },
   {
     rule: 'idgham-mutamathil', label: 'Idghaam mutamathilayn', surah: 26, ayahNum: 63,
@@ -150,9 +150,14 @@ export const RULE_EXAMPLES: readonly RuleExample[] = [
     why: 'The alif ending يَا is followed by a new word (أَيُّهَا) beginning with hamza. The stretch crosses the word boundary — permitted from two up to five counts.',
   },
   {
-    rule: 'madd-lazim', label: 'Madd lazim — 6 counts', surah: 6, ayahNum: 38,
+    rule: 'madd-lazim', label: 'Madd lāzim kalimī — 6 counts', surah: 6, ayahNum: 38,
     ayah: 'وَمَا مِن دَابَّةٍ فِي الْأَرْضِ إِلَّا أُمَمٌ أَمْثَالُكُمْ',
     why: 'In دَابَّةٍ the madd alif is followed by a shaddah-ed ب inside the same word — madd lazim muthaqqal, the longest and compulsory stretch: a full six counts. The same rule marks الضَّالِّينَ in al-Fatiha.',
+  },
+  {
+    rule: 'madd-lazim', label: 'Madd lāzim ḥarfī — the fawātiḥ', surah: 2, ayahNum: 1,
+    ayah: 'الٓمٓ',
+    why: 'The disconnected letters are spelled out, and those whose spelling has a madd in the middle (ل, م here — marked ٓ) take a six-count madd lazim ḥarfī. Likewise مٓ, نٓ, قٓ, صٓ.',
   },
   {
     rule: 'madd-arrid', label: 'Madd arid — the stopping stretch', surah: 1, ayahNum: 5,

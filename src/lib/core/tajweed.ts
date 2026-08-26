@@ -280,26 +280,23 @@ function checkLetterIdgham(c: Cluster, clusters: Cluster[], i: number): boolean 
 }
 
 /**
- * Qalqalah — three levels (ṣughrā / wusṭā / kubrā).
- * A "stopping place" is the last letter of the text or a letter
- * immediately before a waqf sign. At a stop, the letter takes a
- * TEMPORARY sukūn: with shaddah that is kubrā (two causes combine),
- * without shaddah it is wusṭā. Away from a stop, an ORIGINAL sukūn
- * mid-word or mid-speech is ṣughrā.
+ * Qalqalah — the three مراتب of Minhāj al-Dārisīn (Ch. 17), ranked by
+ * the letter's position in its word plus shaddah:
+ *   ʿulyā  (kubrā)  — mushaddad at the END of a word  (الْحَجَّ)
+ *   wusṭā           — sākin in the MIDDLE of a word    (يَقْطَعُونَ)
+ *   dunyā (ṣughrā)  — sākin at the END of a word       (الْفَلَقْ)
  */
-function checkQalqalah(c: Cluster, clusters: Cluster[], i: number, lastIdx: number): boolean {
+function checkQalqalah(c: Cluster, clusters: Cluster[], i: number): boolean {
   if (!QALQALAH_LETTERS.has(c.base)) return false;
+  const hasShadda = c.marks.has(SHADDA);
+  const isSukun = c.marks.has(SUKUN) || !hasVowel(c);
+  if (!hasShadda && !isSukun) return false;
   const next = clusters[i + 1];
-  const atStop = i === lastIdx || (next !== undefined && next.rule === 'waqf');
-  if (atStop) {
-    assign(c, c.marks.has(SHADDA) ? 'qalqalah-kubra' : 'qalqalah-wusta');
-    return true;
-  }
-  if (c.marks.has(SUKUN) || !hasVowel(c)) {
-    assign(c, 'qalqalah');
-    return true;
-  }
-  return false;
+  const wordEnd = !next || next.wordId !== c.wordId || next.rule === 'waqf';
+  if (hasShadda && wordEnd) assign(c, 'qalqalah-kubra');
+  else if (wordEnd) assign(c, 'qalqalah');
+  else assign(c, 'qalqalah-wusta');
+  return true;
 }
 
 /** Lam: the Name of Allah first, then the definite article. */
@@ -370,11 +367,17 @@ function checkMadd(c: Cluster, clusters: Cluster[], i: number, lastIdx: number):
     return true;
   }
   if (!MADD_LETTERS.has(c.base)) return false;
+  // A combining maddah (ٓ U+0653) marks the 6-count madd lāzim of the
+  // fawātiḥ (يسٓ, the ي of which is a madd letter).
+  if (c.marks.has(MADDA)) {
+    assign(c, 'madd-lazim');
+    return true;
+  }
   const prev = clusters[i - 1];
   const prevSameWord = prev && prev.wordId === c.wordId ? prev : null;
   const afterHamza = prevSameWord !== null && HAMZA_CARRIERS.has(prevSameWord.base);
   const isTrueMadd =
-    c.marks.has(DAGGER_ALIF) || c.marks.has(MADDA) || afterHamza || hasMatchingVowel(c, prevSameWord);
+    c.marks.has(DAGGER_ALIF) || afterHamza || hasMatchingVowel(c, prevSameWord);
   if (isTrueMadd) {
     const next = clusters[i + 1];
     const nextSameWord = next && next.wordId === c.wordId ? next : null;
@@ -431,12 +434,15 @@ export function analyzeTajweed(text: string): TajweedSegment[] {
     if (checkNoon(c, clusters, i)) continue;
     if (checkMeem(c, clusters, i)) continue;
     if (checkLetterIdgham(c, clusters, i)) continue;
-    if (checkQalqalah(c, clusters, i, lastIdx)) continue;
+    if (checkQalqalah(c, clusters, i)) continue;
     if (checkLam(c, clusters, i)) continue;
     if (checkRa(c, clusters, i)) continue;
     if (checkSilah(c, clusters, i)) continue;
     if (checkMadd(c, clusters, i, lastIdx)) continue;
-    if (c.marks.has(DAGGER_ALIF) || c.marks.has(MADDA)) assign(c, 'madd');
+    // Non-madd letters bearing a maddah (لٓ مٓ نٓ قٓ صٓ in the fawātiḥ)
+    // carry the 6-count madd lāzim ḥarfī; a dagger-alif is 2-count tabee'ī.
+    if (c.marks.has(MADDA)) assign(c, 'madd-lazim');
+    else if (c.marks.has(DAGGER_ALIF)) assign(c, 'madd');
   }
   applyLeen(clusters, lastIdx);
 
