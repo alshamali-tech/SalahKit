@@ -96,6 +96,8 @@ export const SITEMAP_PATHS: readonly string[] = [
   '/tools/calendar',
   '/tools/hifz',
   '/tools/hadith',
+  '/tools/tajweed',
+  '/tools/arabic',
   '/privacy',
   '/terms',
 ];

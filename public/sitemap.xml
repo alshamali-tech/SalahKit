@@ -76,6 +76,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://salahkit.app/tools/arabic</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://salahkit.app/privacy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>

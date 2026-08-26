@@ -21,8 +21,8 @@ export function DonationModal({ open, onClose }: DonationModalProps): JSX.Elemen
   return (
     <Modal open={open} onClose={onClose} title="Support SalahKit">
       <p className="text-sm leading-relaxed text-[var(--muted)]">
-        {DONATION_TAGLINE} SalahKit is built as <em className="text-[var(--fg)] not-italic font-semibold">sadaqah jariyah</em> —
-        ongoing charity. If it helps your salah, your dhikr or your zakat, you can keep it running.
+        {DONATION_TAGLINE} SalahKit is an <em className="text-[var(--fg)] not-italic font-semibold">independent project</em>,
+        built and maintained by its developer. If it helps your salah, your dhikr or your zakat, a tip helps keep it running.
       </p>
 
       <a

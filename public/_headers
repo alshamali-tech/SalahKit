@@ -9,4 +9,4 @@
   Strict-Transport-Security: max-age=63072000; includeSubDomains
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: same-origin
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' https://cdn.islamic.network https://audio.islamic.network; connect-src 'self' https://api.aladhan.com https://api.alquran.cloud https://www.ngdc.noaa.gov; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' https://cdn.islamic.network https://audio.islamic.network; connect-src 'self' https://api.aladhan.com https://api.alquran.cloud https://www.ngdc.noaa.gov https://cdn.jsdelivr.net; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'

@@ -2,6 +2,8 @@ import { lazy, Suspense, useEffect } from 'react';
 import { useApp } from './store';
 import { watchRoute } from './lib/router';
 import { initLocale } from './lib/use-locale';
+import { initUpdateWatcher } from './lib/sw-update';
+import { useReminders } from './lib/use-reminders';
 import { isOnline, watchConnectivity } from './lib/utils/offline';
 import { buildPageTitle } from './lib/seo';
 import { SkipLink } from './components/ui/SkipLink';
@@ -33,6 +35,7 @@ const HifzTrainer = lazy(() => import('./components/app/HifzTrainer').then((m) =
 const TajweedModule = lazy(() => import('./components/app/TajweedModule').then((m) => ({ default: m.TajweedModule })));
 const LegalPage = lazy(() => import('./components/app/LegalPage').then((m) => ({ default: m.LegalPage })));
 const ArabicModule = lazy(() => import('./components/app/ArabicModule').then((m) => ({ default: m.ArabicModule })));
+const UpdateBanner = lazy(() => import('./components/app/UpdateBanner').then((m) => ({ default: m.UpdateBanner })));
 
 // Apply the persisted locale (lang + direction) before first paint.
 initLocale();
@@ -68,6 +71,8 @@ function ModuleView({ module }: { module: ModuleId }): JSX.Element {
       return <HifzTrainer />;
     case 'tajweed':
       return <TajweedModule />;
+    case 'arabic':
+      return <ArabicModule />;
     case 'privacy':
       return <LegalPage kind="privacy" />;
     case 'terms':
@@ -87,6 +92,9 @@ function ModuleView({ module }: { module: ModuleId }): JSX.Element {
 export default function App(): JSX.Element {
   const { view, module, booted, boot, syncFromHash, sidebarOpen, setSidebarOpen, setOnline } =
     useApp();
+
+  // Reminder loop: prayer / adhkar / hifz notifications while open.
+  useReminders();
 
   useEffect(() => {
     void boot();
@@ -113,16 +121,10 @@ export default function App(): JSX.Element {
 
   useEffect(() => {
     // SW registration must never crash the app: in non-secure or
-    // sandboxed contexts the APIs can throw synchronously.
+    // sandboxed contexts the APIs can throw synchronously. The watcher
+    // also handles update checks and pending-version banners.
     try {
-      if (
-        import.meta.env.PROD &&
-        'serviceWorker' in navigator &&
-        typeof window.isSecureContext === 'boolean' &&
-        window.isSecureContext
-      ) {
-        navigator.serviceWorker.register('/sw.js').catch(() => undefined);
-      }
+      if (import.meta.env.PROD) initUpdateWatcher();
     } catch {
       // Offline caching simply stays disabled.
     }
@@ -182,6 +184,9 @@ export default function App(): JSX.Element {
       <SettingsPanel />
       <DonationToast />
       <QuranAudioDock />
+      <Suspense fallback={null}>
+        <UpdateBanner />
+      </Suspense>
       <ToastHost />
     </div>
   );

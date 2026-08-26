@@ -26,13 +26,18 @@ const FEATURES: readonly Feature[] = [
   },
   {
     module: 'quran', title: 'Quran Reader', icon: 'M10 4.6C8.2 3.3 5.6 3 3.5 3.5v12c2.1-.5 4.7-.2 6.5 1.1 1.8-1.3 4.4-1.6 6.5-1.1v-12c-2.1-.5-4.7-.2-6.5 1.1zM10 4.6v12',
-    blurb: 'Al-Fatiha and the short surahs with English, Urdu and French — readable in airplane mode.',
-    span: '', accent: 'primary',
+    blurb: 'The full Quran with translations, colored tajweed and reciter audio — readable in airplane mode.',
+    span: 'sm:col-span-2', accent: 'primary',
   },
   {
     module: 'tajweed', title: 'Tajweed Trainer', icon: 'M4 4h12v12H4zM7 7.4c1 1 2.5 1 3 0M11.5 7.4c.5 1 2 1 3 0M7.5 11h5M8.5 13.4h3',
     blurb: 'A guided path, the interactive noon tree and a live lab that color-codes any ayah you paste.',
     span: '', accent: 'amber',
+  },
+  {
+    module: 'arabic', title: 'Arabic Foundations', icon: 'M3 15c2.5-1 3.5-4.5 3.5-9M3 8.5c1.5 0 3 .5 4 1.5M11 15V6.5M11 6.5c1.5-1 3-1 4 .5 1 1.5.5 3.5-1 4.5l3 4',
+    blurb: 'Letters with their four forms, harakat, Quran grammar and vocabulary — offline and audible.',
+    span: '', accent: 'primary',
   },
   {
     module: 'hijri', title: 'Hijri Calendar', icon: 'M15 12.8A6.2 6.2 0 0 1 7.2 5a6.2 6.2 0 1 0 7.8 7.8z',
@@ -60,9 +65,24 @@ const FEATURES: readonly Feature[] = [
     span: '', accent: 'amber',
   },
   {
+    module: 'hadith', title: 'Hadith Library', icon: 'M3.5 3.5h13v13h-13zM6.5 7h7M6.5 10h7M6.5 13h4.5',
+    blurb: 'The two Sahihs streamed section by section — thousands of hadiths, cached for offline reading.',
+    span: 'sm:col-span-2', accent: 'primary',
+  },
+  {
+    module: 'hifz', title: 'Hifz Trainer', icon: 'M10 4.6C8.2 3.3 5.6 3 3.5 3.5v12c2.1-.5 4.7-.2 6.5 1.1 1.8-1.3 4.4-1.6 6.5-1.1v-12c-2.1-.5-4.7-.2-6.5 1.1zM10 4.6v12M7 9l2 2 4-4.6',
+    blurb: 'Memorize with spaced repetition — listen, recite aloud, and let your voice reveal the ayah.',
+    span: '', accent: 'amber',
+  },
+  {
     module: 'tracker', title: 'Prayer Tracker', icon: 'M3.5 5.5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2zM6.8 10.4l2.2 2.2 4.4-5',
     blurb: 'A weekly grid with streaks and notes — accountability without an account.',
     span: 'sm:col-span-2', accent: 'primary',
+  },
+  {
+    module: 'calendar', title: 'Hijri Calendar', icon: 'M3 5.5A1.5 1.5 0 0 1 4.5 4h11A1.5 1.5 0 0 1 17 5.5v9a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3 14.5zM3 8h14M7 2.5V5M13 2.5V5M6.5 11.5h2v2h-2z',
+    blurb: 'A full Hijri month view with today marked and Jumu’ah highlighted.',
+    span: '', accent: 'amber',
   },
 ];
 

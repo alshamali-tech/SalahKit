@@ -28,7 +28,7 @@ export const DONATION_LINKS: readonly DonationLink[] = [
 
 /** Halal, guilt-free framing used everywhere donations appear (S11). */
 export const DONATION_TAGLINE =
-  'Free forever. No ads. If this helps, consider a sadaqah.';
+  'Free forever. No ads. If this helps, consider supporting the developer.';
 
 /** Input snapshot for the donation prompt decision. */
 export interface DonationPromptInput {

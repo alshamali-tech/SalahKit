@@ -16,7 +16,7 @@ const PATHS = [
   '/tools/prayer', '/tools/qibla', '/tools/hijri', '/tools/quran',
   '/tools/dhikr', '/tools/zakat', '/tools/duas', '/tools/names',
   '/tools/tracker', '/tools/calendar', '/tools/hifz', '/tools/hadith', '/tools/tajweed',
-  '/privacy', '/terms',
+  '/tools/arabic', '/privacy', '/terms',
 ];
 
 /** Priorities: landing highest, tools next, legal pages lowest. */

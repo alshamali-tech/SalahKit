@@ -13,6 +13,7 @@ import { copyText } from '../../lib/utils/clipboard';
 import { emitToast } from '../../lib/messaging';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
+import { HadithLibraryFull } from './HadithLibraryFull';
 import type { Hadith, HadithBook, HadithCategory } from '../../types';
 
 type CategoryFilter = HadithCategory | 'all' | 'favorites';
@@ -403,9 +404,11 @@ export function HadithList(): JSX.Element {
         </Card>
       )}
 
+      <HadithLibraryFull favorites={favorites} onToggle={(id) => void toggleFavorite(id)} />
+
       <p className="text-xs text-[var(--muted)] text-center pt-2">
-        Selected narrations from the two most authentic collections — Sahih al-Bukhari and Sahih
-        Muslim. Reference numbers follow standard editions.
+        Curated gems above; the complete collections stream below. Reference numbers follow
+        standard editions of Sahih al-Bukhari and Sahih Muslim.
       </p>
     </div>
   );
