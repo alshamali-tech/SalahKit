@@ -147,6 +147,22 @@ function lastLetterIndex(clusters: Cluster[]): number {
   return -1;
 }
 
+/**
+ * Finds the vowel-bearing letter that governs the lam of Allah.
+ * Walks back from the lam, skipping silent article alifs, to the nearest
+ * cluster carrying a short vowel. Returns null when none is found.
+ */
+function vowelSourceBefore(clusters: Cluster[], i: number): Cluster | null {
+  for (let j = i - 1; j >= Math.max(0, i - 3); j -= 1) {
+    const s = clusters[j];
+    if (!s) continue;
+    if (hasVowel(s)) return s;
+    if (s.base === ALIF || s.base === HAMZA_WASL || s.base === ALEF_MADDA) continue;
+    break;
+  }
+  return null;
+}
+
 /** True when the word at idx is the Name of Allah (ا لّ ه). */
 function isDivineNameAt(clusters: Cluster[], idx: number): boolean {
   const first = clusters[idx];
@@ -250,7 +266,9 @@ function checkMeem(c: Cluster, clusters: Cluster[], i: number): boolean {
 
 /** Cross-word letter idghams: mutamathil / mutajanis / mutaqaribayn. */
 function checkLetterIdgham(c: Cluster, clusters: Cluster[], i: number): boolean {
-  if (!(c.marks.has(SUKUN) && !hasVowel(c))) return false;
+  // Before idgham the first letter is saakin — written with a sukūn OR
+  // left bare in Uthmani script (اضْرِب بِّعَصَاكَ, وَقُل رَّبِّ).
+  if (!isSaakin(c)) return false;
   const next = clusters[i + 1];
   if (!next || !isLetter(next.base) || next.wordId === c.wordId) return false;
   if (!next.marks.has(SHADDA)) return false;
@@ -290,9 +308,13 @@ function checkLam(c: Cluster, clusters: Cluster[], i: number): boolean {
   const prev = clusters[i - 1];
   const next = clusters[i + 1];
   if (c.marks.has(SHADDA) && next && next.base === HA) {
-    if (prev) {
-      if (prev.marks.has(KASRA)) assign(c, 'lam-allah-tarqeeq');
-      else if (prev.marks.has(FATHA) || prev.marks.has(DAMMA)) assign(c, 'lam-allah-tafkhim');
+    // The deciding vowel sits on the letter BEFORE the article alif of
+    // الله (e.g. the مِ of بِسْمِ, the دَ of شَهِدَ), or directly before
+    // in لِـللَّهِ. kasra → light; fatha/damma → heavy.
+    const src = vowelSourceBefore(clusters, i);
+    if (src) {
+      if (src.marks.has(KASRA)) assign(c, 'lam-allah-tarqeeq');
+      else if (src.marks.has(FATHA) || src.marks.has(DAMMA)) assign(c, 'lam-allah-tafkhim');
     }
     return true;
   }
