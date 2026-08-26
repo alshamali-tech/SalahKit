@@ -47,7 +47,7 @@ function blockReason(status: string): string {
  */
 export function VoiceRecall({ ayahs, revealed, onReveal, tajweedOn }: VoiceRecallProps): JSX.Element {
   const [active, setActive] = useState<number | null>(null);
-  const [verdicts, setVerdicts] = useState<Record<number, AyahVerdict>>({});
+  const [verdicts, setVerdicts] = useState<Record<number, MatchVerdict>>({});
   const [cardErrors, setCardErrors] = useState<Record<number, string>>({});
   const activeRef = useRef<number | null>(null);
   const spokenRef = useRef('');

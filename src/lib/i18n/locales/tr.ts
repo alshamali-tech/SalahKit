@@ -1,0 +1,71 @@
+/** Türkçe. Kur’an metni her zaman Arapça kalır. */
+import type { TranslationKeys } from '../keys';
+
+export const tr: TranslationKeys = {
+  app: { name: 'SalahKit', tagline: 'Ücretsiz Çevrimdışı İslami Araçlar' },
+  nav: {
+    home: 'SalahKit ana sayfa', settings: 'Ayarları aç', support: 'Destekle',
+    privacy: 'Gizlilik Politikası', terms: 'Kullanım Şartları',
+    openMenu: 'Gezinme menüsünü aç', closeMenu: 'Gezinme menüsünü kapat',
+    language: 'Arayüz dili',
+  },
+  sidebar: {
+    freeBadge: 'Sonsuza dek ücretsiz',
+    sections: { daily: 'Günlük', knowledge: 'Bilgi', practice: 'Uygulama', about: 'Hakkında' },
+    supportNote: 'Sonsuza dek ücretsiz. Reklamsız. Faydası dokunursa bir sadaka düşünün.',
+    supportCta: 'SalahKit’i Destekle', more: 'Daha fazla',
+  },
+  modules: {
+    prayer: 'Namaz Vakitleri', qibla: 'Kıble Pusulası', hijri: 'Hicri Takvim',
+    quran: 'Kur’an Okuyucu', tajweed: 'Tecvid', arabic: 'Arapça Temelleri',
+    dhikr: 'Zikir Sayacı', zakat: 'Zekât Hesaplayıcı', duas: 'Dualar & Zikirler',
+    names: '99 İsim', hadith: 'Hadis Kütüphanesi', hifz: 'Hafızlık Eğitimi',
+    tracker: 'Namaz Takibi', calendar: 'Hicri Takvim',
+  },
+  badges: { free: 'Ücretsiz', offline: 'Çevrimdışı · çalışır', online: 'Çevrimiçi', freeForever: 'Sonsuza dek ücretsiz' },
+  common: {
+    listen: 'Dinle', copy: 'Kopyala', copied: 'Kopyalandı', search: 'Ara', all: 'Tümü',
+    favorites: 'Favoriler', next: 'Sonraki adım →', back: '← Geri', save: 'Kaydet',
+    close: 'Kapat', learnMore: 'Daha fazla bilgi', reset: 'Sıfırla', loading: 'Yükleniyor…',
+  },
+  landing: {
+    kicker: 'Ücretsiz · Çevrimdışı · Gizli',
+    title: 'Dininiz için gereken her şey — tek güzel araç kutusunda',
+    sub: 'Namaz vakitleri, kıble, Kur’an’ın tamamı, tecvid, Arapça, hafızlık, zikir, zekât ve daha fazlası. Reklamsız, kayıtsız, takipsiz. Çevrimdışı çalışır, veriniz cihazınızda kalır.',
+    ctaTools: 'Araç kutusunu aç', ctaFree: 'Sonsuza dek ücretsiz', livePrayer: 'Sonraki namaz',
+    featuresKicker: 'On dört araç, tek yer',
+    featuresTitle: 'Sabah namazından uykuya her şey — doğru tilavetle',
+    featuresSub: 'Bir aracı açmak için karta dokunun — kurulum yok, hesap yok.',
+    compareKicker: 'Dürüst hesap', compareTitle: 'Bunun için neden ödeyesiniz — ve izlenesiniz?',
+    compareSub: 'Tipik ücretli Müslüman uygulama abonelik alır ve yine de reklam gösterir. SalahKit ikisini de tersine çevirir.',
+    faqKicker: 'Sorular', faqTitle: 'Soruldu, cevaplandı',
+    supportTitle: 'Sonsuza dek ücretsiz — reklamlarla değil, tercihle.',
+    supportSub: 'Katkılar gönüllüdür, harici sağlayıcılarca işlenir ve hiçbir şeyin kilidini açmaz — çünkü hiçbir şey kilitli değil.',
+    supportBtn: 'Destekle',
+    faq: [
+      { q: 'Nasıl ücretsiz?', a: 'SalahKit sadaka-i cariye olarak inşa edildi. Reklam, abonelik veya veri satışı yok. Ko-fi üzerinden isteğe bağlı bağış ayakta tutar. Suçluluk yok, ödeme duvarı yok.' },
+      { q: 'Gerçekten çevrimdışı çalışır mı?', a: 'Evet. Vakitler, kıble, Kur’an, tecvid, Arapça ve 99 İsim cihazınızda hesaplanır ya da saklanır. Tek çevrimiçi özellik takvim iyileştirmesidir ve çevrimdışıyken zarifçe kapanır.' },
+      { q: 'Verilerime ne olur?', a: 'Asla cihazınızdan çıkmaz. Ayarlar’dan her şeyi dışa aktarın, içe aktarın ya da silin — sunucumuz da analitiğimiz de yok.' },
+      { q: 'Vakitler ne kadar doğru?', a: 'MWL, ISNA, Mısır, Karaçi ve Umm al-Qura ön ayarlarıyla açık astronomik yöntemler kullanırız. Oruç ve cemaat vakitlerini caminize doğrulatın.' },
+      { q: 'Neden mağazalarda uygulama yok?', a: 'SalahKit bir PWA’dır: tarayıcıda açıp «Ana Ekrana Ekle» deyin — tam ekran, kendi simgesi, çevrimdışı. Mağaza ücreti yok, izin istemi yok.' },
+      { q: 'Bağış zorunlu mu?', a: 'Asla. Bağışlar gönüllüdür ve harici sağlayıcıda işlenir. Hiçbir şeyin kilidini açmaz çünkü hiçbir şey kilitli değil.' },
+    ],
+  },
+  settings: {
+    title: 'Ayarlar', city: 'Şehir', method: 'Hesaplama yöntemi', asrMadhab: 'İkindi mezhebi',
+    shafi: 'Şafiî (1×)', hanafi: 'Hanefî (2×)', theme: 'Tema', light: 'Açık', dark: 'Koyu',
+    plan: 'Plan', planNote: 'Her özellik dahildir. Sonsuza dek.', language: 'Dil',
+    support: 'SalahKit’i Destekle', supportNote: 'Sonsuza dek ücretsiz. Reklamsız. Faydası dokunursa bir sadaka düşünün.',
+    donate: 'Bağışla',
+  },
+  offline: { message: 'Çevrimdışısınız — her araç çalışır. Veriniz asla bu cihazdan ayrılmaz.' },
+  donation: {
+    toastTitle: 'SalahKit sonsuza dek ücretsiz',
+    toastBody: 'Reklamsız, takipsiz. Faydası dokunursa bir sadaka düşünün — bağlantılar Ayarlar’da Destekle altında.',
+    notNow: 'Şimdi değil',
+  },
+  footer: {
+    line: 'Önce çevrimdışı, ücretsiz bir İslami araç kutusu. Veriniz her zaman cihazınızda kalır.',
+    tools: 'Araçlar', support: 'Destek', builtWith: 'İhsanla inşa edildi.',
+  },
+};

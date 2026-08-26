@@ -23,6 +23,7 @@ export type ModuleId =
   | 'hifz'
   | 'hadith'
   | 'tajweed'
+  | 'arabic'
   | 'privacy'
   | 'terms';
 

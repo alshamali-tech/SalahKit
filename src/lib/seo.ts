@@ -34,6 +34,7 @@ export const MODULE_TITLES: Readonly<Record<ModuleId, string>> = {
   hifz: 'Hifz Trainer',
   hadith: 'Hadith Library',
   tajweed: 'Tajweed Trainer',
+  arabic: 'Arabic Foundations',
   privacy: 'Privacy Policy',
   terms: 'Terms of Service',
 };

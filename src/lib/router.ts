@@ -19,6 +19,7 @@ const MODULE_IDS: readonly ModuleId[] = [
   'hifz',
   'hadith',
   'tajweed',
+  'arabic',
   'privacy',
   'terms',
 ];

@@ -1,4 +1,5 @@
-import { DONATION_LINKS, DONATION_TAGLINE } from '../../lib/donation';
+import { DONATION_LINKS } from '../../lib/donation';
+import { useT } from '../../lib/use-locale';
 import { useApp } from '../../store';
 import { Badge } from './Badge';
 import type { ModuleId } from '../../types';
@@ -31,6 +32,7 @@ const SECTIONS: readonly NavSection[] = [
     items: [
       { module: 'quran', label: 'Quran Reader', d: 'M10 4.6C8.2 3.3 5.6 3 3.5 3.5v12c2.1-.5 4.7-.2 6.5 1.1 1.8-1.3 4.4-1.6 6.5-1.1v-12c-2.1-.5-4.7-.2-6.5 1.1zM10 4.6v12' },
       { module: 'tajweed', label: 'Tajweed', d: 'M4 4h12v12H4zM7 7.4c1 1 2.5 1 3 0M11.5 7.4c.5 1 2 1 3 0M7.5 11h5M8.5 13.4h3' },
+      { module: 'arabic', label: 'Arabic Foundations', d: 'M4 14c2-1 3-4 3-8M4 8c1.5 0 3 .5 4 1.5M11 14V6M11 6c1.5-1 3-1 4 .5 1 1.5.5 3.5-1 4.5l3 3' },
       { module: 'hadith', label: 'Hadith Library', d: 'M3.5 3.5h13v13h-13zM6.5 7h7M6.5 10h7M6.5 13h4.5' },
       { module: 'duas', label: 'Duas & Adhkar', d: 'M10 16.2s-6.2-4-6.2-8.2a3.5 3.5 0 0 1 6.2-2 3.5 3.5 0 0 1 6.2 2c0 4.2-6.2 8.2-6.2 8.2z' },
       { module: 'names', label: '99 Names', d: 'M10 2.3l2.3 4.7 5.1.8-3.7 3.6.9 5.1-4.6-2.4-4.6 2.4.9-5.1-3.7-3.6 5.1-.8z' },
@@ -65,17 +67,22 @@ export interface SidebarProps {
  */
 export function Sidebar({ onClose }: SidebarProps): JSX.Element {
   const { module, setModule, setSettingsOpen } = useApp();
+  const { t } = useT();
   const kofi = DONATION_LINKS.find((l) => l.primary) ?? DONATION_LINKS[0];
+  const sectionKey: Record<string, string> = {
+    Daily: 'sidebar.sections.daily', Knowledge: 'sidebar.sections.knowledge',
+    Practice: 'sidebar.sections.practice', About: 'sidebar.sections.about',
+  };
 
   const nav = (
     <>
       <div className="px-3 pt-4 pb-2 flex items-center justify-between gap-2">
-        <Badge tone="success">Free forever</Badge>
+        <Badge tone="success">{t('sidebar.freeBadge')}</Badge>
         {onClose ? (
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close menu"
+            aria-label={t('nav.closeMenu')}
             className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[var(--muted)] hover:bg-[var(--hover)] hover:text-[var(--fg)] focus-visible:outline-2 focus-visible:outline-[var(--primary)]"
           >
             <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -89,7 +96,7 @@ export function Sidebar({ onClose }: SidebarProps): JSX.Element {
         {SECTIONS.map((section) => (
           <div key={section.title}>
             <p className="px-2 pb-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-[var(--muted)]">
-              {section.title}
+              {t(sectionKey[section.title] ?? section.title)}
             </p>
             <ul className="space-y-0.5">
               {section.items.map((item) => {
@@ -111,7 +118,7 @@ export function Sidebar({ onClose }: SidebarProps): JSX.Element {
                       <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden="true">
                         <path d={item.d} />
                       </svg>
-                      <span className="truncate">{item.label}</span>
+                      <span className="truncate">{t(`modules.${item.module}`)}</span>
                       {active ? <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[var(--primary)] shrink-0" aria-hidden="true" /> : null}
                     </button>
                   </li>

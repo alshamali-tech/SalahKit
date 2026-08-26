@@ -1,16 +1,19 @@
 import { DONATION_LINKS } from '../../lib/donation';
 import { navigate } from '../../lib/router';
+import { useT } from '../../lib/use-locale';
 import { useApp } from '../../store';
 import { Badge } from './Badge';
 import { ThemeToggle } from '../app/ThemeToggle';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 /**
- * App header: wordmark, connectivity status, theme toggle,
- * donation shortcut, settings and mobile menu trigger.
+ * App header: wordmark, connectivity status, language switcher, theme
+ * toggle, donation shortcut, settings and mobile menu trigger.
  * @returns The rendered header bar.
  */
 export function Header(): JSX.Element {
   const { view, online, setSettingsOpen, setSidebarOpen, module } = useApp();
+  const { t } = useT();
   const kofi = DONATION_LINKS.find((l) => l.primary) ?? DONATION_LINKS[0];
 
   return (
@@ -19,7 +22,7 @@ export function Header(): JSX.Element {
         <button
           type="button"
           onClick={() => setSidebarOpen(true)}
-          aria-label="Open navigation menu"
+          aria-label={t('nav.openMenu')}
           className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-lg text-[var(--fg)] hover:bg-[var(--hover)] focus-visible:outline-2 focus-visible:outline-[var(--primary)] transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
@@ -31,7 +34,7 @@ export function Header(): JSX.Element {
           type="button"
           onClick={() => navigate('/')}
           className="flex items-center gap-2.5 min-w-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
-          aria-label="SalahKit home"
+          aria-label={t('nav.home')}
         >
           <img src="/favicon.svg" alt="" width="30" height="30" className="shrink-0 rounded-lg" />
           <span className="text-lg font-extrabold tracking-tight text-[var(--fg)] whitespace-nowrap">
@@ -48,7 +51,7 @@ export function Header(): JSX.Element {
               ].join(' ')}
               aria-hidden="true"
             />
-            {online ? 'Online' : 'Offline · still works'}
+            {online ? t('badges.online') : t('badges.offline')}
           </Badge>
         </span>
 
@@ -62,15 +65,16 @@ export function Header(): JSX.Element {
             <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
               <path d="M12 2C9 4 9 6 12 8c-3 2-5 1-6-1M4 10h9a3 3 0 0 1 0 6H7a3 3 0 0 1-3-3z" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <span className="hidden sm:inline">Support</span>
+            <span className="hidden sm:inline">{t('nav.support')}</span>
           </a>
 
+          <LanguageSwitcher />
           <ThemeToggle />
 
           <button
             type="button"
             onClick={() => setSettingsOpen(true)}
-            aria-label="Open settings"
+            aria-label={t('nav.settings')}
             className={[
               'inline-flex h-11 w-11 items-center justify-center rounded-lg hover:bg-[var(--hover)] focus-visible:outline-2 focus-visible:outline-[var(--primary)] transition-colors',
               module === 'privacy' || module === 'terms' ? 'text-[var(--primary)]' : 'text-[var(--fg)]',

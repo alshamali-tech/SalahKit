@@ -4,9 +4,8 @@
  * state → the list of reminders that are due right now.
  * Works identically on mobile, Windows and Linux because it is pure.
  */
-import type { PrayerTimesResult } from './prayer-engine';
 import { PRAYER_LABELS } from './constants';
-import type { PrayerName } from './types';
+import type { PrayerName, PrayerTimesResult } from './types';
 
 /** The kinds of reminder SalahKit can raise. */
 export type ReminderKind = 'salah' | 'adhkar-morning' | 'adhkar-evening' | 'hifz';

@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { useApp } from './store';
 import { watchRoute } from './lib/router';
+import { initLocale } from './lib/use-locale';
 import { isOnline, watchConnectivity } from './lib/utils/offline';
 import { buildPageTitle } from './lib/seo';
 import { SkipLink } from './components/ui/SkipLink';
@@ -31,6 +32,10 @@ const ZakatCalc = lazy(() => import('./components/app/ZakatCalc').then((m) => ({
 const HifzTrainer = lazy(() => import('./components/app/HifzTrainer').then((m) => ({ default: m.HifzTrainer })));
 const TajweedModule = lazy(() => import('./components/app/TajweedModule').then((m) => ({ default: m.TajweedModule })));
 const LegalPage = lazy(() => import('./components/app/LegalPage').then((m) => ({ default: m.LegalPage })));
+const ArabicModule = lazy(() => import('./components/app/ArabicModule').then((m) => ({ default: m.ArabicModule })));
+
+// Apply the persisted locale (lang + direction) before first paint.
+initLocale();
 
 /**
  * Renders the active tool module.
