@@ -16,7 +16,7 @@ export const en: TranslationKeys = {
   sidebar: {
     freeBadge: 'Free forever',
     sections: { daily: 'Daily', knowledge: 'Knowledge', practice: 'Practice', about: 'About' },
-    supportNote: 'Free forever. No ads. If this helps, consider a sadaqah.',
+    supportNote: 'Free forever. No ads. If it helps you, support the developer and keep SalahKit alive.',
     supportCta: 'Support SalahKit',
     more: 'More',
   },
