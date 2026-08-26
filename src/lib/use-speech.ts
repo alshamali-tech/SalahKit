@@ -1,11 +1,21 @@
 /**
  * Web Speech API integration for voice recall (Graph of Thoughts).
  * The graph: [mic] → [SpeechRecognition] → [transcript stream] with an
- * error/backtrack edge. A single recognizer instance is shared by the
- * recall step; the active ayah node receives the routed transcript.
- * Arabic only (ar), interim results streamed for live feedback.
+ * error/backtrack edge into the tap-to-reveal fallback. Handles every
+ * real-world failure path: unsupported browser, insecure context,
+ * denied/revoked permission, dead hardware, silence, offline engines.
+ * Arabic only (ar); interim results streamed for live feedback.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
+
+/** Lifecycle state of microphone access. */
+export type MicStatus =
+  | 'unknown' // not probed yet (or the platform hides permission state)
+  | 'checking' // pre-flight getUserMedia probe in flight
+  | 'granted' // permission confirmed working
+  | 'denied' // blocked by the user or the OS
+  | 'unsupported' // no SpeechRecognition / no mediaDevices
+  | 'insecure'; // served over http — browsers refuse the mic
 
 /** Minimal vendor-neutral shape of the SpeechRecognition engine. */
 interface SpeechRecognitionLike {
@@ -52,30 +62,77 @@ function createEngine(): SpeechRecognitionLike | null {
   }
 }
 
+/**
+ * Maps a getUserMedia failure to a human-readable, actionable message.
+ * @param e - The rejected error object.
+ * @returns Message that always ends with the tap fallback.
+ */
+function describeMediaError(e: unknown): string {
+  const name = (e as { name?: string })?.name ?? '';
+  if (name === 'NotAllowedError' || name === 'SecurityError') {
+    return 'Microphone access is blocked — allow it in your browser settings, or tap any ayah instead.';
+  }
+  if (name === 'NotFoundError' || name === 'OverconstrainedError') {
+    return 'No working microphone was found on this device — tap any ayah to reveal it.';
+  }
+  if (name === 'NotReadableError') {
+    return 'Another app is using your microphone right now — tap any ayah to reveal it.';
+  }
+  return 'Could not open the microphone — tap any ayah to reveal it.';
+}
+
+/**
+ * Maps a SpeechRecognition engine error to a user-facing message.
+ * @param code - Engine error code (e.g. 'no-speech').
+ * @returns Message, or null for non-errors like a user cancel.
+ */
+function describeEngineError(code: string): string | null {
+  switch (code) {
+    case 'not-allowed':
+    case 'service-not-allowed':
+      return 'Voice access was blocked — tap any ayah to reveal it instead.';
+    case 'audio-capture':
+      return 'No microphone audio reached the browser. Check your mic, then try again.';
+    case 'no-speech':
+      return 'Nothing was heard — speak a little closer to the mic and try again.';
+    case 'network':
+      return 'Voice recognition needs a connection right now — tap any ayah to reveal it.';
+    case 'aborted':
+      return null; // user cancelled — not an error
+    default:
+      return 'Voice recognition hiccuped — try again, or tap the ayah.';
+  }
+}
+
 /** State exposed by the hook. */
 export interface SpeechState {
   /** Whether the engine currently has the mic open. */
   listening: boolean;
-  /** Live (interim + final) transcript of the current session. */
+  /** Live transcript of the current utterance (replaced, not appended). */
   transcript: string;
-  /** True only when the platform can do speech recognition. */
+  /** True only when the platform can do speech recognition at all. */
   supported: boolean;
-  /** Last engine error, if any (e.g. 'not-allowed'). */
+  /** Microphone permission lifecycle state. */
+  micStatus: MicStatus;
+  /** Last actionable error message, if any. */
   error: string | null;
+  /** Explicit pre-flight probe (prompts only if the browser must ask). */
+  checkMic: () => Promise<MicStatus>;
   /** Begins a recognition session (requires a user gesture). */
   start: () => void;
   /** Ends the current session. */
   stop: () => void;
-  /** Clears the transcript buffer. */
+  /** Clears transcript and error buffers. */
   clear: () => void;
 }
 
 /**
  * Wraps the Web Speech API in React state for the recall step.
- * Streams interim transcripts via onResult for live UI feedback.
+ * On mount it silently probes the Permissions API (no prompt); the real
+ * permission prompt only fires on the user's first mic tap.
  * @param onResult - Called with (transcript, isFinal) on every update.
  * @param lang - BCP-47 language tag (default Arabic).
- * @returns Controls and live state.
+ * @returns Controls, live state and mic lifecycle.
  */
 export function useSpeechRecognition(
   onResult?: (transcript: string, isFinal: boolean) => void,
@@ -84,23 +141,118 @@ export function useSpeechRecognition(
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [supported] = useState(() => speechSupported());
+  const [micStatus, setMicStatus] = useState<MicStatus>(() =>
+    speechSupported() ? 'unknown' : 'unsupported'
+  );
   const engineRef = useRef<SpeechRecognitionLike | null>(null);
+  const listeningRef = useRef(false);
+  const pendingRestartRef = useRef(false);
   const onResultRef = useRef(onResult);
   onResultRef.current = onResult;
 
+  // Silent probe: never triggers a browser prompt, but surfaces an
+  // already-denied mic immediately and tracks later revocations.
+  useEffect(() => {
+    if (!speechSupported()) {
+      setMicStatus('unsupported');
+      return;
+    }
+    if (typeof window !== 'undefined' && window.isSecureContext === false) {
+      setMicStatus('insecure');
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      try {
+        const perm = await navigator.permissions?.query({
+          name: 'microphone' as PermissionName,
+        });
+        if (cancelled || !perm) return;
+        if (perm.state === 'granted') setMicStatus('granted');
+        else if (perm.state === 'denied') setMicStatus('denied');
+        perm.addEventListener('change', () => {
+          if (cancelled) return;
+          if (perm.state === 'granted') setMicStatus('granted');
+          else if (perm.state === 'denied') {
+            setMicStatus('denied');
+            try {
+              engineRef.current?.abort();
+            } catch {
+              // engine already idle
+            }
+            listeningRef.current = false;
+            setListening(false);
+          }
+        });
+      } catch {
+        // Firefox hides 'microphone' from the Permissions API — stay
+        // 'unknown' and let the first mic tap do the real check.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const checkMic = useCallback(async (): Promise<MicStatus> => {
+    if (!speechSupported()) {
+      setMicStatus('unsupported');
+      return 'unsupported';
+    }
+    if (typeof window !== 'undefined' && window.isSecureContext === false) {
+      setMicStatus('insecure');
+      return 'insecure';
+    }
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setMicStatus('unsupported');
+      return 'unsupported';
+    }
+    setMicStatus('checking');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const live = stream.getAudioTracks().some((t) => t.readyState === 'live');
+      stream.getTracks().forEach((t) => t.stop());
+      const next: MicStatus = live ? 'granted' : 'denied';
+      setMicStatus(next);
+      if (!live) setError('The microphone opened but produced no audio — tap any ayah to reveal it.');
+      return next;
+    } catch (e) {
+      setMicStatus('denied');
+      setError(describeMediaError(e));
+      return 'denied';
+    }
+  }, []);
+
   const stop = useCallback(() => {
-    engineRef.current?.stop();
+    try {
+      engineRef.current?.stop();
+    } catch {
+      // engine already idle
+    }
   }, []);
 
   const start = useCallback(() => {
-    if (!supported) return;
-    if (!engineRef.current) {
-      const engine = createEngine();
+    if (micStatus === 'insecure') {
+      setError('Voice needs a secure (https) connection — tap any ayah to reveal it.');
+      return;
+    }
+    if (micStatus === 'unsupported') {
+      setError('This browser has no speech recognition — tap any ayah to reveal it.');
+      return;
+    }
+    if (micStatus === 'denied') {
+      setError('Microphone access is blocked — tap any ayah to reveal it.');
+      return;
+    }
+    let engine = engineRef.current;
+    if (!engine) {
+      engine = createEngine();
       if (!engine) {
-        setError('unavailable');
+        setMicStatus('unsupported');
+        setError('This browser has no speech recognition — tap any ayah to reveal it.');
         return;
       }
+      engineRef.current = engine;
       engine.lang = lang;
       engine.continuous = false;
       engine.interimResults = true;
@@ -117,35 +269,70 @@ export function useSpeechRecognition(
           }
         }
         if (text) {
-          setTranscript((prev) => (isFinal ? `${prev} ${text}`.trim() : text));
+          setTranscript(text);
           onResultRef.current?.(text, isFinal);
         }
       };
-      engine.onend = () => setListening(false);
-      engine.onerror = (e) => {
-        setError(e.error ?? 'error');
-        setListening(false);
+      engine.onerror = (event) => {
+        const code = event.error ?? '';
+        if (code === 'not-allowed' || code === 'service-not-allowed') setMicStatus('denied');
+        const msg = describeEngineError(code);
+        if (msg) setError(msg);
       };
-      engineRef.current = engine;
+      engine.onend = () => {
+        listeningRef.current = false;
+        setListening(false);
+        // Serialised restart: switching ayahs mid-utterance queues one
+        // clean start after the previous session fully winds down.
+        if (pendingRestartRef.current) {
+          pendingRestartRef.current = false;
+          try {
+            engineRef.current?.start();
+            listeningRef.current = true;
+            setListening(true);
+          } catch {
+            // engine refused the restart — the user can tap again
+          }
+        }
+      };
     }
     setError(null);
+    setTranscript('');
+    if (listeningRef.current) {
+      // Already recording: ask for a clean restart once it ends.
+      pendingRestartRef.current = true;
+      try {
+        engine.stop();
+      } catch {
+        pendingRestartRef.current = false;
+      }
+      return;
+    }
     try {
-      engineRef.current.start();
+      engine.start();
+      listeningRef.current = true;
       setListening(true);
     } catch {
-      // start() throws if already running; treat as no-op.
+      // start() before full shutdown throws — treat as running
+      listeningRef.current = true;
       setListening(true);
     }
-  }, [supported, lang]);
+  }, [micStatus, lang]);
 
-  const clear = useCallback(() => setTranscript(''), []);
-
-  useEffect(() => {
-    return () => {
-      engineRef.current?.abort();
-      engineRef.current = null;
-    };
+  const clear = useCallback(() => {
+    setTranscript('');
+    setError(null);
   }, []);
 
-  return { listening, transcript, supported, error, start, stop, clear };
+  return {
+    listening,
+    transcript,
+    supported: speechSupported(),
+    micStatus,
+    error,
+    checkMic,
+    start,
+    stop,
+    clear,
+  };
 }
