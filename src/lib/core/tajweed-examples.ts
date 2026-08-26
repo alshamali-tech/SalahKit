@@ -12,7 +12,7 @@ export interface RuleExample {
   rule: TajweedRuleId;
   /** Short display label. */
   label: string;
-  /** Full ayah text (Uthmani) for engine annotation + rendering. */
+  /** Ayah text (Uthmani) for engine annotation + rendering. */
   ayah: string;
   /** Surah number (for audio). */
   surah: number;
@@ -24,11 +24,6 @@ export interface RuleExample {
 
 /** One example per rule — the verification suite the UI displays. */
 export const RULE_EXAMPLES: readonly RuleExample[] = [
-  {
-    rule: 'ghunna', label: 'Ghunna — shaddah hum', surah: 108, ayahNum: 1,
-    ayah: 'إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ',
-    why: 'The shaddah on the noon of إِنَّا means two noons merged — hold the nasal hum for two counts.',
-  },
   {
     rule: 'izhaar', label: 'Izhaar — clear noon', surah: 106, ayahNum: 4,
     ayah: 'الَّذِي أَطْعَمَهُم مِّن جُوعٍ وَآمَنَهُم مِّنْ خَوْفٍ',
@@ -42,42 +37,87 @@ export const RULE_EXAMPLES: readonly RuleExample[] = [
   {
     rule: 'idghaam-ghunna', label: 'Idghaam with hum', surah: 2, ayahNum: 8,
     ayah: 'وَمِنَ النَّاسِ مَن يَقُولُ آمَنَّا بِاللَّهِ وَبِالْيَوْمِ الْآخِرِ وَمَا هُم بِمُؤْمِنِينَ',
-    why: 'The bare noon of مَن (Uthmani writes no sukun here — the bare noon IS saakin) flows into the ي of يَقُولُ across the word boundary, humming as it merges.',
+    why: 'The bare noon of مَن (Uthmani writes no sukun — the bare noon IS saakin) flows into the ي of يَقُولُ across the word boundary, humming as it merges.',
   },
   {
     rule: 'idghaam-bila-ghunna', label: 'Idghaam, clean', surah: 2, ayahNum: 2,
     ayah: 'ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًى لِّلْمُتَّقِينَ',
-    why: 'The tanween of هُدًى merges into the ل with no hum. Note the tanween targets the first letter of the NEXT word — not the written ى of هُدًى. The paired ۛ are mu’anaqah: stop at one, never both.',
+    why: 'The tanween of هُدًى merges into the ل with no hum. Note the tanween targets the first letter of the NEXT word — not the written ى. The paired ۛ are mu’anaqah: stop at one, never both.',
   },
   {
     rule: 'iqlaab', label: 'Iqlaab — noon flips to meem', surah: 2, ayahNum: 181,
     ayah: 'فَمَن بَدَّلَهُ بَعْدَمَا سَمِعَهُ فَإِنَّمَا إِثْمُهُ عَلَى الَّذِينَ يُبَدِّلُونَهُ ۗ إِنَّ اللَّهَ سَمِيعٌ عَلِيمٌ',
-    why: 'The bare noon of فَمَن meets ب — it flips into a hidden meem with ghunna (fam-м-baddalahu). The ayah ends with سَمِيعٌ عَلِيمٌ: tanween before ع, a throat letter, read clear (izhaar).',
+    why: 'The bare noon of فَمَن meets ب — it flips into a hidden meem with ghunna. The ayah ends سَمِيعٌ عَلِيمٌ: tanween before the throat letter ع, read clear (izhaar).',
   },
   {
-    rule: 'meem-idgham', label: 'Idghaam shafawi', surah: 105, ayahNum: 5,
-    ayah: 'فَجَعَلَهُمْ كَعَصْفٍ مَّأْكُولٍ',
-    why: 'The saakin meem of كَعَصْفٍ melts into the meem of مَّأْكُولٍ on the lips, with a two-count ghunna.',
+    rule: 'ghunna', label: 'Ghunna — shaddah hum', surah: 108, ayahNum: 1,
+    ayah: 'إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ',
+    why: 'The shaddah on the noon of إِنَّا means two noons merged — hold the nasal hum for two full counts.',
+  },
+  {
+    rule: 'meem-idgham', label: 'Idghaam shafawi', surah: 2, ayahNum: 10,
+    ayah: 'فِي قُلُوبِهِمْ مَّرَضٌ فَزَادَهُمُ اللَّهُ مَرَضًا',
+    why: 'The saakin meem of قُلُوبِهِمْ melts into the meem of مَّرَضٌ on the lips, with a two-count ghunna. (Note: كَعَصْفٍ مَّأْكُولٍ is a tanween before meem — that is idghaam with ghunna, not shafawi.)',
   },
   {
     rule: 'meem-ikhfaa', label: 'Ikhfaa shafawi', surah: 105, ayahNum: 4,
     ayah: 'تَرْمِيهِم بِحِجَارَةٍ مِّن سِجِّيلٍ',
-    why: 'The saakin meem of تَرْمِيهِم hides on the lips before ب, lightly humming. (The م of plural pronouns like عَلَيْهِمْ is voweled in flow and is NOT a meem sakinah.)',
+    why: 'The saakin meem of تَرْمِيهِم hides on the lips before ب, lightly humming. (A plural-pronoun meem like عَلَيْهِمْ is voweled in flow — not a meem sakinah.)',
   },
   {
-    rule: 'qalqalah', label: 'Qalqalah — the bounce', surah: 113, ayahNum: 1,
-    ayah: 'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ',
-    why: 'قُ لْ — the ساكن ق bounces lightly mid-word (sughra); at the stop of الْفَلَقِ the final ق bounces strongly (kubra).',
+    rule: 'qalqalah', label: 'Qalqalah sughra — light bounce', surah: 9, ayahNum: 121,
+    ayah: 'وَلَا يَقْطَعُونَ وَادِيًا إِلَّا كُتِبَ لَهُمْ',
+    why: 'The ق of يَقْطَعُونَ is saakin in the middle of the word, so it bounces lightly (sughra) — a quick echo, not a full stop.',
   },
   {
-    rule: 'madd', label: 'Natural madd — 2 counts', surah: 1, ayahNum: 2,
+    rule: 'qalqalah-kubra', label: 'Qalqalah kubra — strong bounce', surah: 23, ayahNum: 1,
+    ayah: 'قَدْ أَفْلَحَ الْمُؤْمِنُونَ',
+    why: 'The د of قَدْ is saakin at the end of its word. When you pause there it bounces strongly (kubra); mid-flow it is the lighter sughra.',
+  },
+  {
+    rule: 'lam-shamsi', label: 'Lam shamsiyyah — assimilated', surah: 91, ayahNum: 1,
+    ayah: 'وَالشَّمْسِ وَضُحَاهَا',
+    why: 'The article lam before ش (a sun letter) is not pronounced — it dissolves into the shaddah on the ش. You say “wash-shamsi”, not “wal-shamsi”.',
+  },
+  {
+    rule: 'lam-qamari', label: 'Lam qamariyyah — clear lam', surah: 91, ayahNum: 2,
+    ayah: 'وَالْقَمَرِ إِذَا تَلَاهَا',
+    why: 'The article lam before ق (a moon letter) is pronounced clearly — “wal-qamari”. The lam keeps its own sound.',
+  },
+  {
+    rule: 'ra-tafkhim', label: 'Ra tafkhim — heavy ra', surah: 1, ayahNum: 1,
+    ayah: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+    why: 'The ر of الرَّحْمَٰنِ carries a fatha, so it is pronounced heavy, with the back of the mouth raised (tafkhim).',
+  },
+  {
+    rule: 'ra-tarqeeq', label: 'Ra tarqeeq — light ra', surah: 1, ayahNum: 2,
+    ayah: 'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
+    why: 'The ر of رَبِّ carries a kasra, so it thins out and is pronounced light (tarqeeq).',
+  },
+  {
+    rule: 'madd', label: 'Madd tabee’i — 2 counts', surah: 1, ayahNum: 2,
     ayah: 'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
     why: 'The alif of الْعَا and the ya of ـمِينَ each follow their matching vowel: a calm two-count stretch, the baseline of all elongation.',
   },
   {
-    rule: 'madd-caused', label: 'Caused madd — 4–6 counts', surah: 1, ayahNum: 7,
+    rule: 'madd-badal', label: 'Madd badal — after a hamza', surah: 2, ayahNum: 136,
+    ayah: 'وَمَا أُوتِيَ النَّبِيُّونَ مِن رَّبِّهِمْ',
+    why: 'The hamza of أُوتِيَ is immediately followed by the saakin و — a madd badal, stretched two counts. The hamza “replaced” an original madd letter.',
+  },
+  {
+    rule: 'madd-wajib', label: 'Madd wajib muttasil — 4–5 counts', surah: 110, ayahNum: 1,
+    ayah: 'إِذَا جَاءَ نَصْرُ اللَّهِ وَالْفَتْحُ',
+    why: 'In جَاءَ the madd letter and the hamzah sit in the SAME word, so the stretch is obligatory — four or five counts, never two.',
+  },
+  {
+    rule: 'madd-jaiz', label: 'Madd jaiz munfasil — 2–5 counts', surah: 2, ayahNum: 21,
+    ayah: 'يَا أَيُّهَا النَّاسُ اعْبُدُوا رَبَّكُمُ',
+    why: 'The alif ending يَا is followed by a new word (أَيُّهَا) beginning with hamza. The stretch crosses the word boundary — permitted from two up to five counts.',
+  },
+  {
+    rule: 'madd-lazim', label: 'Madd lazim — 6 counts', surah: 1, ayahNum: 7,
     ayah: 'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
-    why: 'In الضَّالِّينَ a shaddah sits right after the madd letter — madd lazim, stretched six counts. جَاءَ (110:1) is the same family: the hamzah in the word forces 4–5 counts.',
+    why: 'In الضَّالِّينَ a shaddah follows the madd letter inside one word — the longest, compulsory stretch: a full six counts.',
   },
   {
     rule: 'waqf', label: 'Waqf — stopping signs', surah: 2, ayahNum: 2,
@@ -86,12 +126,14 @@ export const RULE_EXAMPLES: readonly RuleExample[] = [
   },
 ];
 
-/** Short preset list for the Live Lab. */
+/** Short preset list for the Live Lab (rule + real text). */
 export const LAB_PRESETS: readonly { label: string; rule: TajweedRuleId; ayah: string }[] = [
-  { label: '2:25 — ikhfaa in مِن تَحْتِهَا', rule: 'ikhfaa', ayah: RULE_EXAMPLES[2].ayah },
-  { label: '106:4 — izhaar, shafawi & ikhfaa', rule: 'izhaar', ayah: RULE_EXAMPLES[1].ayah },
-  { label: '2:2 — idghaam + waqf pair', rule: 'idghaam-bila-ghunna', ayah: RULE_EXAMPLES[4].ayah },
-  { label: '2:8 — bare noon idghaam', rule: 'idghaam-ghunna', ayah: RULE_EXAMPLES[3].ayah },
-  { label: '1:7 — six-count madd', rule: 'madd-caused', ayah: RULE_EXAMPLES[10].ayah },
-  { label: '113:1 — qalqalah bounce', rule: 'qalqalah', ayah: RULE_EXAMPLES[8].ayah },
+  { label: '2:25 — ikhfaa in مِن تَحْتِهَا', rule: 'ikhfaa', ayah: RULE_EXAMPLES[1].ayah },
+  { label: '91:1 — lam shamsiyyah (sun)', rule: 'lam-shamsi', ayah: RULE_EXAMPLES[10].ayah },
+  { label: '91:2 — lam qamariyyah (moon)', rule: 'lam-qamari', ayah: RULE_EXAMPLES[11].ayah },
+  { label: '1:1 — heavy ra (tafkhim)', rule: 'ra-tafkhim', ayah: RULE_EXAMPLES[12].ayah },
+  { label: '110:1 — wajib madd in جَاءَ', rule: 'madd-wajib', ayah: RULE_EXAMPLES[16].ayah },
+  { label: '1:7 — six-count lazim madd', rule: 'madd-lazim', ayah: RULE_EXAMPLES[18].ayah },
+  { label: '2:2 — idghaam + waqf pair', rule: 'idghaam-bila-ghunna', ayah: RULE_EXAMPLES[3].ayah },
+  { label: '23:1 — qalqalah kubra on قَدْ', rule: 'qalqalah-kubra', ayah: RULE_EXAMPLES[9].ayah },
 ];

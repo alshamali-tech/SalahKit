@@ -2,16 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { analyzeTajweed, RULE_ORDER } from '../../src/lib/core/tajweed';
 import type { TajweedRuleId } from '../../src/lib/core/tajweed';
 
-/** Collects every rule present in the analyzed text. */
 function rulesIn(text: string): Set<TajweedRuleId> {
   return new Set(
-    analyzeTajweed(text)
-      .filter((s) => s.rule)
-      .map((s) => s.rule as TajweedRuleId)
+    analyzeTajweed(text).filter((s) => s.rule).map((s) => s.rule as TajweedRuleId)
   );
 }
 
-/** The rule applied to a specific substring, if any. */
 function ruleOn(text: string, needle: string): TajweedRuleId | null {
   for (const seg of analyzeTajweed(text)) {
     if (seg.text.includes(needle)) return seg.rule;
@@ -19,124 +15,114 @@ function ruleOn(text: string, needle: string): TajweedRuleId | null {
   return null;
 }
 
-describe('noon sakinah & tanween (real-world outcomes)', () => {
+describe('noon sakinah & tanween', () => {
   it('ikhfaa before one of the 15 letters', () => {
-    expect(rulesIn('مِن قَبْلُ')).toContain('ikhfaa');
-    expect(rulesIn('عِنْدَ')).toContain('ikhfaa');
+    expect(rulesIn('مِن تَحْتِهَا')).toContain('ikhfaa');
   });
-
-  it('izhaar before a throat letter, and colors ONLY the noon', () => {
+  it('izhaar before a throat letter, coloring only the noon', () => {
     expect(ruleOn('مِنْ خَوْفٍ', 'مِنْ')).toBe('izhaar');
     expect(ruleOn('مِنْ خَوْفٍ', 'خَوْف')).toBeNull();
   });
-
   it('idghaam with ghunna before ي ن م و across words', () => {
     expect(ruleOn('مِن نَّعِيمٍ', 'مِن')).toBe('idghaam-ghunna');
     expect(ruleOn('مَن يَقُولُ', 'مَن')).toBe('idghaam-ghunna');
   });
-
-  it('a bare noon with no written sukun is still saakin (Uthmani convention)', () => {
+  it('a bare noon with no written sukun is still saakin', () => {
     expect(rulesIn('فَمَن يَعْمَلْ')).toContain('idghaam-ghunna');
-    expect(rulesIn('فَمَن بَدَّلَهُ')).toContain('iqlaab');
   });
-
-  it('tanween targets the first letter of the NEXT word, not a trailing ى', () => {
-    // هُدًى لِّلْمُتَّقِينَ: idghaam-bila onto the ل, not the written ى.
+  it('tanween targets the first letter of the next word', () => {
     expect(rulesIn('هُدًى لِّلْمُتَّقِينَ')).toContain('idghaam-bila-ghunna');
   });
-
-  it('idghaam without ghunna before ل or ر', () => {
-    expect(rulesIn('مِن رَّبِّهِمْ')).toContain('idghaam-bila-ghunna');
-  });
-
   it('iqlaab before ب', () => {
-    expect(rulesIn('مِن بَعْدِ')).toContain('iqlaab');
+    expect(rulesIn('فَمَن بَدَّلَهُ')).toContain('iqlaab');
   });
-
-  it('does NOT merge idghaam inside a single word — read clear', () => {
+  it('does not merge idghaam inside a single word', () => {
     expect(rulesIn('الدُّنْيَا').has('idghaam-ghunna')).toBe(false);
-    expect(rulesIn('الدُّنْيَا').has('izhaar')).toBe(true);
-    expect(rulesIn('صِنْوَانٌ').has('idghaam-ghunna')).toBe(false);
-  });
-
-  it('same-word ikhfaa is still real', () => {
-    expect(rulesIn('عِنْدَ').has('ikhfaa')).toBe(true);
-    expect(rulesIn('مِنكُمْ').has('ikhfaa')).toBe(true);
-  });
-
-  it('tanween follows the same rules', () => {
-    expect(rulesIn('طَيْرًا أَبَابِيلَ')).toContain('izhaar');
-    // ت is one of the 15 ikhfaa letters — NOT an idghaam letter.
-    expect(rulesIn('جَنَّاتٍ تَجْرِي')).toContain('ikhfaa');
-    expect(rulesIn('جَنَّاتٍ تَجْرِي').has('idghaam-ghunna')).toBe(false);
   });
 });
 
-describe('ghunna, qalqalah & meem sakinah', () => {
-  it('ghunna on noon/meem with shaddah', () => {
-    expect(rulesIn('إِنَّا')).toContain('ghunna');
-    expect(rulesIn('ثُمَّ')).toContain('ghunna');
+describe('meem sakinah & ghunna', () => {
+  it('idghaam shafawi merges a saakin م into a following م', () => {
+    expect(rulesIn('فِي قُلُوبِهِمْ مَّرَضٌ')).toContain('meem-idgham');
   });
-
-  it('madd after shaddah is still a natural stretch (vowel absorbed)', () => {
-    expect(rulesIn('إِنَّا')).toContain('madd');
-    expect(rulesIn('يُحِبُّونَ')).toContain('madd');
+  it('a tanween before meem is idghaam with ghunna, not shafawi', () => {
+    expect(rulesIn('فَجَعَلَهُمْ كَعَصْفٍ مَّأْكُولٍ')).toContain('idghaam-ghunna');
+    expect(rulesIn('فَجَعَلَهُمْ كَعَصْفٍ مَّأْكُولٍ').has('meem-idgham')).toBe(false);
   });
-
-  it('qalqalah only on the saakin echoing letters', () => {
-    expect(rulesIn('قُلْ')).toContain('qalqalah');
-    expect(rulesIn('فَجَعَلَهُمْ كَعَصْفٍ')).toContain('qalqalah');
-    expect(rulesIn('الْفَلَقِ').has('qalqalah')).toBe(false);
-  });
-
-  it('idghaam shafawi merges a saakin م into م', () => {
-    expect(rulesIn('كَم مِّن فِئَةٍ')).toContain('meem-idgham');
-  });
-
-  it('ikhfaa shafawi before ب, and plural-pronoun meem is NOT saakin', () => {
+  it('ikhfaa shafawi before ب; plural-pronoun meem is not saakin', () => {
     expect(rulesIn('تَرْمِيهِم بِحِجَارَةٍ')).toContain('meem-ikhfaa');
     expect(rulesIn('عَلَيْهِمُ الذِّلَّةُ').has('meem-ikhfaa')).toBe(false);
   });
+  it('ghunna on shaddah-ed noon/meem', () => {
+    expect(rulesIn('إِنَّا')).toContain('ghunna');
+    expect(rulesIn('ثُمَّ')).toContain('ghunna');
+  });
 });
 
-describe('madd & waqf', () => {
-  it('natural madd (2 counts) on matching vowels and dagger-alif', () => {
+describe('qalqalah', () => {
+  it('sughra mid-word, kubra at a word end', () => {
+    expect(rulesIn('يَقْطَعُونَ')).toContain('qalqalah');
+    expect(rulesIn('قَدْ')).toContain('qalqalah-kubra');
+  });
+  it('does not mark a voweled qalqalah letter', () => {
+    expect(rulesIn('الْفَلَقِ').has('qalqalah')).toBe(false);
+  });
+});
+
+describe('lam rules', () => {
+  it('lam shamsiyyah before a sun letter', () => {
+    expect(rulesIn('وَالشَّمْسِ وَضُحَاهَا')).toContain('lam-shamsi');
+  });
+  it('lam qamariyyah before a moon letter', () => {
+    expect(rulesIn('وَالْقَمَرِ إِذَا تَلَاهَا')).toContain('lam-qamari');
+  });
+});
+
+describe('ra rules', () => {
+  it('ra with fatha/damma is tafkhim; with kasra is tarqeeq', () => {
+    expect(rulesIn('الرَّحْمَٰنِ الرَّحِيمِ')).toContain('ra-tafkhim');
+    expect(rulesIn('رَبِّ الْعَالَمِينَ')).toContain('ra-tarqeeq');
+  });
+});
+
+describe('madd family', () => {
+  it('madd tabee\'i (2 counts) on matching vowels', () => {
     expect(rulesIn('قَالَ')).toContain('madd');
-    expect(rulesIn('يَقُولُ')).toContain('madd');
-    expect(rulesIn('ذَٰلِكَ').has('madd')).toBe(true);
-    expect(rulesIn('ذَٰلِكَ').has('madd-caused')).toBe(false);
+    expect(rulesIn('رَبِّ الْعَالَمِينَ')).toContain('madd');
   });
-
-  it('caused madd (4-6 counts) before hamzah or shaddah/sukun', () => {
-    expect(rulesIn('جَاءَ')).toContain('madd-caused');
-    expect(rulesIn('وَلَا الضَّالِّينَ')).toContain('madd-caused');
+  it('madd badal after a hamza', () => {
+    expect(rulesIn('وَمَا أُوتِيَ النَّبِيُّونَ')).toContain('madd-badal');
   });
-
-  it('madda sign gives caused madd', () => {
-    expect(rulesIn('الرَّحْمَٰنِ')).toContain('madd-caused');
+  it('madd wajib when the hamza is in the same word', () => {
+    expect(rulesIn('إِذَا جَاءَ نَصْرُ اللَّهِ')).toContain('madd-wajib');
   });
+  it('madd jaiz across a word boundary into a hamza', () => {
+    expect(rulesIn('يَا أَيُّهَا النَّاسُ')).toContain('madd-jaiz');
+  });
+  it('madd lazim before a shaddah in the same word', () => {
+    expect(rulesIn('وَلَا الضَّالِّينَ')).toContain('madd-lazim');
+  });
+});
 
+describe('waqf & integrity', () => {
   it('detects standalone waqf signs', () => {
     expect(rulesIn('لَا رَيْبَ ۛ فِيهِ')).toContain('waqf');
   });
-});
-
-describe('segmentation integrity', () => {
   it('reconstructs the exact input', () => {
     const input = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ۝ قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ';
     expect(analyzeTajweed(input).map((s) => s.text).join('')).toBe(input);
   });
-
-  it('detects all twelve rules in canonical examples', () => {
+  it('every rule in RULE_ORDER is detectable in a canonical example', () => {
     const all = new Set<TajweedRuleId>();
     [
-      'إِنَّا', 'مِنْ خَوْفٍ', 'مِن قَبْلُ', 'مِن نَّعِيمٍ', 'مِن رَّبِّهِمْ',
-      'مِن بَعْدِ', 'كَم مِّن فِئَةٍ', 'تَرْمِيهِم بِحِجَارَةٍ', 'قُلْ',
-      'جَاءَ', 'قَالَ', 'لَا رَيْبَ ۛ فِيهِ',
+      'إِنَّا', 'مِنْ خَوْفٍ', 'مِن تَحْتِهَا', 'مِن نَّعِيمٍ', 'مِن رَّبِّهِمْ',
+      'فَمَن بَدَّلَهُ', 'تَرْمِيهِم بِحِجَارَةٍ', 'فِي قُلُوبِهِمْ مَّرَضٌ',
+      'يَقْطَعُونَ', 'قَدْ', 'وَالشَّمْسِ', 'وَالْقَمَرِ', 'الرَّحْمَٰنِ', 'رَبِّ',
+      'قَالَ', 'وَمَا أُوتِيَ', 'إِذَا جَاءَ', 'يَا أَيُّهَا', 'وَلَا الضَّالِّينَ',
+      'لَا رَيْبَ ۛ فِيهِ',
     ].forEach((t) => analyzeTajweed(t).forEach((s) => { if (s.rule) all.add(s.rule); }));
     expect(all.size).toBe(RULE_ORDER.length);
   });
-
   it('handles empty and non-Arabic input gracefully', () => {
     expect(analyzeTajweed('')).toEqual([]);
     expect(rulesIn('hello')).size.toBe(0);

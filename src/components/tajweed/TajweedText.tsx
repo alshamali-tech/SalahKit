@@ -14,10 +14,12 @@ export interface TajweedTextProps {
 }
 
 /**
- * Renders Arabic text with live tajweed coloring, exactly like a
- * color-coded mushaf: articulation rules recolour the GLYPHS themselves
- * (never boxes or bold — those break Arabic letter-joining), while madd
- * and waqf get a soft underline. Hovering names the rule.
+ * Renders Arabic with live tajweed colouring driven by the rule table.
+ * Articulation rules recolor the glyphs themselves (never bold/box, so
+ * Arabic letter-joining survives). Madd & waqf take underlines — wavy
+ * for the natural 2-harakah stretch, solid for the longer caused madds.
+ * Hovering any marked letter names the rule, its Arabic term and how
+ * many harakahs to hold it.
  * @param props - text/enabled/focus/className.
  * @returns The annotated inline element.
  */
@@ -37,31 +39,22 @@ export function TajweedText({
         if (!seg.rule) return <span key={i}>{seg.text}</span>;
         const rule = TAJWEED_RULES[seg.rule];
         const dimmed = focus !== null && focus !== seg.rule;
-        // Madd and waqf are durations/stops, so they take underlines
-        // (wavy = natural 2 counts, thick solid = caused 4–6); every
-        // articulation rule simply recolors the glyphs so Arabic
-        // letter-joining stays perfectly intact.
-        const underlined = seg.rule === 'madd' || seg.rule === 'madd-caused' || seg.rule === 'waqf';
-        const style = underlined
-          ? {
-              textDecorationLine: 'underline' as const,
-              textDecorationStyle: (seg.rule === 'madd' ? 'wavy' : 'solid') as 'wavy' | 'solid',
-              textDecorationColor: rule.color,
-              textDecorationThickness: seg.rule === 'madd-caused' ? '0.16em' : '0.1em',
-              textUnderlineOffset: '0.24em',
-              color: rule.color,
-              opacity: dimmed ? 0.25 : 1,
-            }
-          : {
-              color: rule.color,
-              opacity: dimmed ? 0.25 : 1,
-            };
+        const hold = rule.duration ? ` · hold ${rule.duration} harakah${rule.duration > 1 ? 's' : ''}` : '';
+        const isUnderline = rule.style !== 'color';
         return (
           <span
             key={i}
-            title={`${rule.label} (${rule.arabic}) — ${rule.desc}`}
+            title={`${rule.label} (${rule.arabic}) — ${rule.desc}${hold}`}
             className="transition-opacity duration-200 ease-out"
-            style={style}
+            style={{
+              color: rule.color,
+              textDecorationLine: isUnderline ? 'underline' : 'none',
+              textDecorationStyle: rule.style === 'underline-wavy' ? 'wavy' : 'solid',
+              textDecorationThickness: rule.duration && rule.duration >= 4 ? 3 : 2,
+              textDecorationColor: rule.color,
+              textUnderlineOffset: 5,
+              opacity: dimmed ? 0.18 : 1,
+            }}
           >
             {seg.text}
           </span>
