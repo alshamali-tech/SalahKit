@@ -13,13 +13,14 @@ import { getJSON, setJSON } from '../../../lib/utils/storage';
 import { STORAGE_KEYS } from '../../../lib/core/constants';
 import { TajweedText } from '../../tajweed/TajweedText';
 import { TajweedToggle } from '../../tajweed/TajweedToggle';
+import { VoiceRecall } from './VoiceRecall';
 import { Badge } from '../../ui/Badge';
 import { Button } from '../../ui/Button';
 import { Card } from '../../ui/Card';
 import { SurahPicker } from '../SurahPicker';
 import type { HifzChunkRow, HifzGrade } from '../../../types';
 
-const STEPS = ['Understand', 'Repeat ×3', 'Recall', 'Link', 'Test'] as const;
+const STEPS = ['Understand', 'Repeat ×3', 'Recite Aloud', 'Link', 'Test'] as const;
 const READS_NEEDED = 3;
 
 export interface HifzLearnProps {
@@ -330,27 +331,12 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
               ))}
             </>
           ) : step === 2 ? (
-            <>
-              <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
-                Step 3 · Recite from memory, then tap an ayah to check — {revealed.size}/{ayahs.length} checked
-              </p>
-              {ayahs.map((a) => (
-                <button
-                  key={a.ayahNum}
-                  type="button"
-                  onClick={() => setRevealed((s) => new Set(s).add(a.ayahNum))}
-                  aria-pressed={revealed.has(a.ayahNum)}
-                  className="w-full text-right rounded-lg border border-[var(--border)] bg-[var(--field)] p-3 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--primary)]"
-                >
-                  <p className={['arabic text-lg sm:text-xl text-[var(--fg)] transition-all duration-250', revealed.has(a.ayahNum) ? '' : 'blur-[7px] select-none'].join(' ')}>
-                    <TajweedText text={a.arabic} enabled={tajweedOn} />
-                  </p>
-                  <p className="mt-1 text-[11px] font-bold text-[var(--muted)]">
-                    {revealed.has(a.ayahNum) ? 'Checked ✓' : 'Recite it, then tap to check'}
-                  </p>
-                </button>
-              ))}
-            </>
+            <VoiceRecall
+              ayahs={ayahs}
+              revealed={revealed}
+              onReveal={(num) => setRevealed((s) => new Set(s).add(num))}
+              tajweedOn={tajweedOn}
+            />
           ) : step === 3 ? (
             <>
               <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">Step 4 · Link — the seam between chunks is where memory breaks</p>
