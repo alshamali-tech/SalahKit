@@ -81,7 +81,9 @@ describe('lam rules', () => {
 describe('ra rules', () => {
   it('ra with fatha/damma is tafkhim; with kasra is tarqeeq', () => {
     expect(rulesIn('الرَّحْمَٰنِ الرَّحِيمِ')).toContain('ra-tafkhim');
-    expect(rulesIn('رَبِّ الْعَالَمِينَ')).toContain('ra-tarqeeq');
+    // رَبِّ has a FATHA on the ra — that is tafkhim, not tarqeeq.
+    expect(rulesIn('رَبِّ الْعَالَمِينَ')).not.toContain('ra-tarqeeq');
+    expect(rulesIn('إِيلَافِهِمْ رِحْلَةَ الشِّتَاءِ')).toContain('ra-tarqeeq');
   });
 });
 
@@ -101,6 +103,32 @@ describe('madd family', () => {
   });
   it('madd lazim before a shaddah in the same word', () => {
     expect(rulesIn('وَلَا الضَّالِّينَ')).toContain('madd-lazim');
+    expect(rulesIn('وَمَا مِن دَابَّةٍ')).toContain('madd-lazim');
+  });
+  it('the silent article alif never takes a madd rule', () => {
+    // Only the ا of تَبَارَكَ is a madd — not the alif of اللَّهُ.
+    const counts = countByRule(analyzeTajweed('تَبَارَكَ اللَّهُ'));
+    expect(counts['madd'] ?? 0).toBe(1);
+    expect(rulesIn('الَّذِينَ').has('madd-lazim')).toBe(false);
+    expect(rulesIn('النَّاسِ').has('madd-lazim')).toBe(false);
+  });
+  it('madd does not leak across a word boundary', () => {
+    // The article alif of النَّاسِ follows a fatha from the PREVIOUS word.
+    expect(rulesIn('مِنَ النَّاسِ').has('madd')).toBe(false);
+  });
+  it('a meem sakinah written bare (no sukun) still triggers its rules', () => {
+    expect(rulesIn('تَرْمِيهِم بِحِجَارَةٍ')).toContain('meem-ikhfaa');
+  });
+  it('a voweled plural meem is not a meem sakinah', () => {
+    expect(rulesIn('عَلَيْهِمُ الذِّلَّةُ').has('meem-ikhfaa')).toBe(false);
+  });
+  it('combined alif-madda (آ) is a madd badal', () => {
+    expect(rulesIn('آمَنُوا').has('madd-badal') || rulesIn('آمَنُوا').has('madd')).toBe(true);
+    expect(rulesIn('إِيمَانٍ')).toContain('madd-badal');
+  });
+  it('the Name of Allah is not marked as an article lam', () => {
+    expect(rulesIn('قُلْ هُوَ اللَّهُ أَحَدٌ').has('lam-shamsi')).toBe(false);
+    expect(rulesIn('قُلْ هُوَ اللَّهُ أَحَدٌ').has('lam-qamari')).toBe(false);
   });
 });
 
@@ -117,7 +145,7 @@ describe('waqf & integrity', () => {
     [
       'إِنَّا', 'مِنْ خَوْفٍ', 'مِن تَحْتِهَا', 'مِن نَّعِيمٍ', 'مِن رَّبِّهِمْ',
       'فَمَن بَدَّلَهُ', 'تَرْمِيهِم بِحِجَارَةٍ', 'فِي قُلُوبِهِمْ مَّرَضٌ',
-      'يَقْطَعُونَ', 'قَدْ', 'وَالشَّمْسِ', 'وَالْقَمَرِ', 'الرَّحْمَٰنِ', 'رَبِّ',
+      'يَقْطَعُونَ', 'قَدْ', 'وَالشَّمْسِ', 'وَالْقَمَرِ', 'الرَّحْمَٰنِ', 'رِحْلَةَ الشِّتَاءِ',
       'قَالَ', 'وَمَا أُوتِيَ', 'إِذَا جَاءَ', 'يَا أَيُّهَا', 'وَلَا الضَّالِّينَ',
       'لَا رَيْبَ ۛ فِيهِ',
     ].forEach((t) => analyzeTajweed(t).forEach((s) => { if (s.rule) all.add(s.rule); }));

@@ -172,8 +172,9 @@ export function analyzeTajweed(text: string): TajweedSegment[] {
       }
     }
 
-    // Meem sakinah (not shaddah-ed).
-    if (c.base === '\u0645' && c.marks.has(SUKUN) && !c.marks.has(SHADDA)) {
+    // Meem sakinah — a written sukun OR a bare (vowel-less) meem, e.g.
+    // the final م of تَرْمِيهِم before بِحِجَارَةٍ (not shaddah-ed).
+    if (c.base === '\u0645' && (c.marks.has(SUKUN) || !hasVowel(c)) && !c.marks.has(SHADDA)) {
       const next = at(i + 1);
       if (next && isLetter(next.base)) {
         if (next.base === '\u0628') assign(c, 'meem-ikhfaa');
@@ -193,7 +194,9 @@ export function analyzeTajweed(text: string): TajweedSegment[] {
       const prev = at(i - 1);
       if (prev && ARTICLE_ALIFS.has(prev.base) && prev.wordId === c.wordId) {
         const next = at(i + 1);
-        if (next && isLetter(next.base)) {
+        // ا-ل-لّ is the Name of Allah, not an article + assimilated lam.
+        const isDivineName = next?.base === '\u0644' && next.marks.has(SHADDA);
+        if (next && isLetter(next.base) && !isDivineName) {
           if (SUN_LETTERS.has(next.base)) assign(c, 'lam-shamsi');
           else if (MOON_LETTERS.has(next.base)) assign(c, 'lam-qamari');
         }
@@ -217,21 +220,46 @@ export function analyzeTajweed(text: string): TajweedSegment[] {
       continue;
     }
 
-    // Madd family (checked lazim → wajib → badal → jaiz → tabee'i).
+    // Combined hamza-with-madda (آ) is always a madd badal.
+    if (c.base === '\u0622') {
+      assign(c, 'madd-badal');
+      continue;
+    }
+
+    // Madd family. Gate: only a *true* madd letter qualifies — one that
+    // follows its matching short vowel within the SAME word, or carries
+    // a dagger-alif/madda. The silent article alif of الَّذِي / النَّاسِ
+    // never qualifies, which removes false tabee'i/lazim on ال- words.
     if (MADD_LETTERS.has(c.base)) {
       const prev = at(i - 1);
-      const next = at(i + 1);
-      const nextSameWord = next && next.wordId === c.wordId ? next : null;
-      if (nextSameWord && (nextSameWord.marks.has(SHADDA) || (nextSameWord.marks.has(SUKUN) && !hasVowel(nextSameWord)))) {
-        assign(c, 'madd-lazim');
-      } else if (nextSameWord && HAMZA_CARRIERS.has(nextSameWord.base)) {
-        assign(c, 'madd-wajib');
-      } else if (prev && HAMZA_CARRIERS.has(prev.base) && prev.wordId === c.wordId) {
-        assign(c, 'madd-badal');
-      } else if (isWordEnd(clusters, i) && startsNextWordWithHamza(clusters, i)) {
-        assign(c, 'madd-jaiz');
-      } else if (c.marks.has(DAGGER_ALIF) || c.marks.has(MADDA) || hasMatchingVowel(c, prev)) {
-        assign(c, 'madd');
+      const prevSameWord = prev && prev.wordId === c.wordId ? prev : null;
+      // A madd letter after a hamza (آمَنُوا) qualifies too — that is
+      // exactly the madd badal case.
+      const isTrueMadd =
+        c.marks.has(DAGGER_ALIF) ||
+        c.marks.has(MADDA) ||
+        hasMatchingVowel(c, prevSameWord) ||
+        (prevSameWord !== null && HAMZA_CARRIERS.has(prevSameWord.base));
+      if (isTrueMadd) {
+        const next = at(i + 1);
+        const nextSameWord = next && next.wordId === c.wordId ? next : null;
+        if (
+          nextSameWord &&
+          (nextSameWord.marks.has(SHADDA) ||
+            (nextSameWord.marks.has(SUKUN) && !hasVowel(nextSameWord)))
+        ) {
+          // Madd lazim: shaddah (muthaqqal) or sukun (mukhaffaf) inside
+          // the same word — دَابَّةٍ, الضَّالِّينَ — a full 6 counts.
+          assign(c, 'madd-lazim');
+        } else if (nextSameWord && HAMZA_CARRIERS.has(nextSameWord.base)) {
+          assign(c, 'madd-wajib');
+        } else if (prevSameWord && HAMZA_CARRIERS.has(prevSameWord.base)) {
+          assign(c, 'madd-badal');
+        } else if (isWordEnd(clusters, i) && startsNextWordWithHamza(clusters, i)) {
+          assign(c, 'madd-jaiz');
+        } else {
+          assign(c, 'madd');
+        }
       }
       continue;
     }

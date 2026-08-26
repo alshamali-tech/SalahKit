@@ -70,9 +70,9 @@ export const RULE_EXAMPLES: readonly RuleExample[] = [
     why: 'The ق of يَقْطَعُونَ is saakin in the middle of the word, so it bounces lightly (sughra) — a quick echo, not a full stop.',
   },
   {
-    rule: 'qalqalah-kubra', label: 'Qalqalah kubra — strong bounce', surah: 23, ayahNum: 1,
-    ayah: 'قَدْ أَفْلَحَ الْمُؤْمِنُونَ',
-    why: 'The د of قَدْ is saakin at the end of its word. When you pause there it bounces strongly (kubra); mid-flow it is the lighter sughra.',
+    rule: 'qalqalah-kubra', label: 'Qalqalah kubra — strong bounce', surah: 95, ayahNum: 4,
+    ayah: 'لَقَدْ خَلَقْنَا الْإِنسَانَ فِي أَحْسَنِ تَقْوِيمٍ',
+    why: 'لَقَدْ carries both bounces: the mid-word ق is sughra (light), while the د ends its word with a written sukun — the canonical kubra position, echoed strongly when you pause.',
   },
   {
     rule: 'lam-shamsi', label: 'Lam shamsiyyah — assimilated', surah: 91, ayahNum: 1,
@@ -90,9 +90,9 @@ export const RULE_EXAMPLES: readonly RuleExample[] = [
     why: 'The ر of الرَّحْمَٰنِ carries a fatha, so it is pronounced heavy, with the back of the mouth raised (tafkhim).',
   },
   {
-    rule: 'ra-tarqeeq', label: 'Ra tarqeeq — light ra', surah: 1, ayahNum: 2,
-    ayah: 'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
-    why: 'The ر of رَبِّ carries a kasra, so it thins out and is pronounced light (tarqeeq).',
+    rule: 'ra-tarqeeq', label: 'Ra tarqeeq — light ra', surah: 106, ayahNum: 2,
+    ayah: 'إِيلَافِهِمْ رِحْلَةَ الشِّتَاءِ وَالصَّيْفِ',
+    why: 'The ر of رِحْلَةَ carries a kasra directly, so it thins out and is pronounced light (tarqeeq). Contrast it with the ف of the same word, which stays heavy.',
   },
   {
     rule: 'madd', label: 'Madd tabee’i — 2 counts', surah: 1, ayahNum: 2,
@@ -115,9 +115,9 @@ export const RULE_EXAMPLES: readonly RuleExample[] = [
     why: 'The alif ending يَا is followed by a new word (أَيُّهَا) beginning with hamza. The stretch crosses the word boundary — permitted from two up to five counts.',
   },
   {
-    rule: 'madd-lazim', label: 'Madd lazim — 6 counts', surah: 1, ayahNum: 7,
-    ayah: 'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
-    why: 'In الضَّالِّينَ a shaddah follows the madd letter inside one word — the longest, compulsory stretch: a full six counts.',
+    rule: 'madd-lazim', label: 'Madd lazim — 6 counts', surah: 6, ayahNum: 38,
+    ayah: 'وَمَا مِن دَابَّةٍ فِي الْأَرْضِ إِلَّا أُمَمٌ أَمْثَالُكُمْ',
+    why: 'In دَابَّةٍ the madd alif is followed by a shaddah-ed ب inside the same word — madd lazim muthaqqal, the longest and compulsory stretch: a full six counts. (The same rule marks الضَّالِّينَ in al-Fatiha.)',
   },
   {
     rule: 'waqf', label: 'Waqf — stopping signs', surah: 2, ayahNum: 2,
