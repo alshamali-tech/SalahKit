@@ -232,8 +232,8 @@ export const TAJWEED_RULES: Readonly<Record<TajweedRuleId, TajweedRule>> = {
   'madd-lazim': {
     label: 'Madd lāzim', arabic: 'مد لازم', category: 'madd', color: 'var(--tw-madd-lazim)',
     duration: 6, ghunnah: false, priority: 85, style: 'recolor',
-    desc: 'Obligatory 6 counts: kalimī (shaddah/sukūn in one word — دَابَّةٍ, الضَّالِّينَ) or ḥarfī (the fawātiḥ “نص حكيم له سر قاطع”; 11 stretch: ص ن ق ط ح ي ر ل م س ك, while أ هـ ع stay 2).',
-    descAr: 'المد اللازم: ست حركات — كلمي (الضَّالِّينَ) أو حرفي في فواتح السور (نص حكيم له سر قاطع)',
+    desc: 'Obligatory 6 counts. Kalimī: shaddah/sukūn after the madd in one word — الضَّالِّينَ (muthaqqal), دَابَّةٍ. Ḥarfī: fawātiḥ letters whose name is 3 letters with a madd in the middle — ص ن ق ع س ك ل م (الٓمٓ, مٓ, نٓ, صٓ). Letters spelled حا يا طا ها را take only 2 natural counts, and ا none; the engine reads the ٓ mark in the Uthmani text.',
+    descAr: 'المد اللازم: ست حركات — كلمي (الضَّالِّينَ, دَابَّةٍ) أو حرفي في فواتح السور للحروف الثلاثية الوسط: ص ن ق ع س ك ل م',
   },
   'madd-arrid': {
     label: 'Madd arid', arabic: 'مد عارض للسكون', category: 'madd', color: 'var(--tw-madd-arrid)',
@@ -262,8 +262,8 @@ export const TAJWEED_RULES: Readonly<Record<TajweedRuleId, TajweedRule>> = {
   'hamza-wasl': {
     label: 'Hamzat al-wasl', arabic: 'همزة الوصل', category: 'hamza', color: 'var(--tw-hamza-wasl)',
     duration: null, ghunnah: false, priority: 15, style: 'recolor',
-    desc: 'The small ٱ: pronounced when starting, dropped when the word flows from the previous one.',
-    descAr: 'همزة الوصل: تنطق ابتداءً وتسقط وصلاً',
+    desc: 'The small ٱ: pronounced only when starting, dropped in flow. Found in the article ال, certain nouns (اسم, ابن, امرأة), 5/6-letter past verbs and 3-letter imperatives. Its vowel when starting: kasra after a saakin, else from the word.',
+    descAr: 'همزة الوصل: تنطق ابتداءً وتسقط وصلاً — في ال التعريف وأسماء والأفعال الخماسية والسداسية وأمر الثلاثي',
   },
   waqf: {
     label: 'Waqf', arabic: 'علامات الوقف', category: 'waqf', color: 'var(--tw-waqf)',
