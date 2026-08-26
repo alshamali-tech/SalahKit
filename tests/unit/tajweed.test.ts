@@ -57,25 +57,32 @@ describe('meem sakinah', () => {
   });
 });
 
-describe('qalqalah — three ranks (Minhāj al-Dārisīn, Ch. 17)', () => {
-  it('dunyā/ṣughrā: sākin at the END of a word, no shaddah', () => {
-    expect(rulesIn('قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ')).toContain('qalqalah');
-    expect(rulesIn('قُلْ هُوَ اللَّهُ أَحَدٌ')).toContain('qalqalah');
-    expect(rulesIn('قَدْ أَفْلَحَ الْمُؤْمِنُونَ')).toContain('qalqalah');
+describe('qalqalah — three ranks by stopping place (Minhāj al-Dārisīn)', () => {
+  it('ṣughrā: sākin, NOT a stopping place — mid-word', () => {
+    expect(rulesIn('يَقْطَعُونَ')).toContain('qalqalah');
+    expect(rulesIn('شَقَقْنَا')).toContain('qalqalah');
+    expect(rulesIn('يَقْطَعُونَ').has('qalqalah-wusta')).toBe(false);
+  });
+  it('ṣughrā: word-end but CONTINUING (not موقوف عليه)', () => {
+    expect(rulesIn('قَدْ سَمِعَ اللَّهُ')).toContain('qalqalah');
+    expect(rulesIn('قَدْ سَمِعَ اللَّهُ').has('qalqalah-wusta')).toBe(false);
+  });
+  it('ṣughrā: MUSHADDAH mid-word while continuing', () => {
+    expect(rulesIn('سَبَّحَ لِلَّهِ')).toContain('qalqalah');
+    expect(rulesIn('سَبَّحَ لِلَّهِ').has('qalqalah-kubra')).toBe(false);
+  });
+  it('wusṭā: sākin, no shaddah, at a stopping place', () => {
+    expect(rulesIn('قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ')).toContain('qalqalah-wusta');
+    expect(rulesIn('لَقَدْ')).toContain('qalqalah-wusta');
     expect(rulesIn('قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ').has('qalqalah-kubra')).toBe(false);
   });
-  it('wusṭā: sākin in the MIDDLE of a word', () => {
-    expect(rulesIn('يَقْطَعُونَ')).toContain('qalqalah-wusta');
-    expect(rulesIn('يَقْطَعُونَ').has('qalqalah')).toBe(false);
-    expect(rulesIn('يَقْطَعُونَ').has('qalqalah-kubra')).toBe(false);
-  });
-  it('ʿulyā/kubrā: MUSHADDAH at the end of a word', () => {
+  it('kubrā: MUSHADDAH at a stopping place', () => {
     expect(rulesIn('تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ')).toContain('qalqalah-kubra');
     expect(rulesIn('الْحَقِّ')).toContain('qalqalah-kubra');
     expect(rulesIn('تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ').has('qalqalah-wusta')).toBe(false);
   });
   it('a voweled qalqalah letter gets no bounce', () => {
-    expect(rulesIn('أَحَدُ ثُمَّ').has('qalqalah')).toBe(false);
+    expect(rulesIn('قَدَرُ').has('qalqalah')).toBe(false);
   });
 });
 

@@ -70,19 +70,19 @@ export const RULE_EXAMPLES: readonly RuleExample[] = [
     why: 'The shaddah on the noon of إِنَّا means two noons merged — hold the nasal hum for two full counts.',
   },
   {
-    rule: 'qalqalah', label: 'Qalqalah ṣughrā (dunyā) — end of word', surah: 113, ayahNum: 1,
+    rule: 'qalqalah', label: 'Qalqalah ṣughrā — not a stopping place', surah: 58, ayahNum: 1,
+    ayah: 'قَدْ سَمِعَ اللَّهُ قَوْلَ الَّتِي تُجَادِلُكَ',
+    why: 'The د of قَدْ is sākin at a word’s end, but you CONTINUE to سَمِعَ — it is not موقوف عليه, so it is only ṣughrā. A mid-word sakin letter like the ق of شَقَقْنَا is also ṣughrā.',
+  },
+  {
+    rule: 'qalqalah-wusta', label: 'Qalqalah wusṭā — stopped on, no shaddah', surah: 113, ayahNum: 1,
     ayah: 'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ',
-    why: 'The final ق of الْفَلَقِ is sākin at the END of its word with no shaddah — the lightest rank (al-dunyā) per Minhāj al-Dārisīn. Same for أَحَدْ in al-Ikhlāṣ.',
+    why: 'You STOP on the final ق of الْفَلَقِ — a sākin letter with NO shaddah at a stopping place — so it is wusṭā. Same for لَقَدْ when stopped upon. Mid-word, as in يَقْطَعُونَ, is the lighter ṣughrā.',
   },
   {
-    rule: 'qalqalah-wusta', label: 'Qalqalah wusṭā — middle of word', surah: 9, ayahNum: 121,
-    ayah: 'وَلَا يَقْطَعُونَ وَادِيًا إِلَّا كُتِبَ لَهُمْ',
-    why: 'The ق of يَقْطَعُونَ carries a sukūn in the MIDDLE of its word — the middle rank (wusṭā). Contrast it with a word-final letter, which is the lighter dunyā.',
-  },
-  {
-    rule: 'qalqalah-kubra', label: 'Qalqalah kubrā (ʿulyā) — mushaddad', surah: 111, ayahNum: 1,
+    rule: 'qalqalah-kubra', label: 'Qalqalah kubrā — stopped on, mushaddah', surah: 111, ayahNum: 1,
     ayah: 'تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ',
-    why: 'The final ب of وَتَبَّ carries a SHADDAH at the end of its word — the highest rank (al-ʿulyā), the strongest bounce. Also الْحَجِّ.',
+    why: 'You STOP on the final بّ of وَتَبَّ — a MUSHADDAH letter at a stopping place — the clearest bounce (kubrā), for it is two merged letters. Also الْحَقُّ and الْحَجُّ.',
   },
   {
     rule: 'idgham-mutamathil', label: 'Idghaam mutamathilayn', surah: 26, ayahNum: 63,

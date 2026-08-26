@@ -280,22 +280,25 @@ function checkLetterIdgham(c: Cluster, clusters: Cluster[], i: number): boolean 
 }
 
 /**
- * Qalqalah — the three مراتب of Minhāj al-Dārisīn (Ch. 17), ranked by
- * the letter's position in its word plus shaddah:
- *   ʿulyā  (kubrā)  — mushaddad at the END of a word  (الْحَجَّ)
- *   wusṭā           — sākin in the MIDDLE of a word    (يَقْطَعُونَ)
- *   dunyā (ṣughrā)  — sākin at the END of a word       (الْفَلَقْ)
+ * Qalqalah — the three أقسام of Minhāj al-Dārisīn. The deciding factor
+ * is whether the sākin letter is a STOPPING place (موقوف عليه), per the
+ * book's own definitions and Ibn al-Jazarī's الجَزَريَّة:
+ *   «وبَيِّنَنْ مُقَلْقَلًا إن سَكَّنَا ... وإن يَكُنْ في الوَقْفِ كَانَ أَبْيَنَا»
+ *   kubrā  — MUSHADDAH and stopped upon          (وَتَبَّ، الْحَقُّ، الْحَجُّ)
+ *   wusṭā  — sākin, NO shaddah, stopped upon      (الْفَلَقِ، لَقَدْ)
+ *   ṣughrā — sākin, NOT stopped upon              (شَقَقْنَا، قَدْ سَمِعَ)
+ * A stop = the very last letter of the text, or the letter right before
+ * a waqf sign. Word-end while CONTINUING (قَدْ سَمِعَ) is ṣughrā.
  */
-function checkQalqalah(c: Cluster, clusters: Cluster[], i: number): boolean {
+function checkQalqalah(c: Cluster, clusters: Cluster[], i: number, lastIdx: number): boolean {
   if (!QALQALAH_LETTERS.has(c.base)) return false;
   const hasShadda = c.marks.has(SHADDA);
   const isSukun = c.marks.has(SUKUN) || !hasVowel(c);
   if (!hasShadda && !isSukun) return false;
   const next = clusters[i + 1];
-  const wordEnd = !next || next.wordId !== c.wordId || next.rule === 'waqf';
-  if (hasShadda && wordEnd) assign(c, 'qalqalah-kubra');
-  else if (wordEnd) assign(c, 'qalqalah');
-  else assign(c, 'qalqalah-wusta');
+  const atStop = i === lastIdx || (next !== undefined && next.rule === 'waqf');
+  if (atStop) assign(c, hasShadda ? 'qalqalah-kubra' : 'qalqalah-wusta');
+  else assign(c, 'qalqalah');
   return true;
 }
 
@@ -434,7 +437,7 @@ export function analyzeTajweed(text: string): TajweedSegment[] {
     if (checkNoon(c, clusters, i)) continue;
     if (checkMeem(c, clusters, i)) continue;
     if (checkLetterIdgham(c, clusters, i)) continue;
-    if (checkQalqalah(c, clusters, i)) continue;
+    if (checkQalqalah(c, clusters, i, lastIdx)) continue;
     if (checkLam(c, clusters, i)) continue;
     if (checkRa(c, clusters, i)) continue;
     if (checkSilah(c, clusters, i)) continue;
