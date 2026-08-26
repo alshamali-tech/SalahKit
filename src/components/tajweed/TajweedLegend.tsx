@@ -50,7 +50,7 @@ export function TajweedLegend({
       </>
     );
     const classes = [
-      'inline-flex items-center gap-1.5 rounded-full border px-2.5 h-7 text-[11px] font-bold transition-all duration-150 min-w-0',
+      'inline-flex items-center gap-1.5 rounded-full border px-3 h-9 sm:h-8 text-xs font-bold transition-all duration-150 min-w-0',
       active ? 'border-transparent text-white shadow-sm' : 'border-[var(--border)] bg-[var(--card)] text-[var(--fg)]',
       onFocus ? 'cursor-pointer hover:-translate-y-px hover:shadow-sm focus-visible:outline-2 focus-visible:outline-[var(--primary)]' : 'cursor-default',
     ].join(' ');
@@ -76,8 +76,8 @@ export function TajweedLegend({
         if (catIds.length === 0) return null;
         return (
           <div key={cat} className="flex flex-wrap items-center gap-1.5">
-            <span className="w-24 shrink-0 text-[10px] font-extrabold uppercase tracking-wider text-[var(--muted)]">
-              {RULE_CATEGORIES[cat]}
+            <span className="w-20 sm:w-24 shrink-0 text-[10px] font-extrabold uppercase tracking-wider text-[var(--muted)]">
+              {RULE_CATEGORIES.find((c) => c.id === cat)?.label ?? cat}
             </span>
             {catIds.map(renderChip)}
           </div>

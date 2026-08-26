@@ -47,7 +47,7 @@ export function TajweedAudio({ surah, from = 1, to, compact = false, label }: Ta
       className={[
         'inline-flex items-center justify-center gap-1.5 rounded-full font-bold transition-all duration-150 active:scale-90 shrink-0',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]',
-        compact ? 'h-9 w-9' : 'h-11 px-4 text-xs',
+        compact ? 'h-10 w-10' : 'h-11 px-4 text-xs',
         playing
           ? 'bg-[var(--accent)] text-[#3b2305] shadow-md shadow-amber-900/25'
           : 'bg-[color-mix(in_srgb,var(--accent)_14%,transparent)] text-[var(--accent-strong)] hover:bg-[var(--accent)] hover:text-[#3b2305]',

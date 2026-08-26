@@ -232,7 +232,7 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
         <p className="text-sm font-extrabold text-[var(--fg)]">
           {info.num}. {info.name} · ayahs {range.start}–{range.end}
         </p>
-        <div className="flex items-center gap-1.5">
+        <div className="flex flex-wrap items-center justify-end gap-1.5">
           <Button
             variant="amber"
             size="sm"
@@ -248,6 +248,9 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
           <TajweedToggle on={tajweedOn} onChange={toggleTajweed} />
           <Button variant="ghost" size="sm" onClick={() => setRange(null)}>← All chunks</Button>
         </div>
+        <p className="w-full sm:hidden text-[11px] text-[var(--muted)] -mt-1">
+          Session controls wrap on small screens — Listen, تجويد and Back stay one tap away.
+        </p>
       </div>
 
       <ol className="flex items-center gap-1 sm:gap-2" aria-label="Memorization steps">
@@ -283,7 +286,7 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
               <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]">Step 1 · Understand before you memorize</p>
               {ayahs.map((a) => (
                 <div key={a.ayahNum} className="rounded-lg border border-[var(--border)] bg-[var(--field)] p-3">
-                  <p className="arabic text-xl text-[var(--fg)] text-right">
+                  <p className="arabic text-lg sm:text-xl text-[var(--fg)] text-right">
                     <TajweedText text={a.arabic} enabled={tajweedOn} />
                   </p>
                   <p className="mt-1.5 text-sm text-[var(--muted)] leading-relaxed">{a.en}</p>
@@ -308,7 +311,7 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
                       : 'border-[var(--border)] bg-[var(--field)] hover:border-[var(--primary)]',
                   ].join(' ')}
                 >
-                  <p className="arabic text-xl text-[var(--fg)]">
+                  <p className="arabic text-lg sm:text-xl text-[var(--fg)]">
                     <TajweedText text={a.arabic} enabled={tajweedOn} />
                   </p>
                   <span className="mt-1.5 inline-flex items-center gap-1" aria-label={`${reads[i]} of ${READS_NEEDED} reads`}>
@@ -339,7 +342,7 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
                   aria-pressed={revealed.has(a.ayahNum)}
                   className="w-full text-right rounded-lg border border-[var(--border)] bg-[var(--field)] p-3 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--primary)]"
                 >
-                  <p className={['arabic text-xl text-[var(--fg)] transition-all duration-250', revealed.has(a.ayahNum) ? '' : 'blur-[7px] select-none'].join(' ')}>
+                  <p className={['arabic text-lg sm:text-xl text-[var(--fg)] transition-all duration-250', revealed.has(a.ayahNum) ? '' : 'blur-[7px] select-none'].join(' ')}>
                     <TajweedText text={a.arabic} enabled={tajweedOn} />
                   </p>
                   <p className="mt-1 text-[11px] font-bold text-[var(--muted)]">
@@ -385,7 +388,7 @@ export function HifzLearn({ initialSurah, onGraded }: HifzLearnProps): JSX.Eleme
               </div>
               <div className={['rounded-lg border border-[var(--border)] bg-[var(--field)] p-4 transition-all duration-300', showAll ? '' : 'blur-[9px] select-none'].join(' ')}>
                 {ayahs.map((a) => (
-                  <p key={a.ayahNum} className="arabic text-xl text-[var(--fg)] text-right leading-loose">
+                  <p key={a.ayahNum} className="arabic text-lg sm:text-xl text-[var(--fg)] text-right leading-loose">
                     <TajweedText text={a.arabic} enabled={tajweedOn} />{' '}
                     <span className="text-[var(--accent-strong)]">﴿{a.ayahNum}﴾</span>
                   </p>

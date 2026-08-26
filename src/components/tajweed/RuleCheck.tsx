@@ -67,7 +67,7 @@ export function RuleCheck(): JSX.Element {
                 </span>
               </div>
 
-              <p className="arabic mt-3 text-xl sm:text-[1.35rem] leading-[2.15] text-[var(--fg)] text-right">
+              <p className="arabic mt-3 text-lg sm:text-xl lg:text-[1.35rem] leading-[2.15] text-[var(--fg)] text-right">
                 <TajweedText text={ex.ayah} focus={ex.rule} />
               </p>
 

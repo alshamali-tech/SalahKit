@@ -69,7 +69,7 @@ export function DonationToast(): JSX.Element | null {
   const kofi = DONATION_LINKS.find((l) => l.primary) ?? DONATION_LINKS[0];
 
   return (
-    <div aria-live="polite" className="fixed bottom-4 left-4 z-[55] w-[calc(100%-2rem)] max-w-sm pointer-events-none">
+    <div aria-live="polite" className="fixed bottom-24 sm:bottom-4 left-4 z-[55] w-[calc(100%-2rem)] max-w-sm pointer-events-none">
       <div
         role="status"
         className="pointer-events-auto rounded-xl border border-[color-mix(in_srgb,var(--accent)_45%,var(--border))] border-l-4 border-l-[var(--accent)] bg-[var(--card)] shadow-2xl p-4 animate-[slideIn_240ms_ease-out]"

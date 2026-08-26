@@ -37,7 +37,7 @@ export function ToastHost(): JSX.Element {
     <div
       aria-live="polite"
       aria-label="Notifications"
-      className="fixed bottom-4 right-4 left-4 sm:left-auto z-[60] flex flex-col gap-2 sm:w-80 pointer-events-none"
+      className="fixed bottom-24 sm:bottom-4 right-4 left-4 sm:left-auto z-[60] flex flex-col gap-2 sm:w-80 pointer-events-none"
     >
       {toasts.map((toast) => {
         const tone = TONE_STYLES[toast.tone];

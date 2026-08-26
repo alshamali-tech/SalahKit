@@ -99,6 +99,9 @@ export function NoonTree(): JSX.Element {
             );
           })}
         </svg>
+        <p className="mt-1 text-center text-[11px] font-semibold text-[var(--muted)] sm:hidden">
+          ← swipe the diagram sideways →
+        </p>
       </Card>
 
       <Card key={branch.rule} className="animate-[fadeIn_220ms_ease-out] border-l-4" style={{ borderLeftColor: rule.color }}>

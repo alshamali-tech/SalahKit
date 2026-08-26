@@ -318,7 +318,7 @@ export function QuranReader(): JSX.Element {
                       {ayah.ayahNum}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="arabic text-xl sm:text-2xl text-[var(--fg)] text-right">
+                      <p className="arabic text-lg sm:text-xl lg:text-2xl text-[var(--fg)] text-right">
                         <TajweedText text={ayah.arabic} enabled={tajweedOn} />
                       </p>
                       <p

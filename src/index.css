@@ -39,6 +39,53 @@
   color-scheme: dark;
 }
 
+/* ── Tajweed rule colours (theme-aware, ≥4.5:1 on both surfaces) ── */
+:root {
+  --tw-izhaar: #1a7f37;
+  --tw-ikhfaa: #7048a8;
+  --tw-idghaam-ghunna: #c2410c;
+  --tw-idghaam-bila-ghunna: #a16207;
+  --tw-iqlaab: #4338ca;
+  --tw-ghunna: #be185d;
+  --tw-meem-ikhfaa: #0f766e;
+  --tw-meem-idgham: #b91c1c;
+  --tw-qalqalah: #155e75;
+  --tw-qalqalah-kubra: #312e81;
+  --tw-lam-shamsi: #b45309;
+  --tw-lam-qamari: #475569;
+  --tw-ra-tafkhim: #9f1239;
+  --tw-ra-tarqeeq: #0369a1;
+  --tw-madd: #4d7c0f;
+  --tw-madd-badal: #0e7490;
+  --tw-madd-wajib: #9a3412;
+  --tw-madd-jaiz: #854d0e;
+  --tw-madd-lazim: #6b21a8;
+  --tw-waqf: #57534e;
+}
+
+[data-theme="dark"] {
+  --tw-izhaar: #4ade80;
+  --tw-ikhfaa: #c084fc;
+  --tw-idghaam-ghunna: #fb923c;
+  --tw-idghaam-bila-ghunna: #facc15;
+  --tw-iqlaab: #a5b4fc;
+  --tw-ghunna: #f472b6;
+  --tw-meem-ikhfaa: #2dd4bf;
+  --tw-meem-idgham: #f87171;
+  --tw-qalqalah: #67e8f9;
+  --tw-qalqalah-kubra: #93c5fd;
+  --tw-lam-shamsi: #fbbf24;
+  --tw-lam-qamari: #94a3b8;
+  --tw-ra-tafkhim: #fda4af;
+  --tw-ra-tarqeeq: #7dd3fc;
+  --tw-madd: #a3e635;
+  --tw-madd-badal: #22d3ee;
+  --tw-madd-wajib: #fdba74;
+  --tw-madd-jaiz: #fde047;
+  --tw-madd-lazim: #d8b4fe;
+  --tw-waqf: #a8a29e;
+}
+
 html,
 body {
   margin: 0;

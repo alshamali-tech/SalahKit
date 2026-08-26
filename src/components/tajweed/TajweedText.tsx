@@ -40,20 +40,24 @@ export function TajweedText({
         const rule = TAJWEED_RULES[seg.rule];
         const dimmed = focus !== null && focus !== seg.rule;
         const hold = rule.duration ? ` · hold ${rule.duration} harakah${rule.duration > 1 ? 's' : ''}` : '';
-        const isUnderline = rule.style !== 'color';
+        const isUnderline = rule.style !== 'recolor';
+        // Recolor rules paint the glyphs; madd/waqf keep normal ink and
+        // mark with an underline so the ayah stays fully readable.
+        // Dimmed (focus mode) text drops back to the base ink at 55%
+        // instead of near-invisible — contrast stays accessible.
         return (
           <span
             key={i}
             title={`${rule.label} (${rule.arabic}) — ${rule.desc}${hold}`}
-            className="transition-opacity duration-200 ease-out"
+            className="transition-all duration-200 ease-out"
             style={{
-              color: rule.color,
-              textDecorationLine: isUnderline ? 'underline' : 'none',
+              color: dimmed ? 'var(--fg)' : isUnderline ? 'inherit' : rule.color,
+              textDecorationLine: isUnderline && !dimmed ? 'underline' : 'none',
               textDecorationStyle: rule.style === 'underline-wavy' ? 'wavy' : 'solid',
               textDecorationThickness: rule.duration && rule.duration >= 4 ? 3 : 2,
               textDecorationColor: rule.color,
               textUnderlineOffset: 5,
-              opacity: dimmed ? 0.18 : 1,
+              opacity: dimmed ? 0.55 : 1,
             }}
           >
             {seg.text}

@@ -67,6 +67,9 @@ export function LetterMap(): JSX.Element {
             the silent noon asks: what comes next?
           </text>
         </svg>
+        <p className="mt-1 text-center text-[11px] font-semibold text-[var(--muted)] sm:hidden">
+          ← swipe the graph sideways →
+        </p>
       </Card>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
