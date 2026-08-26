@@ -293,13 +293,22 @@ function checkLetterIdgham(c: Cluster, clusters: Cluster[], i: number): boolean 
 function checkQalqalah(c: Cluster, clusters: Cluster[], i: number, lastIdx: number): boolean {
   if (!QALQALAH_LETTERS.has(c.base)) return false;
   const hasShadda = c.marks.has(SHADDA);
-  const isSukun = c.marks.has(SUKUN) || !hasVowel(c);
-  if (!hasShadda && !isSukun) return false;
   const next = clusters[i + 1];
   const atStop = i === lastIdx || (next !== undefined && next.rule === 'waqf');
-  if (atStop) assign(c, hasShadda ? 'qalqalah-kubra' : 'qalqalah-wusta');
-  else assign(c, 'qalqalah');
-  return true;
+  if (atStop) {
+    // Stopping places the letter in a TEMPORARY sukūn (ʿāriḍ) even when a
+    // short vowel is written — the qalqalah still fires: mushaddad → kubrā,
+    // otherwise → wusṭā. This is why the final قِ of الْفَلَقِ bounces.
+    assign(c, hasShadda ? 'qalqalah-kubra' : 'qalqalah-wusta');
+    return true;
+  }
+  // Not a stopping place: only an ORIGINAL sukūn (written, or a bare
+  // consonant) bounces — ṣughrā. A voweled letter mid-flow never does.
+  if (c.marks.has(SUKUN) || !hasVowel(c)) {
+    assign(c, 'qalqalah');
+    return true;
+  }
+  return false;
 }
 
 /** Lam: the Name of Allah first, then the definite article. */
@@ -429,6 +438,18 @@ export function analyzeTajweed(text: string): TajweedSegment[] {
   for (let i = 0; i < clusters.length; i += 1) {
     const c = clusters[i];
     if (!c || c.rule === 'waqf') continue;
+    // The Uthmani maddah (ٓ) is decisive: it only ever appears on the
+    // fawātiḥ letters (الٓمٓ, قٓ, نٓ, صٓ…) and means madd lāzim ḥarfī
+    // (6 counts). The dagger alif (ٰ) is a 2-count natural madd (طٰهٰ,
+    // الرَّحْمَٰنِ). Both outrank every other rule on the letter.
+    if (c.marks.has(MADDA)) {
+      assign(c, 'madd-lazim');
+      continue;
+    }
+    if (c.marks.has(DAGGER_ALIF) && !MADD_LETTERS.has(c.base)) {
+      assign(c, 'madd');
+      continue;
+    }
     if (checkGhunna(c)) continue;
     if (c.base === HAMZA_WASL) {
       assign(c, 'hamza-wasl');
