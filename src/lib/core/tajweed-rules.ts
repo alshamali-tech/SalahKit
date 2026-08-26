@@ -31,6 +31,7 @@ export type TajweedRuleId =
   | 'izhaar-shafawi'
   | 'ghunna'
   | 'qalqalah'
+  | 'qalqalah-wusta'
   | 'qalqalah-kubra'
   | 'idgham-mutamathil'
   | 'idgham-mutajanis'
@@ -133,16 +134,22 @@ export const TAJWEED_RULES: Readonly<Record<TajweedRuleId, TajweedRule>> = {
     descAr: 'غنة كاملة مقدار حركتين عند النون أو الميم المشددة',
   },
   qalqalah: {
-    label: 'Qalqalah sughra', arabic: 'قلقلة صغرى', category: 'qalqalah', color: 'var(--tw-qalqalah)',
+    label: 'Qalqalah ṣughrā', arabic: 'قلقلة صغرى', category: 'qalqalah', color: 'var(--tw-qalqalah)',
     duration: null, ghunnah: false, priority: 50, style: 'recolor',
-    desc: 'Light bounce on a saakin ق ط ب ج د when you continue reciting (mid-word or mid-ayah).',
-    descAr: 'قلقلة خفيفة عند سكون أحد حروف قطب جد مع الوصل',
+    desc: 'Weakest bounce: an ORIGINAL sukūn on ق ط ب ج د mid-word or mid-speech, as you keep reciting — قَدْ, يَقْطَعُونَ.',
+    descAr: 'أخف المراتب: سكون أصلي وسط الكلمة أو الكلام مع الوصل',
+  },
+  'qalqalah-wusta': {
+    label: 'Qalqalah wusṭā', arabic: 'قلقلة وسطى', category: 'qalqalah', color: 'var(--tw-qalqalah-wusta)',
+    duration: null, ghunnah: false, priority: 54, style: 'recolor',
+    desc: 'Medium bounce: you STOP on the letter at a word’s end WITHOUT shaddah — the stopping itself makes it sākin — الْفَلَقِ, أَحَدْ.',
+    descAr: 'مرتبة وسطى: الوقف على الحرف آخر الكلمة غير مشدد',
   },
   'qalqalah-kubra': {
-    label: 'Qalqalah kubra', arabic: 'قلقلة كبرى', category: 'qalqalah', color: 'var(--tw-qalqalah-kubra)',
+    label: 'Qalqalah kubrā', arabic: 'قلقلة كبرى', category: 'qalqalah', color: 'var(--tw-qalqalah-kubra)',
     duration: null, ghunnah: false, priority: 56, style: 'recolor',
-    desc: 'Strong bounce when you STOP on a qalqalah letter — end of ayah or at a waqf sign.',
-    descAr: 'قلقلة قوية عند الوقف على أحد حروف قطب جد',
+    desc: 'Strongest bounce: you STOP on a SHADDAH-ed qalqalah letter — shaddah and the sukūn of waqf combine — وَتَبَّ, الْحَقِّ.',
+    descAr: 'أقوى المراتب: الوقف على الحرف مشددًا لاجتماع سببين',
   },
   'idgham-mutamathil': {
     label: 'Idghaam mutamathilayn', arabic: 'إدغام متماثلين', category: 'idgham', color: 'var(--tw-idgham-mutamathil)',
@@ -270,7 +277,7 @@ export const TAJWEED_RULES: Readonly<Record<TajweedRuleId, TajweedRule>> = {
 export const RULE_ORDER: readonly TajweedRuleId[] = [
   'izhaar', 'ikhfaa', 'idghaam-ghunna', 'idghaam-bila-ghunna', 'iqlaab',
   'meem-ikhfaa', 'meem-idgham', 'izhaar-shafawi', 'ghunna',
-  'qalqalah', 'qalqalah-kubra',
+  'qalqalah', 'qalqalah-wusta', 'qalqalah-kubra',
   'idgham-mutamathil', 'idgham-mutajanis', 'idgham-mutaqarib',
   'lam-shamsi', 'lam-qamari', 'lam-allah-tafkhim', 'lam-allah-tarqeeq',
   'ra-tafkhim', 'ra-tarqeeq',

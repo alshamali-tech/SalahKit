@@ -70,14 +70,19 @@ export const RULE_EXAMPLES: readonly RuleExample[] = [
     why: 'The shaddah on the noon of إِنَّا means two noons merged — hold the nasal hum for two full counts.',
   },
   {
-    rule: 'qalqalah', label: 'Qalqalah sughra — light bounce', surah: 9, ayahNum: 121,
-    ayah: 'وَلَا يَقْطَعُونَ وَادِيًا إِلَّا كُتِبَ لَهُمْ',
-    why: 'The ق of يَقْطَعُونَ is saakin in the middle of the word and you continue reciting, so it bounces lightly (sughra) — a quick echo, not a full stop.',
+    rule: 'qalqalah', label: 'Qalqalah ṣughrā — weakest bounce', surah: 23, ayahNum: 1,
+    ayah: 'قَدْ أَفْلَحَ الْمُؤْمِنُونَ',
+    why: 'The د of قَدْ carries an ORIGINAL sukūn in the middle of speech and you keep reciting — so it gets only the light ṣughrā bounce. Same for a mid-word sukūn as in يَقْطَعُونَ.',
   },
   {
-    rule: 'qalqalah-kubra', label: 'Qalqalah kubra — strong bounce', surah: 113, ayahNum: 1,
+    rule: 'qalqalah-wusta', label: 'Qalqalah wusṭā — medium bounce', surah: 113, ayahNum: 1,
     ayah: 'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ',
-    why: 'The ق of الْفَلَقِ is the stopping place — the end of the ayah. When you stop, its vowel becomes saakin and the bounce is strong (kubra). Mid-flow, as in قُلْ or قَدْ أَفْلَحَ, it is only the light sughra.',
+    why: 'You STOP on the final ق of الْفَلَقِ — the stopping itself makes it sākin. It has no shaddah, so the bounce is the medium wusṭā (as with أَحَدْ at the end of al-Ikhlāṣ). Note قُلْ earlier in the same ayah is only ṣughrā.',
+  },
+  {
+    rule: 'qalqalah-kubra', label: 'Qalqalah kubrā — strongest bounce', surah: 111, ayahNum: 1,
+    ayah: 'تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ',
+    why: 'You stop on وَتَبَّ, whose ب carries a SHADDAH. Two causes combine — the qalqalah ṣifah plus the sukūn of stopping — giving the strongest kubrā bounce (also الْحَقِّ when stopped upon).',
   },
   {
     rule: 'idgham-mutamathil', label: 'Idghaam mutamathilayn', surah: 26, ayahNum: 63,

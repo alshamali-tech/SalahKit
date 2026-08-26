@@ -261,16 +261,24 @@ function checkLetterIdgham(c: Cluster, clusters: Cluster[], i: number): boolean 
   return true;
 }
 
-/** Qalqalah — kubra ONLY at a stopping place (end of text / waqf sign). */
+/**
+ * Qalqalah — three levels (ṣughrā / wusṭā / kubrā).
+ * A "stopping place" is the last letter of the text or a letter
+ * immediately before a waqf sign. At a stop, the letter takes a
+ * TEMPORARY sukūn: with shaddah that is kubrā (two causes combine),
+ * without shaddah it is wusṭā. Away from a stop, an ORIGINAL sukūn
+ * mid-word or mid-speech is ṣughrā.
+ */
 function checkQalqalah(c: Cluster, clusters: Cluster[], i: number, lastIdx: number): boolean {
   if (!QALQALAH_LETTERS.has(c.base)) return false;
-  if (i === lastIdx) {
-    assign(c, 'qalqalah-kubra');
+  const next = clusters[i + 1];
+  const atStop = i === lastIdx || (next !== undefined && next.rule === 'waqf');
+  if (atStop) {
+    assign(c, c.marks.has(SHADDA) ? 'qalqalah-kubra' : 'qalqalah-wusta');
     return true;
   }
-  if (c.marks.has(SUKUN) && !hasVowel(c)) {
-    const next = clusters[i + 1];
-    assign(c, next && next.rule === 'waqf' ? 'qalqalah-kubra' : 'qalqalah');
+  if (c.marks.has(SUKUN) || !hasVowel(c)) {
+    assign(c, 'qalqalah');
     return true;
   }
   return false;

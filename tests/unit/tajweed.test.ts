@@ -57,21 +57,25 @@ describe('meem sakinah', () => {
   });
 });
 
-describe('qalqalah — position aware', () => {
-  it('saakin mid-word is sughra', () => {
+describe('qalqalah — three levels', () => {
+  it('ṣughrā: original sukūn mid-word or mid-speech (weakest)', () => {
     expect(rulesIn('يَقْطَعُونَ')).toContain('qalqalah');
-    expect(rulesIn('يَقْطَعُونَ').has('qalqalah-kubra')).toBe(false);
-  });
-  it('word-end mid-ayah is still sughra when continuing', () => {
     expect(rulesIn('قَدْ أَفْلَحَ الْمُؤْمِنُونَ')).toContain('qalqalah');
+    expect(rulesIn('قَدْ أَفْلَحَ الْمُؤْمِنُونَ').has('qalqalah-wusta')).toBe(false);
     expect(rulesIn('قَدْ أَفْلَحَ الْمُؤْمِنُونَ').has('qalqalah-kubra')).toBe(false);
   });
-  it('the last letter of the text is a stopping place — kubra', () => {
-    expect(rulesIn('قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ')).toContain('qalqalah-kubra');
-    expect(rulesIn('قُلْ هُوَ اللَّهُ أَحَدٌ')).toContain('qalqalah-kubra');
+  it('wusṭā: stopping on an end letter WITHOUT shaddah (medium)', () => {
+    expect(rulesIn('قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ')).toContain('qalqalah-wusta');
+    expect(rulesIn('قُلْ هُوَ اللَّهُ أَحَدٌ')).toContain('qalqalah-wusta');
+    expect(rulesIn('قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ').has('qalqalah-kubra')).toBe(false);
   });
-  it('a saakin qalqalah letter before a waqf sign is kubra', () => {
-    expect(rulesIn('يَدْخُلُونَ ۖ إِلَّا')).toContain('qalqalah-kubra');
+  it('kubrā: stopping on a SHADDAH-ed end letter (strongest)', () => {
+    expect(rulesIn('تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ')).toContain('qalqalah-kubra');
+    expect(rulesIn('الْحَقِّ')).toContain('qalqalah-kubra');
+    expect(rulesIn('تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ').has('qalqalah-wusta')).toBe(false);
+  });
+  it('a voweled qalqalah letter mid-speech gets no bounce', () => {
+    expect(rulesIn('أَحَدُ ثُمَّ').has('qalqalah')).toBe(false);
   });
 });
 
@@ -172,12 +176,12 @@ describe('hamza & waqf & integrity', () => {
     const input = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ۝ قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ';
     expect(analyzeTajweed(input).map((s) => s.text).join('')).toBe(input);
   });
-  it('all 31 rules are detectable in canonical examples', () => {
+  it('every rule is detectable in a canonical example', () => {
     const all = new Set<TajweedRuleId>();
     [
       'مِنْ خَوْفٍ', 'مِنْ قَبْلُ', 'فَمَنْ يَعْمَلْ', 'مِنْ رَّبِّهِمْ', 'مِنْ بَعْدِ',
       'تَرْمِيهِم بِحِجَارَةٍ', 'فِي قُلُوبِهِم مَّرَضٌ', 'هُمْ نَائِمُونَ', 'إِنَّ',
-      'يَقْطَعُونَ', 'قُلْ هُوَ اللَّهُ أَحَدٌ',
+      'يَقْطَعُونَ', 'قُلْ هُوَ اللَّهُ أَحَدٌ', 'تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ',
       'أَنِ اضْرِب بِّعَصَاكَ', 'قَدْ تَّبَيَّنَ الرُّشْدُ', 'وَقُل رَّبِّ زِدْنِي عِلْمًا',
       'وَالشَّمْسِ', 'وَالْقَمَرِ', 'شَهِدَ اللَّهُ', 'بِسْمِ اللَّهِ',
       'الرَّحْمَٰنِ', 'رِحْلَةَ الشِّتَاءِ',
