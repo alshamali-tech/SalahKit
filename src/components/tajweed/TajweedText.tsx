@@ -37,12 +37,19 @@ export function TajweedText({
         if (!seg.rule) return <span key={i}>{seg.text}</span>;
         const rule = TAJWEED_RULES[seg.rule];
         const dimmed = focus !== null && focus !== seg.rule;
-        const style = rule.underline
+        // Madd and waqf are durations/stops, so they take underlines
+        // (wavy = natural 2 counts, thick solid = caused 4–6); every
+        // articulation rule simply recolors the glyphs so Arabic
+        // letter-joining stays perfectly intact.
+        const underlined = seg.rule === 'madd' || seg.rule === 'madd-caused' || seg.rule === 'waqf';
+        const style = underlined
           ? {
               textDecorationLine: 'underline' as const,
+              textDecorationStyle: (seg.rule === 'madd' ? 'wavy' : 'solid') as 'wavy' | 'solid',
               textDecorationColor: rule.color,
-              textDecorationThickness: '0.14em',
-              textUnderlineOffset: '0.22em',
+              textDecorationThickness: seg.rule === 'madd-caused' ? '0.16em' : '0.1em',
+              textUnderlineOffset: '0.24em',
+              color: rule.color,
               opacity: dimmed ? 0.25 : 1,
             }
           : {

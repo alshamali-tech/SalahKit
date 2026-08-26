@@ -9,19 +9,21 @@ import { TajweedPath } from '../tajweed/TajweedPath';
 import { NoonTree } from '../tajweed/NoonTree';
 import { LetterMap } from '../tajweed/LetterMap';
 import { TajweedLab } from '../tajweed/TajweedLab';
+import { RuleCheck } from '../tajweed/RuleCheck';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
 
-type TabId = 'path' | 'tree' | 'map' | 'lab';
+type TabId = 'path' | 'tree' | 'check' | 'map' | 'lab';
 
 const TABS: readonly { id: TabId; label: string; hint: string }[] = [
   { id: 'path', label: 'Guided Path', hint: 'Chain of mastery' },
   { id: 'tree', label: 'The Noon Tree', hint: 'One letter, five fates' },
+  { id: 'check', label: 'Real Examples', hint: 'Verified ayah by ayah' },
   { id: 'map', label: 'Letter Map', hint: 'The whole graph' },
   { id: 'lab', label: 'Live Lab', hint: 'Annotate any ayah' },
 ];
 
-const OPENING_LINE = 'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِن شَرِّ مَا خَلَقَ';
+const OPENING_LINE = 'أَنَّ لَهُمْ جَنَّاتٍ تَجْرِي مِن تَحْتِهَا الْأَنْهَارُ';
 
 /**
  * Tajweed module shell: opens on a live-annotated mushaf strip whose
@@ -71,8 +73,8 @@ export function TajweedModule(): JSX.Element {
           <div className="min-w-0 lg:w-[46%]">
             <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-inner">
               <div className="mb-2.5 flex items-center justify-between gap-2">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-[var(--primary)]">Surah al-Falaq · live</span>
-                <TajweedAudio compact surah={113} from={1} to={2} label="Listen to Surah al-Falaq, ayahs 1 to 2" />
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-[var(--primary)]">2:25 · ikhfaa live</span>
+                <TajweedAudio compact surah={2} from={25} to={25} label="Listen to the annotated ayah" />
               </div>
               <p className="arabic text-xl sm:text-2xl text-[var(--fg)] text-right leading-[2.2]" aria-label="Annotated opening ayah">
                 <TajweedText text={OPENING_LINE} focus={focus} />
@@ -134,7 +136,17 @@ export function TajweedModule(): JSX.Element {
       </p>
 
       <div key={tab} className="module-enter">
-        {tab === 'path' ? <TajweedPath /> : tab === 'tree' ? <NoonTree /> : tab === 'map' ? <LetterMap /> : <TajweedLab />}
+        {tab === 'path' ? (
+          <TajweedPath />
+        ) : tab === 'tree' ? (
+          <NoonTree />
+        ) : tab === 'check' ? (
+          <RuleCheck />
+        ) : tab === 'map' ? (
+          <LetterMap />
+        ) : (
+          <TajweedLab />
+        )}
       </div>
     </div>
   );

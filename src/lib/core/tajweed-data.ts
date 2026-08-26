@@ -60,6 +60,8 @@ export const TAJWEED_CONCEPTS: readonly TajweedConcept[] = [
       'Throat letters (ء ه ع ح غ خ) keep the noon crystal clear: izhaar.',
       'ب flips it into a hidden meem: iqlaab. ي ن م و swallow it with a hum: idghaam.',
       'ل and ر swallow it with no hum; the remaining 15 letters hide it: ikhfaa.',
+      'Idghaam only crosses a word boundary. Inside one word (الدُّنْيَا, صِنْوَانٌ) the noon stays clear — but same-word ikhfaa is real (عِنْدَ, مِنكُمْ).',
+      'In Uthmani script a noon before idghaam is often written bare, with no sukun (مَن يَقُولُ) — the bare noon still follows all four rules.',
     ],
     practice: 'مِن نَّعِيمٍ ۝ مِنْ خَوْفٍ ۝ مِن رَّبِّهِمْ ۝ مِن قَبْلُ',
     practiceHint: 'Same noon, four colors: merge, clear, merge-clean, hide.',
@@ -99,9 +101,9 @@ export const TAJWEED_CONCEPTS: readonly TajweedConcept[] = [
     id: 'madd', order: 5, title: 'Madd', arabic: 'المد', minutes: 10,
     tagline: 'Stretching the light of the vowel.',
     points: [
-      'Natural madd (ا و ي after their matching vowel) is two counts — the baseline of all stretching.',
-      'Madd wajib muttasil stretches 4–5 counts when the cause (hamzah) sits in the same word: جَاءَ.',
-      'Madd lazim stretches six counts when a sukun/shaddah follows — the longest of all.',
+      'Natural madd (ا و ي after their matching vowel) is two counts — the baseline of all stretching. The dagger-alif of ذَٰلِكَ and هَٰذَا also counts as two.',
+      'Madd wajib muttasil stretches 4–5 counts when a hamzah follows in the same word: جَاءَ، السَّمَاء.',
+      'Madd lazim stretches a full six counts when a shaddah or sukun follows: الضَّالِّينَ، الْحَاقَّة.',
       'Consistency beats length: whatever measure you choose, never shorten it mid-ayah.',
     ],
     practice: 'جَاءَ نَصْرُ اللَّهِ ۝ وَلَا الضَّالِّينَ',
@@ -133,15 +135,17 @@ export interface NoonTreeBranch {
   condition: string;
   /** Example (the engine will color it). */
   example: string;
+  /** Real ayah to hear the rule recited. */
+  audio: { surah: number; ayah: number };
 }
 
 /** The five outcomes, ordered as drawn in the tree. */
 export const NOON_TREE_BRANCHES: readonly NoonTreeBranch[] = [
-  { rule: 'izhaar', letters: ['ء', 'ه', 'ع', 'ح', 'غ', 'خ'], condition: 'a throat letter follows', example: 'مِنْ هَادٍ ۝ مِنْ خَوْفٍ' },
-  { rule: 'iqlaab', letters: ['ب'], condition: 'ب follows — the noon flips', example: 'مِنۢ بَعْدِ ۝ سَمِيعٌ بَصِيرٌ' },
-  { rule: 'idghaam-ghunna', letters: ['ي', 'ن', 'م', 'و'], condition: 'it merges with a hum', example: 'مَن يَقُولُ ۝ مِن نَّعِيمٍ' },
-  { rule: 'idghaam-bila-ghunna', letters: ['ل', 'ر'], condition: 'it merges without a hum', example: 'مِن رَّبِّهِمْ ۝ مِن لَّدُنَّا' },
-  { rule: 'ikhfaa', letters: ['ت', 'ث', 'ج', 'د', 'ذ', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ف', 'ق', 'ك'], condition: 'any of the 15 remaining letters', example: 'مِن قَبْلُ ۝ مِن تَحْتِهَا' },
+  { rule: 'izhaar', letters: ['ء', 'ه', 'ع', 'ح', 'غ', 'خ'], condition: 'a throat letter follows', example: 'مِنْ خَوْفٍ ۝ مِنْ هَادٍ', audio: { surah: 106, ayah: 4 } },
+  { rule: 'iqlaab', letters: ['ب'], condition: 'ب follows — the noon flips', example: 'فَمَن بَدَّلَهُ ۝ سَمِيعٌ بَصِيرٌ', audio: { surah: 2, ayah: 181 } },
+  { rule: 'idghaam-ghunna', letters: ['ي', 'ن', 'م', 'و'], condition: 'it merges with a hum', example: 'مَن يَقُولُ ۝ مِن نَّعِيمٍ', audio: { surah: 2, ayah: 8 } },
+  { rule: 'idghaam-bila-ghunna', letters: ['ل', 'ر'], condition: 'it merges without a hum', example: 'مِن رَّبِّهِمْ ۝ هُدًى لِّلْمُتَّقِينَ', audio: { surah: 2, ayah: 2 } },
+  { rule: 'ikhfaa', letters: ['ت', 'ث', 'ج', 'د', 'ذ', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ف', 'ق', 'ك'], condition: 'any of the 15 remaining letters', example: 'مِن تَحْتِهَا ۝ مِن قَبْلُ', audio: { surah: 2, ayah: 25 } },
 ];
 
 /** Names of the 28 letters for the knowledge graph. */

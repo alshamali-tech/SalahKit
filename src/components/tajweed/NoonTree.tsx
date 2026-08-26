@@ -3,6 +3,7 @@ import { NOON_TREE_BRANCHES } from '../../lib/core/tajweed-data';
 import { TAJWEED_RULES } from '../../lib/core/tajweed';
 import type { TajweedRuleId } from '../../lib/core/tajweed';
 import { TajweedText } from './TajweedText';
+import { TajweedAudio } from './TajweedAudio';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 
@@ -120,7 +121,15 @@ export function NoonTree(): JSX.Element {
           ))}
         </div>
         <div className="mt-4 rounded-lg border border-[var(--border)] bg-[var(--field)] p-4">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--muted)] mb-2">Example — hover the colored text</p>
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--muted)]">Example — hover the colored text</p>
+            <TajweedAudio
+              compact
+              surah={branch.audio.surah}
+              from={branch.audio.ayah}
+              label={`Hear ${rule.label} recited in surah ${branch.audio.surah}, ayah ${branch.audio.ayah}`}
+            />
+          </div>
           <p className="arabic text-2xl text-[var(--fg)] text-right">
             <TajweedText text={branch.example} focus={branch.rule} />
           </p>

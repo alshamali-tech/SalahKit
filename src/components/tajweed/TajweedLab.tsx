@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { analyzeTajweed, countByRule } from '../../lib/core/tajweed';
+import { LAB_PRESETS } from '../../lib/core/tajweed-examples';
 import type { TajweedRuleId } from '../../lib/core/tajweed';
 import { TajweedText } from './TajweedText';
 import { TajweedLegend } from './TajweedLegend';
@@ -8,10 +9,10 @@ import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 
 const DEFAULT_TEXT =
-  'أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَابِ الْفِيلِ ۝ أَلَمْ يَجْعَلْ كَيْدَهُمْ فِي تَضْلِيلٍ ۝ وَأَرْسَلَ عَلَيْهِمْ طَيْرًا أَبَابِيلَ ۝ تَرْمِيهِم بِحِجَارَةٍ مِّن سِجِّيلٍ ۝ فَجَعَلَهُمْ كَعَصْفٍ مَّأْكُولٍ';
+  'وَبَشِّرِ الَّذِينَ آمَنُوا وَعَمِلُوا الصَّالِحَاتِ أَنَّ لَهُمْ جَنَّاتٍ تَجْرِي مِن تَحْتِهَا الْأَنْهَارُ';
 
-/** The sample is Surah al-Fil — this range is what "Listen" recites. */
-const DEFAULT_AUDIO = { surah: 105, from: 1, to: 5 };
+/** The default sample is 2:25 — this range is what "Listen" recites. */
+const DEFAULT_AUDIO = { surah: 2, from: 25, to: 25 };
 
 /**
  * The Tajweed Lab: paste any ayah and watch the engine annotate it
@@ -21,7 +22,18 @@ const DEFAULT_AUDIO = { surah: 105, from: 1, to: 5 };
  */
 export function TajweedLab(): JSX.Element {
   const [text, setText] = useState(DEFAULT_TEXT);
+  const [presetIdx, setPresetIdx] = useState(0);
   const [focus, setFocus] = useState<TajweedRuleId | null>(null);
+
+  /** Loads a real-world preset ayah and focuses its featured rule. */
+  function loadPreset(idx: number): void {
+    const preset = LAB_PRESETS[idx];
+    setPresetIdx(idx);
+    if (preset) {
+      setText(preset.ayah);
+      setFocus(preset.rule);
+    }
+  }
 
   const segments = useMemo(() => analyzeTajweed(text), [text]);
   const counts = useMemo(() => countByRule(segments), [segments]);
@@ -32,11 +44,23 @@ export function TajweedLab(): JSX.Element {
       <Card>
         <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
           <label htmlFor="tajweed-lab-input" className="text-xs font-extrabold uppercase tracking-wider text-[var(--muted)]">
-            Paste any Quranic text
+            Paste any Quranic text, or pick a real example
           </label>
-          <Button variant="ghost" size="sm" onClick={() => { setText(DEFAULT_TEXT); setFocus(null); }}>
-            Reset sample
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              aria-label="Load a real-world example"
+              value={presetIdx}
+              onChange={(e) => loadPreset(Number(e.target.value))}
+              className="h-9 rounded-lg border border-[var(--border)] bg-[var(--field)] px-2 text-xs font-bold text-[var(--fg)] focus:outline-none focus:border-[var(--primary)]"
+            >
+              {LAB_PRESETS.map((p, i) => (
+                <option key={p.label} value={i}>{p.label}</option>
+              ))}
+            </select>
+            <Button variant="ghost" size="sm" onClick={() => { setText(DEFAULT_TEXT); setFocus(null); setPresetIdx(0); }}>
+              Reset
+            </Button>
+          </div>
         </div>
         <textarea
           id="tajweed-lab-input"
