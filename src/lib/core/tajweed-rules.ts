@@ -82,8 +82,8 @@ export const TAJWEED_RULES: Readonly<Record<TajweedRuleId, TajweedRule>> = {
   izhaar: {
     label: 'Izhaar', arabic: 'إظهار حلقي', category: 'noon', color: 'var(--tw-izhaar)',
     duration: null, ghunnah: false, priority: 40, style: 'recolor',
-    desc: 'Pronounce the noon/tanween crystal clear before the six throat letters ء هـ ع ح غ خ.',
-    descAr: 'إظهار النون الساكنة أو التنوين عند حروف الحلق الستة',
+    desc: 'Clear noon/tanween before the six throat letters ء هـ ع ح غ خ. Also before an idghaam letter in the SAME word (الدُّنْيَا) — called izhār muṭlaq.',
+    descAr: 'إظهار النون عند حروف الحلق، وعند حرف إدغام في كلمة واحدة (إظهار مطلق)',
   },
   ikhfaa: {
     label: 'Ikhfaa', arabic: 'إخفاء حقيقي', category: 'noon', color: 'var(--tw-ikhfaa)',
@@ -232,8 +232,8 @@ export const TAJWEED_RULES: Readonly<Record<TajweedRuleId, TajweedRule>> = {
   'madd-lazim': {
     label: 'Madd lāzim', arabic: 'مد لازم', category: 'madd', color: 'var(--tw-madd-lazim)',
     duration: 6, ghunnah: false, priority: 85, style: 'recolor',
-    desc: 'Obligatory 6 counts: kalimī (shaddah/sukūn in one word — دَابَّةٍ, الضَّالِّينَ) or ḥarfī (the ٓ-marked fawātiḥ — الٓمٓ, مٓ, نٓ).',
-    descAr: 'المد اللازم: ست حركات — كلمي (الضَّالِّينَ) أو حرفي في فواتح السور (الٓمٓ, مٓ, نٓ)',
+    desc: 'Obligatory 6 counts: kalimī (shaddah/sukūn in one word — دَابَّةٍ, الضَّالِّينَ) or ḥarfī (the fawātiḥ “نص حكيم له سر قاطع”; 11 stretch: ص ن ق ط ح ي ر ل م س ك, while أ هـ ع stay 2).',
+    descAr: 'المد اللازم: ست حركات — كلمي (الضَّالِّينَ) أو حرفي في فواتح السور (نص حكيم له سر قاطع)',
   },
   'madd-arrid': {
     label: 'Madd arid', arabic: 'مد عارض للسكون', category: 'madd', color: 'var(--tw-madd-arrid)',

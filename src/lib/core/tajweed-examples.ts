@@ -77,7 +77,7 @@ export const RULE_EXAMPLES: readonly RuleExample[] = [
   {
     rule: 'qalqalah-wusta', label: 'Qalqalah wusṭā — middle of word', surah: 9, ayahNum: 121,
     ayah: 'وَلَا يَقْطَعُونَ وَادِيًا إِلَّا كُتِبَ لَهُمْ',
-    why: 'The ط of يَقْطَعُونَ is sākin in the MIDDLE of its word — the middle rank (wusṭā). Contrast it with a word-final letter.',
+    why: 'The ق of يَقْطَعُونَ carries a sukūn in the MIDDLE of its word — the middle rank (wusṭā). Contrast it with a word-final letter, which is the lighter dunyā.',
   },
   {
     rule: 'qalqalah-kubra', label: 'Qalqalah kubrā (ʿulyā) — mushaddad', surah: 111, ayahNum: 1,
