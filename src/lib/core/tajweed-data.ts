@@ -39,6 +39,8 @@ export const TAJWEED_CONCEPTS: readonly TajweedConcept[] = [
     points: [
       'The five exits: the empty space (jawf), the throat, the tongue, the two lips and the nasal passage.',
       'Throat letters come from three depths: deep (ء ه), middle (ع ح) and upper (غ خ).',
+      'The tongue alone hosts ten positions — from ق at the base, through ك then ج ش ي in the middle, ض on the edge, ل ن ر at the tip, down to ط د ت then ص س ز and finally ظ ذ ث at the very front.',
+      'The seven isti’la letters (خ ص ض غ ط ق ظ) always lift the tongue toward the palate — that fullness is tafkhim. Every other letter defaults to light (tarqiq).',
       'Ghunna has its own home — the nasal passage — which is why it sounds “in the nose”.',
       'A wrong makhraj changes the letter; tajweed starts by placing each letter home.',
     ],

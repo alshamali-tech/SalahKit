@@ -10,16 +10,18 @@ import { NoonTree } from '../tajweed/NoonTree';
 import { LetterMap } from '../tajweed/LetterMap';
 import { TajweedLab } from '../tajweed/TajweedLab';
 import { RuleCheck } from '../tajweed/RuleCheck';
+import { SifaatExplorer } from '../tajweed/SifaatExplorer';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
 
-type TabId = 'path' | 'tree' | 'check' | 'map' | 'lab';
+type TabId = 'path' | 'tree' | 'check' | 'map' | 'sifaat' | 'lab';
 
 const TABS: readonly { id: TabId; label: string; hint: string }[] = [
   { id: 'path', label: 'Guided Path', hint: 'Chain of mastery' },
   { id: 'tree', label: 'The Noon Tree', hint: 'One letter, five fates' },
   { id: 'check', label: 'Real Examples', hint: 'Verified ayah by ayah' },
   { id: 'map', label: 'Letter Map', hint: 'The whole graph' },
+  { id: 'sifaat', label: 'Ṣifāt', hint: 'Letter characteristics' },
   { id: 'lab', label: 'Live Lab', hint: 'Annotate any ayah' },
 ];
 
