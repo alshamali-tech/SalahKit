@@ -25,7 +25,7 @@ const TABS: readonly { id: TabId; label: string; hint: string }[] = [
   { id: 'lab', label: 'Live Lab', hint: 'Annotate any ayah' },
 ];
 
-const OPENING_LINE = 'أَنَّ لَهُمْ جَنَّاتٍ تَجْرِي مِن تَحْتِهَا الْأَنْهَارُ';
+const OPENING_LINE = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
 
 /**
  * Tajweed module shell: opens on a live-annotated mushaf strip whose
@@ -75,8 +75,8 @@ export function TajweedModule(): JSX.Element {
           <div className="min-w-0 lg:w-[46%]">
             <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-inner">
               <div className="mb-2.5 flex items-center justify-between gap-2">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-[var(--primary)]">2:25 · ikhfaa live</span>
-                <TajweedAudio compact surah={2} from={25} to={25} label="Listen to the annotated ayah" />
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-[var(--primary)]">The Basmala · light lam of Allah</span>
+                <TajweedAudio compact surah={1} from={1} to={1} label="Listen to the Basmala" />
               </div>
               <p className="arabic text-xl sm:text-2xl text-[var(--fg)] text-right leading-[2.2]" aria-label="Annotated opening ayah">
                 <TajweedText text={OPENING_LINE} focus={focus} />
@@ -133,7 +133,7 @@ export function TajweedModule(): JSX.Element {
         </div>
       </div>
 
-      <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--muted)] -mb-2">
+      <p className="pt-1 text-[11px] font-bold uppercase tracking-wider text-[var(--muted)]">
         {activeTab.label} · {activeTab.hint}
       </p>
 

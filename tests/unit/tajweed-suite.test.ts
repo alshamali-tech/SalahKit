@@ -282,11 +282,11 @@ describe('GoT · golden ayah maps (regression anchors)', () => {
     ['قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ', ['lam-qamari', 'qalqalah-wusta']],
     // Ch.6 — lam of Allah heavy (fatha on و) + wusta on stopped د.
     ['قُلْ هُوَ اللَّهُ أَحَدٌ', ['lam-allah-tafkhim', 'qalqalah-wusta']],
-    // Ch.6 — the full basmala: light lam, two qamari lams, heavy ras,
-    // the dagger-alif madd of الرَّحْمَٰنِ.
+    // Ch.6 — the full basmala: light lam of Allah, two shamsi lams (ر is a
+    // sun letter), heavy ras, and the dagger-alif madd of الرَّحْمَٰنِ.
     [
       'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
-      ['lam-allah-tarqeeq', 'lam-qamari', 'ra-tafkhim', 'madd', 'lam-qamari', 'ra-tafkhim'],
+      ['lam-allah-tarqeeq', 'lam-shamsi', 'ra-tafkhim', 'madd', 'lam-shamsi', 'ra-tafkhim'],
     ],
     // Ch.4 — badal (آ) + tabee‘i (the و of ـنُوا).
     ['آمَنُوا', ['madd-badal', 'madd']],

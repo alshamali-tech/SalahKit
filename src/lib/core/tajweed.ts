@@ -148,16 +148,31 @@ function lastLetterIndex(clusters: Cluster[]): number {
 }
 
 /**
- * Finds the vowel-bearing letter that governs the lam of Allah.
- * Walks back from the lam, skipping silent article alifs, to the nearest
- * cluster carrying a short vowel. Returns null when none is found.
+ * Determines the vowel quality that governs the lam of Allah. Walks back
+ * from the name-lam over the article (ا + ل) to the deciding letter:
+ * an explicit kasra → light; fatha/damma → heavy; a bare madd letter
+ * stands for its own vowel (و/ا carry a heavy quality, ي a light one).
+ * Returns null when no deciding letter is found.
  */
-function vowelSourceBefore(clusters: Cluster[], i: number): Cluster | null {
-  for (let j = i - 1; j >= Math.max(0, i - 3); j -= 1) {
+function vowelQualityBefore(clusters: Cluster[], i: number): 'light' | 'heavy' | null {
+  for (let j = i - 1; j >= Math.max(0, i - 4); j -= 1) {
     const s = clusters[j];
     if (!s) continue;
-    if (hasVowel(s)) return s;
-    if (s.base === ALIF || s.base === HAMZA_WASL || s.base === ALEF_MADDA) continue;
+    if (hasVowel(s)) return s.marks.has(KASRA) ? 'light' : 'heavy';
+    // The article alif of الله (always immediately before the article lam).
+    const after = clusters[j + 1];
+    const isArticleAlif =
+      (s.base === ALIF || s.base === HAMZA_WASL || s.base === ALEF_MADDA) &&
+      after !== undefined &&
+      after.base === LAM &&
+      after.wordId === s.wordId;
+    if (isArticleAlif) continue;
+    // The article lam of الله.
+    if (s.base === LAM) continue;
+    // A bare madd letter (no marks) represents its vowel: و/ا → heavy, ي → light.
+    if (s.marks.size === 0 && MADD_LETTERS.has(s.base)) {
+      return s.base === YA || s.base === ALIF_MAQSURA ? 'light' : 'heavy';
+    }
     break;
   }
   return null;
@@ -316,19 +331,25 @@ function checkLam(c: Cluster, clusters: Cluster[], i: number): boolean {
   if (c.base !== LAM) return false;
   const prev = clusters[i - 1];
   const next = clusters[i + 1];
+  const nextNext = clusters[i + 2];
   if (c.marks.has(SHADDA) && next && next.base === HA) {
     // The deciding vowel sits on the letter BEFORE the article alif of
     // الله (e.g. the مِ of بِسْمِ, the دَ of شَهِدَ), or directly before
     // in لِـللَّهِ. kasra → light; fatha/damma → heavy.
-    const src = vowelSourceBefore(clusters, i);
-    if (src) {
-      if (src.marks.has(KASRA)) assign(c, 'lam-allah-tarqeeq');
-      else if (src.marks.has(FATHA) || src.marks.has(DAMMA)) assign(c, 'lam-allah-tafkhim');
-    }
+    const quality = vowelQualityBefore(clusters, i);
+    if (quality === 'light') assign(c, 'lam-allah-tarqeeq');
+    else if (quality === 'heavy') assign(c, 'lam-allah-tafkhim');
     return true;
   }
   if (prev && ARTICLE_ALIFS.has(prev.base) && prev.wordId === c.wordId) {
-    if (next && isLetter(next.base) && !isDivineNameAt(clusters, i + 1)) {
+    // The Name of Allah is ا + ل + لّ + ه. When this article lam is followed
+    // by a mushaddah lam and then ha, it belongs to the Name — the name-lam
+    // branch above carries the tafkhim/tarqeeq, so skip it here (otherwise
+    // the bare ل would be misread as a shamsiyyah article before ل).
+    const isDivineArticle =
+      next && next.base === LAM && next.marks.has(SHADDA) && nextNext && nextNext.base === HA;
+    if (isDivineArticle) return true;
+    if (next && isLetter(next.base)) {
       if (SUN_LETTERS.has(next.base)) assign(c, 'lam-shamsi');
       else if (MOON_LETTERS.has(next.base)) assign(c, 'lam-qamari');
     }
