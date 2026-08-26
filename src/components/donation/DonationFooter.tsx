@@ -1,27 +1,28 @@
-import { DONATION_LINKS, DONATION_TAGLINE } from '../../lib/donation';
+import { DONATION_LINKS } from '../../lib/donation';
+import { useT } from '../../lib/use-locale';
 
 /**
  * Landing support strip (S11): halal framing, external links only,
- * no guilt language.
+ * no guilt language. Localized via the active dictionary.
  * @returns The rendered donation footer band.
  */
 export function DonationFooter(): JSX.Element {
+  const { t } = useT();
   const primary = DONATION_LINKS.find((l) => l.primary) ?? DONATION_LINKS[0];
   const secondary = DONATION_LINKS.filter((l) => !l.primary);
 
   return (
-    <section aria-label="Support SalahKit" className="mx-auto max-w-7xl px-4 pb-16">
+    <section aria-label={t('sidebar.supportCta')} className="mx-auto max-w-7xl px-4 pb-16">
       <div className="relative overflow-hidden rounded-2xl border border-[color-mix(in_srgb,var(--accent)_40%,var(--border))] bg-[color-mix(in_srgb,var(--accent)_8%,var(--card))] px-6 py-8 sm:px-10">
         <div className="bg-pattern absolute inset-0 pointer-events-none" aria-hidden="true" />
         <div className="relative flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0 max-w-xl">
-            <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[var(--accent-strong)]">Sadaqah jariyah</p>
+            <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[var(--accent-strong)]">{t('landing.supportKicker')}</p>
             <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-[var(--fg)] sm:text-3xl">
-              Free forever — by choice, not by ads.
+              {t('landing.supportTitle')}
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
-              {DONATION_TAGLINE} Contributions are voluntary, handled by external providers, and
-              never unlock anything — because nothing is locked.
+              {t('landing.supportSub')}
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap items-center gap-2.5">

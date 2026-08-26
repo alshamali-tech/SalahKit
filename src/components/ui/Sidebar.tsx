@@ -131,7 +131,7 @@ export function Sidebar({ onClose }: SidebarProps): JSX.Element {
 
       <div className="p-3 border-t border-[var(--border)]">
         <div className="rounded-xl bg-[color-mix(in_srgb,var(--accent)_10%,transparent)] border border-[color-mix(in_srgb,var(--accent)_30%,transparent)] p-3">
-          <p className="text-xs font-semibold text-[var(--fg)] leading-snug">{DONATION_TAGLINE}</p>
+          <p className="text-xs font-semibold text-[var(--fg)] leading-snug">{t('sidebar.supportNote')}</p>
           <div className="mt-2.5 flex gap-2">
             <a
               href={kofi.url}
@@ -139,14 +139,14 @@ export function Sidebar({ onClose }: SidebarProps): JSX.Element {
               rel="noopener noreferrer"
               className="inline-flex h-9 items-center rounded-lg bg-[var(--accent)] px-3 text-xs font-bold text-[#3b2305] hover:brightness-105 active:scale-[0.97] transition-all whitespace-nowrap"
             >
-              Ko-fi
+              {t('sidebar.supportCta')}
             </a>
             <button
               type="button"
               onClick={() => setSettingsOpen(true)}
               className="inline-flex h-9 items-center rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 text-xs font-bold text-[var(--fg)] hover:border-[var(--accent)] transition-colors whitespace-nowrap"
             >
-              More
+              {t('sidebar.more')}
             </button>
           </div>
         </div>

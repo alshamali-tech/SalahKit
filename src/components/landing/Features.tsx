@@ -1,4 +1,5 @@
 import { navigate } from '../../lib/router';
+import { useT } from '../../lib/use-locale';
 import type { ModuleId } from '../../types';
 
 interface Feature {
@@ -71,16 +72,18 @@ const FEATURES: readonly Feature[] = [
  * @returns The rendered features section.
  */
 export function Features(): JSX.Element {
+  const { t, locale } = useT();
+  const blurbs = locale.dict.landing.featureBlurbs;
   return (
     <section id="features" aria-labelledby="features-title" className="mx-auto max-w-7xl px-4 py-14">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[var(--primary)]">Ten tools, one place</p>
+          <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[var(--primary)]">{t('landing.featuresKicker')}</p>
           <h2 id="features-title" className="mt-2 text-3xl font-extrabold tracking-tight text-[var(--fg)] sm:text-4xl">
-            Everything between Fajr and sleep — recited right
+            {t('landing.featuresTitle')}
           </h2>
         </div>
-        <p className="max-w-xs text-sm text-[var(--muted)]">Tap any tile to open the tool — no install, no login.</p>
+        <p className="max-w-xs text-sm text-[var(--muted)]">{t('landing.featuresSub')}</p>
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -112,12 +115,12 @@ export function Features(): JSX.Element {
             </span>
             <span className="min-w-0">
               <span className="flex items-center gap-2 text-base font-extrabold text-[var(--fg)]">
-                {f.title}
+                {t(`modules.${f.module}`)}
                 <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--primary)] opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0" aria-hidden="true">
                   <path d="M4 10h12m-5-5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </span>
-              <span className="mt-1 block text-sm leading-relaxed text-[var(--muted)]">{f.blurb}</span>
+              <span className="mt-1 block text-sm leading-relaxed text-[var(--muted)]">{blurbs[i] ?? f.blurb}</span>
             </span>
           </button>
         ))}

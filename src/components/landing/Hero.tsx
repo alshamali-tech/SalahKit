@@ -7,6 +7,7 @@ import { toISODate } from '../../lib/core/validator';
 import { formatClockTime, formatCountdown, formatHijriLong } from '../../lib/utils/format';
 import { navigate } from '../../lib/router';
 import { useApp } from '../../store';
+import { useT } from '../../lib/use-locale';
 import { Badge } from '../ui/Badge';
 
 /**
@@ -16,6 +17,7 @@ import { Badge } from '../ui/Badge';
  */
 export function Hero(): JSX.Element {
   const settings = useApp((s) => s.settings);
+  const { t, locale } = useT();
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -47,16 +49,13 @@ export function Hero(): JSX.Element {
     <section className="relative overflow-hidden">
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 pb-16 pt-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-8 lg:pt-20">
         <div className="min-w-0">
-          <p className="arabic text-lg text-[var(--primary)] opacity-90">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+          <p className="arabic text-lg text-[var(--primary)] opacity-90" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+          <p className="mt-4 text-xs font-extrabold uppercase tracking-[0.22em] text-[var(--primary)]">{t('landing.kicker')}</p>
           <h1 className="mt-3 text-4xl font-extrabold leading-[1.05] tracking-tight text-[var(--fg)] sm:text-5xl lg:text-6xl">
-            Your deen,
-            <br />
-            <span className="text-[var(--primary)]">offline.</span>
+            {t('landing.title')}
           </h1>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-[var(--muted)] sm:text-lg">
-            Prayer times, Qibla, Hijri calendar, Quran, dhikr, Zakat, duas and the 99 Names —
-            a complete Islamic toolkit that lives in your browser.{' '}
-            <strong className="font-bold text-[var(--fg)]">Free forever. No ads. No sign-up. No tracking.</strong>
+            {t('landing.sub')}
           </p>
           <div className="mt-7 flex flex-wrap items-center gap-3">
             <button
@@ -64,7 +63,7 @@ export function Hero(): JSX.Element {
               onClick={() => navigate('/tools/prayer')}
               className="inline-flex h-12 items-center gap-2 rounded-lg bg-[var(--primary)] px-6 text-sm font-bold text-[var(--primary-fg)] shadow-lg shadow-teal-900/20 hover:brightness-110 active:scale-[0.97] transition-all whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
             >
-              Open the toolkit
+              {t('landing.ctaTools')}
               <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path d="M4 10h12m-5-5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -74,13 +73,15 @@ export function Hero(): JSX.Element {
               onClick={() => document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' })}
               className="inline-flex h-12 items-center rounded-lg border border-[var(--border)] bg-[var(--card)] px-5 text-sm font-bold text-[var(--fg)] hover:border-[var(--primary)] hover:text-[var(--primary)] active:scale-[0.97] transition-all whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
             >
-              How is it free?
+              {t('landing.ctaFaq')}
             </button>
           </div>
           <div className="mt-6 flex flex-wrap gap-2">
-            <Badge tone="success">100% free</Badge>
-            <Badge tone="primary">Works offline</Badge>
-            <Badge tone="neutral">Data stays on your device</Badge>
+            {locale.dict.landing.heroBadges.map((label, i) => (
+              <Badge key={label} tone={i === 0 ? 'success' : i === 1 ? 'primary' : 'neutral'}>
+                {label}
+              </Badge>
+            ))}
           </div>
         </div>
 
@@ -91,7 +92,7 @@ export function Hero(): JSX.Element {
             <div className="relative">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--primary)]">
-                  Next prayer · {PRAYER_LABELS[next.name]}
+                  {t('landing.livePrayer')} · {PRAYER_LABELS[next.name]}
                 </p>
                 <Badge tone="neutral">{city.name}</Badge>
               </div>

@@ -1,50 +1,21 @@
 import { useState } from 'react';
-import { DONATION_LINKS } from '../../lib/donation';
-
-interface FaqItem {
-  q: string;
-  a: string;
-}
-
-const ITEMS: readonly FaqItem[] = [
-  {
-    q: 'How is this free?',
-    a: `SalahKit is built as sadaqah jariyah — ongoing charity. There are no ads, no subscriptions and no data sales because there is nothing to sell: everything runs in your browser. If it helps you, an optional donation via ${DONATION_LINKS[0]?.label ?? 'Ko-fi'} keeps the lights on. No guilt, no paywall, ever.`,
-  },
-  {
-    q: 'Does it really work offline?',
-    a: 'Yes. Prayer times, Qibla, the Hijri calendar, the Quran collection, duas and the 99 Names are computed or stored on your device. The optional AlAdhan refinement is the only network feature, and it degrades silently to the built-in algorithms when you are offline.',
-  },
-  {
-    q: 'What happens to my data?',
-    a: 'It never leaves your device. Logs, tasbih counts and Zakat records live in your browser’s IndexedDB. You can export everything as JSON, import it on another device, or wipe it completely from Settings. We have no servers, no accounts and no analytics — we could not read your data even if asked.',
-  },
-  {
-    q: 'How accurate are the prayer times?',
-    a: 'They use the same open astronomical methods (solar declination, equation of time and hour-angle math) as major timetable authorities, with MWL, ISNA, Egyptian, Karachi and Umm al-Qura presets and Shafi’i/Hanafi Asr. They are typically within a minute of published timetables — still verify fasting and congregation times with your local mosque.',
-  },
-  {
-    q: 'Why no app in the stores?',
-    a: 'SalahKit is a PWA: open it in your browser, then “Add to Home Screen” and it behaves like a native app — full screen, own icon, offline cache. No store fees, no update queue, no permission prompts.',
-  },
-  {
-    q: 'Is my donation tax-deductible or required?',
-    a: 'Donations are voluntary, one-way and handled entirely by the external provider (Ko-fi, Buy Me a Coffee or PayPal). They unlock nothing because there is nothing locked — every feature is free for everyone, forever.',
-  },
-];
+import { useT } from '../../lib/use-locale';
 
 /**
  * Landing FAQ (S8), including the required “How is this free?” entry (S11).
+ * Entries come from the active locale dictionary.
  * @returns The rendered accordion section.
  */
 export function FAQ(): JSX.Element {
+  const { t, locale } = useT();
   const [open, setOpen] = useState<number>(0);
+  const ITEMS = locale.dict.landing.faq;
 
   return (
     <section id="faq" aria-labelledby="faq-title" className="mx-auto max-w-3xl scroll-mt-24 px-4 py-14">
-      <p className="text-center text-xs font-extrabold uppercase tracking-[0.2em] text-[var(--primary)]">Questions</p>
+      <p className="text-center text-xs font-extrabold uppercase tracking-[0.2em] text-[var(--primary)]">{t('landing.faqKicker')}</p>
       <h2 id="faq-title" className="mt-2 text-center text-3xl font-extrabold tracking-tight text-[var(--fg)] sm:text-4xl">
-        Asked, answered
+        {t('landing.faqTitle')}
       </h2>
 
       <div className="mt-8 space-y-2.5">

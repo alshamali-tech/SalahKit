@@ -12,6 +12,13 @@ export interface FaqEntry {
   a: string;
 }
 
+/** One comparison-table row (localised). */
+export interface CompareRow {
+  label: string;
+  salahkit: string;
+  typical: string;
+}
+
 /** The complete UI string catalogue. */
 export interface TranslationKeys {
   app: { name: string; tagline: string };
@@ -49,13 +56,22 @@ export interface TranslationKeys {
     sub: string;
     ctaTools: string;
     ctaFree: string;
+    ctaFaq: string;
+    heroBadges: readonly [string, string, string];
     livePrayer: string;
     featuresKicker: string;
     featuresTitle: string;
     featuresSub: string;
+    /** Blurbs for the landing feature mosaic, by tile order. */
+    featureBlurbs: readonly string[];
     compareKicker: string;
     compareTitle: string;
     compareSub: string;
+    compareHeaders: { feature: string; salahkit: string; typical: string };
+    compareRows: readonly CompareRow[];
+    compareCta: string;
+    compareCtaNote: string;
+    supportKicker: string;
     faqKicker: string;
     faqTitle: string;
     supportTitle: string;
