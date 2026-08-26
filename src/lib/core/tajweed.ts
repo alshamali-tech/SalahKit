@@ -1,9 +1,11 @@
 /**
  * Tajweed rule engine (Layer 3 of the blueprint).
- * A single forward pass walks the tokenized Uthmani text and, at each
- * letter, evaluates the registered rule detectors. Conflicts resolve by
- * the priority field in the rule table (§5.3). The engine is pure and
- * deterministic: same text → same annotations, colours and durations.
+ * A forward pass walks the tokenized Uthmani text calling one detector
+ * per rule family; a small post-pass handles the stop-based madd leen.
+ * Conflicts resolve by the priority field in the rule table (§5.3).
+ * Qalqalah kubra is position-aware: it only fires at a stopping place
+ * (end of the text or before a waqf sign) — mid-flow it is sughra.
+ * Pure and deterministic: same text → same annotations. Hafs 'an 'Asim.
  */
 import {
   TAJWEED_RULES,
@@ -11,12 +13,13 @@ import {
   RULE_CATEGORIES,
   SUN_LETTERS,
   MOON_LETTERS,
+  MUTAJANIS_PAIRS,
+  MUTAQARIB_PAIRS,
 } from './tajweed-rules';
-import type { TajweedRuleId, RuleCategory, RuleDefinition } from './tajweed-rules';
+import type { TajweedRuleId, RuleCategory, TajweedRule } from './tajweed-rules';
 
-// Re-export the rule table so consumers keep a single import surface.
 export { TAJWEED_RULES, RULE_ORDER, RULE_CATEGORIES };
-export type { TajweedRuleId, RuleCategory, RuleDefinition };
+export type { TajweedRuleId, RuleCategory, TajweedRule };
 
 const SUKUN = '\u0652';
 const SHADDA = '\u0651';
@@ -25,15 +28,30 @@ const DAMMA = '\u064f';
 const KASRA = '\u0650';
 const DAGGER_ALIF = '\u0670';
 const MADDA = '\u0653';
+const SMALL_WAW = '\u06e5';
+const SMALL_YA = '\u06e6';
+const HAMZA_WASL = '\u0671';
+const ALIF = '\u0627';
+const NOON = '\u0646';
+const MEEM = '\u0645';
+const LAM = '\u0644';
+const RA = '\u0631';
+const HA = '\u0647';
+const BA = '\u0628';
+const WAW = '\u0648';
+const YA = '\u064a';
+const ALIF_MAQSURA = '\u0649';
+const ALEF_MADDA = '\u0622';
 
 const TANWEEN = new Set(['\u064b', '\u064c', '\u064d']);
-const HAMZA_CARRIERS = new Set(['\u0621', '\u0623', '\u0625', '\u0622', '\u0626', '\u0624']);
-const ARTICLE_ALIFS = new Set(['\u0627', '\u0622', '\u0671']);
-const MADD_LETTERS = new Set(['\u0627', '\u0648', '\u064a', '\u0649']);
-const QALQALAH_LETTERS = new Set(['\u0642', '\u0637', '\u0628', '\u062c', '\u062f']);
-const THROAT_LETTERS = new Set(['\u0621', '\u0647', '\u0639', '\u062d', '\u063a', '\u062e', '\u0623', '\u0625', '\u0622', '\u0671']);
-const IDGHAAM_GHUNNA_LETTERS = new Set(['\u064a', '\u0646', '\u0645', '\u0648']);
-const IDGHAAM_BILA_LETTERS = new Set(['\u0644', '\u0631']);
+const HAMZA_CARRIERS = new Set(['\u0621', '\u0623', '\u0625', ALEF_MADDA, '\u0626', '\u0624']);
+const ARTICLE_ALIFS = new Set([ALIF, ALEF_MADDA, HAMZA_WASL]);
+const MADD_LETTERS = new Set([ALIF, WAW, YA, ALIF_MAQSURA]);
+const QALQALAH_LETTERS = new Set(['\u0642', '\u0637', BA, '\u062c', '\u062f']);
+const THROAT_LETTERS = new Set(['\u0621', HA, '\u0639', '\u062d', '\u063a', '\u062e', '\u0623', '\u0625', ALEF_MADDA, HAMZA_WASL]);
+const IDGHAAM_GHUNNA_LETTERS = new Set([YA, NOON, MEEM, WAW]);
+const IDGHAAM_BILA_LETTERS = new Set([LAM, RA]);
+const ISTIALA_LETTERS = new Set(['\u062e', '\u0635', '\u0636', '\u063a', '\u0637', '\u0642', '\u0638']);
 
 /** One annotated slice of text. */
 export interface TajweedSegment {
@@ -56,14 +74,12 @@ function isLetter(ch: string): boolean {
   return (c >= 0x0621 && c <= 0x064a && c !== 0x0640) || c === 0x0671;
 }
 
-/** True for combining marks / Quranic signs. */
+/** True for combining marks (excludes standalone waqf signs). */
 function isMark(ch: string): boolean {
   const c = ch.codePointAt(0) ?? 0;
   return (
-    (c >= 0x0610 && c <= 0x061a) ||
-    (c >= 0x064b && c <= 0x065f) ||
-    c === 0x0670 ||
-    (c >= 0x06d6 && c <= 0x06ed)
+    ((c >= 0x0610 && c <= 0x061a) || (c >= 0x064b && c <= 0x065f) || c === 0x0670) &&
+    !isWaqfSign(ch)
   );
 }
 
@@ -96,7 +112,7 @@ function buildClusters(text: string): Cluster[] {
       const start = i;
       const marks = new Set<string>();
       i += 1;
-      while (i < chars.length && isMark(chars[i] ?? '') && !isWaqfSign(chars[i] ?? '')) {
+      while (i < chars.length && isMark(chars[i] ?? '')) {
         marks.add(chars[i] ?? '');
         i += 1;
       }
@@ -122,13 +138,247 @@ function assign(c: Cluster, id: TajweedRuleId): void {
   if (c.rule === null || p > TAJWEED_RULES[c.rule].priority) c.rule = id;
 }
 
+/** Index of the last letter cluster, or -1. */
+function lastLetterIndex(clusters: Cluster[]): number {
+  for (let j = clusters.length - 1; j >= 0; j -= 1) {
+    const c = clusters[j];
+    if (c && isLetter(c.base)) return j;
+  }
+  return -1;
+}
+
+/** True when the word at idx is the Name of Allah (ا لّ ه). */
+function isDivineNameAt(clusters: Cluster[], idx: number): boolean {
+  const first = clusters[idx];
+  const second = clusters[idx + 1];
+  const third = clusters[idx + 2];
+  return Boolean(
+    first &&
+      (first.base === ALIF || first.base === HAMZA_WASL) &&
+      second &&
+      second.base === LAM &&
+      second.marks.has(SHADDA) &&
+      third &&
+      third.base === HA
+  );
+}
+
+/** A trailing silent alif of a word (plural ا, tanween-fath ا, ى). */
+function isSilentTail(c: Cluster): boolean {
+  return (c.base === ALIF || c.base === ALIF_MAQSURA) && c.marks.size === 0;
+}
+
+/** First letter of the next word, skipping silent trailing alifs. */
+function firstLetterOfNextWord(clusters: Cluster[], i: number): { c: Cluster; idx: number } | null {
+  const current = clusters[i];
+  if (!current) return null;
+  for (let j = i + 1; j < clusters.length; j += 1) {
+    const n = clusters[j];
+    if (!n) break;
+    if (n.wordId === current.wordId) {
+      if (isLetter(n.base) && !isSilentTail(n)) return null;
+    } else if (isLetter(n.base)) {
+      return { c: n, idx: j };
+    }
+  }
+  return null;
+}
+
 /** Noon-sakinah / tanween outcome by the following letter. */
 function noonRuleFor(nextBase: string): TajweedRuleId {
-  if (nextBase === '\u0628') return 'iqlaab';
+  if (nextBase === BA) return 'iqlaab';
   if (THROAT_LETTERS.has(nextBase)) return 'izhaar';
   if (IDGHAAM_BILA_LETTERS.has(nextBase)) return 'idghaam-bila-ghunna';
   if (IDGHAAM_GHUNNA_LETTERS.has(nextBase)) return 'idghaam-ghunna';
   return 'ikhfaa';
+}
+
+/** True when a madd letter follows its matching short vowel. */
+function hasMatchingVowel(c: Cluster, prev: Cluster | null): boolean {
+  if (!prev) return false;
+  if (c.base === ALIF) return prev.marks.has(FATHA);
+  if (c.base === WAW) return prev.marks.has(DAMMA);
+  if (c.base === YA || c.base === ALIF_MAQSURA) return prev.marks.has(KASRA);
+  return false;
+}
+
+/** Ghunna: شaddah-ed noon or meem. Returns true when consumed. */
+function checkGhunna(c: Cluster): boolean {
+  if ((c.base === NOON || c.base === MEEM) && c.marks.has(SHADDA)) {
+    assign(c, 'ghunna');
+    return true;
+  }
+  return false;
+}
+
+/** Noon sakinah & tanween (Category A). */
+function checkNoon(c: Cluster, clusters: Cluster[], i: number): boolean {
+  const isTanween = [...c.marks].some((m) => TANWEEN.has(m));
+  if (c.base === NOON && (c.marks.has(SUKUN) || !hasVowel(c))) {
+    const next = clusters[i + 1];
+    if (next && isLetter(next.base)) {
+      let rule = noonRuleFor(next.base);
+      const sameWord = next.wordId === c.wordId;
+      if (sameWord && (rule === 'idghaam-ghunna' || rule === 'idghaam-bila-ghunna')) rule = 'izhaar';
+      assign(c, rule);
+      return true;
+    }
+    return false;
+  }
+  if (isTanween) {
+    const nw = firstLetterOfNextWord(clusters, i);
+    if (nw && !isDivineNameAt(clusters, nw.idx)) {
+      assign(c, noonRuleFor(nw.c.base));
+      return true;
+    }
+  }
+  return false;
+}
+
+/** Meem sakinah: shafawi ikhfaa / idgham / izhaar (Category B). */
+function checkMeem(c: Cluster, clusters: Cluster[], i: number): boolean {
+  if (c.base !== MEEM || c.marks.has(SHADDA)) return false;
+  if (!(c.marks.has(SUKUN) || !hasVowel(c))) return false;
+  const next = clusters[i + 1];
+  if (next && isLetter(next.base)) {
+    if (next.base === BA) assign(c, 'meem-ikhfaa');
+    else if (next.base === MEEM) assign(c, 'meem-idgham');
+    else assign(c, 'izhaar-shafawi');
+  }
+  return true;
+}
+
+/** Cross-word letter idghams: mutamathil / mutajanis / mutaqaribayn. */
+function checkLetterIdgham(c: Cluster, clusters: Cluster[], i: number): boolean {
+  if (!(c.marks.has(SUKUN) && !hasVowel(c))) return false;
+  const next = clusters[i + 1];
+  if (!next || !isLetter(next.base) || next.wordId === c.wordId) return false;
+  if (!next.marks.has(SHADDA)) return false;
+  if (next.base === c.base) assign(c, 'idgham-mutamathil');
+  else if (MUTAJANIS_PAIRS[c.base] === next.base) assign(c, 'idgham-mutajanis');
+  else if (MUTAQARIB_PAIRS[c.base] === next.base) assign(c, 'idgham-mutaqarib');
+  else return false;
+  return true;
+}
+
+/** Qalqalah — kubra ONLY at a stopping place (end of text / waqf sign). */
+function checkQalqalah(c: Cluster, clusters: Cluster[], i: number, lastIdx: number): boolean {
+  if (!QALQALAH_LETTERS.has(c.base)) return false;
+  if (i === lastIdx) {
+    assign(c, 'qalqalah-kubra');
+    return true;
+  }
+  if (c.marks.has(SUKUN) && !hasVowel(c)) {
+    const next = clusters[i + 1];
+    assign(c, next && next.rule === 'waqf' ? 'qalqalah-kubra' : 'qalqalah');
+    return true;
+  }
+  return false;
+}
+
+/** Lam: the Name of Allah first, then the definite article. */
+function checkLam(c: Cluster, clusters: Cluster[], i: number): boolean {
+  if (c.base !== LAM) return false;
+  const prev = clusters[i - 1];
+  const next = clusters[i + 1];
+  if (c.marks.has(SHADDA) && next && next.base === HA) {
+    if (prev) {
+      if (prev.marks.has(KASRA)) assign(c, 'lam-allah-tarqeeq');
+      else if (prev.marks.has(FATHA) || prev.marks.has(DAMMA)) assign(c, 'lam-allah-tafkhim');
+    }
+    return true;
+  }
+  if (prev && ARTICLE_ALIFS.has(prev.base) && prev.wordId === c.wordId) {
+    if (next && isLetter(next.base) && !isDivineNameAt(clusters, i + 1)) {
+      if (SUN_LETTERS.has(next.base)) assign(c, 'lam-shamsi');
+      else if (MOON_LETTERS.has(next.base)) assign(c, 'lam-qamari');
+    }
+    return true;
+  }
+  return false;
+}
+
+/** Ra: tafkhim / tarqeeq, incl. the isti'la exception (مِرْصَادًا). */
+function checkRa(c: Cluster, clusters: Cluster[], i: number): boolean {
+  if (c.base !== RA) return false;
+  if (c.marks.has(FATHA) || c.marks.has(DAMMA)) assign(c, 'ra-tafkhim');
+  else if (c.marks.has(KASRA)) assign(c, 'ra-tarqeeq');
+  else if (isSaakin(c)) {
+    const prev = clusters[i - 1];
+    const next = clusters[i + 1];
+    if (prev) {
+      if (prev.marks.has(KASRA)) {
+        assign(c, next && ISTIALA_LETTERS.has(next.base) ? 'ra-tafkhim' : 'ra-tarqeeq');
+      } else if (prev.base === YA && isSaakin(prev)) assign(c, 'ra-tarqeeq');
+      else if (prev.marks.has(FATHA) || prev.marks.has(DAMMA)) assign(c, 'ra-tafkhim');
+    }
+  }
+  return true;
+}
+
+/** Madd silah: the pronoun هُ / هِ between voweled letters. */
+function checkSilah(c: Cluster, clusters: Cluster[], i: number): boolean {
+  if (c.base !== HA) return false;
+  const prev = clusters[i - 1];
+  const hasSilahMark = c.marks.has(SMALL_WAW) || c.marks.has(SMALL_YA);
+  const pronoun =
+    hasSilahMark ||
+    ((c.marks.has(DAMMA) || c.marks.has(KASRA)) && prev && prev.wordId === c.wordId && hasVowel(prev));
+  if (!pronoun) return false;
+  const next = clusters[i + 1];
+  if (next && isLetter(next.base) && next.wordId !== c.wordId) {
+    if (HAMZA_CARRIERS.has(next.base) && !isDivineNameAt(clusters, i + 1)) assign(c, 'madd-silah-kubra');
+    else if (hasVowel(next) || next.marks.has(SHADDA)) assign(c, 'madd-silah-sughra');
+  }
+  return true;
+}
+
+/** The madd family (Category C), checked lazim → wajib → badal → jaiz. */
+function checkMadd(c: Cluster, clusters: Cluster[], i: number, lastIdx: number): boolean {
+  if (c.base === ALEF_MADDA) {
+    assign(c, 'madd-badal');
+    return true;
+  }
+  if (!MADD_LETTERS.has(c.base)) return false;
+  const prev = clusters[i - 1];
+  const prevSameWord = prev && prev.wordId === c.wordId ? prev : null;
+  const afterHamza = prevSameWord !== null && HAMZA_CARRIERS.has(prevSameWord.base);
+  const isTrueMadd =
+    c.marks.has(DAGGER_ALIF) || c.marks.has(MADDA) || afterHamza || hasMatchingVowel(c, prevSameWord);
+  if (isTrueMadd) {
+    const next = clusters[i + 1];
+    const nextSameWord = next && next.wordId === c.wordId ? next : null;
+    if (nextSameWord && (nextSameWord.marks.has(SHADDA) || (nextSameWord.marks.has(SUKUN) && !hasVowel(nextSameWord)))) {
+      assign(c, 'madd-lazim');
+    } else if (nextSameWord && i + 1 === lastIdx && hasVowel(nextSameWord)) {
+      assign(c, 'madd-arrid');
+    } else if (nextSameWord && HAMZA_CARRIERS.has(nextSameWord.base)) {
+      assign(c, 'madd-wajib');
+    } else if (afterHamza) {
+      assign(c, 'madd-badal');
+    } else {
+      const nw = firstLetterOfNextWord(clusters, i);
+      if (nw && HAMZA_CARRIERS.has(nw.c.base) && !isDivineNameAt(clusters, nw.idx)) assign(c, 'madd-jaiz');
+      else assign(c, 'madd');
+    }
+  }
+  return true;
+}
+
+/** Post-pass: madd leen on a saakin و/ي (after fatha) in the final word. */
+function applyLeen(clusters: Cluster[], lastIdx: number): void {
+  if (lastIdx < 0) return;
+  const last = clusters[lastIdx];
+  if (!last) return;
+  for (let j = lastIdx; j >= 0; j -= 1) {
+    const w = clusters[j];
+    if (!w || w.wordId !== last.wordId) break;
+    if ((w.base === WAW || w.base === YA) && !w.marks.has(SHADDA) && (w.marks.has(SUKUN) || !hasVowel(w))) {
+      const p = clusters[j - 1];
+      if (p && p.wordId === w.wordId && p.marks.has(FATHA)) assign(w, 'madd-leen');
+      break;
+    }
+  }
 }
 
 /**
@@ -138,139 +388,28 @@ function noonRuleFor(nextBase: string): TajweedRuleId {
  */
 export function analyzeTajweed(text: string): TajweedSegment[] {
   const clusters = buildClusters(text);
-  const at = (i: number): Cluster | null => clusters[i] ?? null;
+  const lastIdx = lastLetterIndex(clusters);
 
   for (let i = 0; i < clusters.length; i += 1) {
     const c = clusters[i];
     if (!c || c.rule === 'waqf') continue;
-
-    // Ghunnah: shaddah-ed noon or meem (highest priority).
-    if ((c.base === '\u0646' || c.base === '\u0645') && c.marks.has(SHADDA)) {
-      assign(c, 'ghunna');
+    if (checkGhunna(c)) continue;
+    if (c.base === HAMZA_WASL) {
+      assign(c, 'hamza-wasl');
       continue;
     }
-
-    // Noon sakinah & tanween.
-    const isTanween = [...c.marks].some((m) => TANWEEN.has(m));
-    if (c.base === '\u0646' && (c.marks.has(SUKUN) || !hasVowel(c))) {
-      const next = at(i + 1);
-      if (next && isLetter(next.base)) {
-        let rule = noonRuleFor(next.base);
-        const sameWord = next.wordId === c.wordId;
-        if (sameWord && (rule === 'idghaam-ghunna' || rule === 'idghaam-bila-ghunna')) rule = 'izhaar';
-        assign(c, rule);
-        continue;
-      }
-    } else if (isTanween) {
-      // Tanween acts across to the first letter of the NEXT word.
-      let j = i + 1;
-      while (j < clusters.length && clusters[j] && clusters[j].wordId === c.wordId) j += 1;
-      const nextWord = at(j);
-      if (nextWord && isLetter(nextWord.base)) {
-        assign(c, noonRuleFor(nextWord.base));
-        continue;
-      }
-    }
-
-    // Meem sakinah — a written sukun OR a bare (vowel-less) meem, e.g.
-    // the final م of تَرْمِيهِم before بِحِجَارَةٍ (not shaddah-ed).
-    if (c.base === '\u0645' && (c.marks.has(SUKUN) || !hasVowel(c)) && !c.marks.has(SHADDA)) {
-      const next = at(i + 1);
-      if (next && isLetter(next.base)) {
-        if (next.base === '\u0628') assign(c, 'meem-ikhfaa');
-        else if (next.base === '\u0645') assign(c, 'meem-idgham');
-      }
-      continue;
-    }
-
-    // Qalqalah on saakin ق ط ب ج د (kubra at word end, else sughra).
-    if (QALQALAH_LETTERS.has(c.base) && c.marks.has(SUKUN) && !hasVowel(c)) {
-      assign(c, isWordEnd(clusters, i) ? 'qalqalah-kubra' : 'qalqalah');
-      continue;
-    }
-
-    // Lam of the definite article (shamsi / qamari).
-    if (c.base === '\u0644') {
-      const prev = at(i - 1);
-      if (prev && ARTICLE_ALIFS.has(prev.base) && prev.wordId === c.wordId) {
-        const next = at(i + 1);
-        // ا-ل-لّ is the Name of Allah, not an article + assimilated lam.
-        const isDivineName = next?.base === '\u0644' && next.marks.has(SHADDA);
-        if (next && isLetter(next.base) && !isDivineName) {
-          if (SUN_LETTERS.has(next.base)) assign(c, 'lam-shamsi');
-          else if (MOON_LETTERS.has(next.base)) assign(c, 'lam-qamari');
-        }
-        continue;
-      }
-      // Ra rules are separate; fall through to ra/ra below only for ر.
-    }
-
-    // Ra tafkhim / tarqeeq.
-    if (c.base === '\u0631') {
-      if (c.marks.has(FATHA) || c.marks.has(DAMMA)) assign(c, 'ra-tafkhim');
-      else if (c.marks.has(KASRA)) assign(c, 'ra-tarqeeq');
-      else if (isSaakin(c)) {
-        const prev = at(i - 1);
-        if (prev) {
-          if (prev.marks.has(KASRA)) assign(c, 'ra-tarqeeq');
-          else if (prev.base === '\u064a' && isSaakin(prev)) assign(c, 'ra-tarqeeq');
-          else if (prev.marks.has(FATHA) || prev.marks.has(DAMMA)) assign(c, 'ra-tafkhim');
-        }
-      }
-      continue;
-    }
-
-    // Combined hamza-with-madda (آ) is always a madd badal.
-    if (c.base === '\u0622') {
-      assign(c, 'madd-badal');
-      continue;
-    }
-
-    // Madd family. Gate: only a *true* madd letter qualifies — one that
-    // follows its matching short vowel within the SAME word, or carries
-    // a dagger-alif/madda. The silent article alif of الَّذِي / النَّاسِ
-    // never qualifies, which removes false tabee'i/lazim on ال- words.
-    if (MADD_LETTERS.has(c.base)) {
-      const prev = at(i - 1);
-      const prevSameWord = prev && prev.wordId === c.wordId ? prev : null;
-      // A madd letter after a hamza (آمَنُوا) qualifies too — that is
-      // exactly the madd badal case.
-      const isTrueMadd =
-        c.marks.has(DAGGER_ALIF) ||
-        c.marks.has(MADDA) ||
-        hasMatchingVowel(c, prevSameWord) ||
-        (prevSameWord !== null && HAMZA_CARRIERS.has(prevSameWord.base));
-      if (isTrueMadd) {
-        const next = at(i + 1);
-        const nextSameWord = next && next.wordId === c.wordId ? next : null;
-        if (
-          nextSameWord &&
-          (nextSameWord.marks.has(SHADDA) ||
-            (nextSameWord.marks.has(SUKUN) && !hasVowel(nextSameWord)))
-        ) {
-          // Madd lazim: shaddah (muthaqqal) or sukun (mukhaffaf) inside
-          // the same word — دَابَّةٍ, الضَّالِّينَ — a full 6 counts.
-          assign(c, 'madd-lazim');
-        } else if (nextSameWord && HAMZA_CARRIERS.has(nextSameWord.base)) {
-          assign(c, 'madd-wajib');
-        } else if (prevSameWord && HAMZA_CARRIERS.has(prevSameWord.base)) {
-          assign(c, 'madd-badal');
-        } else if (isWordEnd(clusters, i) && startsNextWordWithHamza(clusters, i)) {
-          assign(c, 'madd-jaiz');
-        } else {
-          assign(c, 'madd');
-        }
-      }
-      continue;
-    }
-
-    // Dagger-alif / madda on a non-madd letter (e.g. ذَٰلِكَ).
-    if (c.marks.has(DAGGER_ALIF) || c.marks.has(MADDA)) {
-      assign(c, 'madd');
-    }
+    if (checkNoon(c, clusters, i)) continue;
+    if (checkMeem(c, clusters, i)) continue;
+    if (checkLetterIdgham(c, clusters, i)) continue;
+    if (checkQalqalah(c, clusters, i, lastIdx)) continue;
+    if (checkLam(c, clusters, i)) continue;
+    if (checkRa(c, clusters, i)) continue;
+    if (checkSilah(c, clusters, i)) continue;
+    if (checkMadd(c, clusters, i, lastIdx)) continue;
+    if (c.marks.has(DAGGER_ALIF) || c.marks.has(MADDA)) assign(c, 'madd');
   }
+  applyLeen(clusters, lastIdx);
 
-  // Emit contiguous segments.
   const segments: TajweedSegment[] = [];
   let cursor = 0;
   const push = (chunk: string, rule: TajweedRuleId | null): void => {
@@ -286,33 +425,6 @@ export function analyzeTajweed(text: string): TajweedSegment[] {
   }
   if (cursor < text.length) push(text.slice(cursor), null);
   return segments;
-}
-
-/** True when cluster i is the last letter of its word. */
-function isWordEnd(clusters: Cluster[], i: number): boolean {
-  const c = clusters[i];
-  const next = clusters[i + 1];
-  if (!c) return false;
-  return !next || next.wordId !== c.wordId;
-}
-
-/** True when the next word begins with a hamza carrier (for jaiz). */
-function startsNextWordWithHamza(clusters: Cluster[], i: number): boolean {
-  const c = clusters[i];
-  if (!c) return false;
-  let j = i + 1;
-  while (j < clusters.length && clusters[j] && clusters[j].wordId === c.wordId) j += 1;
-  const nextWord = clusters[j];
-  return Boolean(nextWord && HAMZA_CARRIERS.has(nextWord.base));
-}
-
-/** True when a madd letter follows its matching short vowel. */
-function hasMatchingVowel(c: Cluster, prev: Cluster | null): boolean {
-  if (!prev) return false;
-  if (c.base === '\u0627') return prev.marks.has(FATHA);
-  if (c.base === '\u0648') return prev.marks.has(DAMMA);
-  if (c.base === '\u064a' || c.base === '\u0649') return prev.marks.has(KASRA);
-  return false;
 }
 
 /**

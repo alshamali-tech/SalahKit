@@ -68,7 +68,7 @@ export function TajweedLegend({
 
   if (!grouped) return <div className="flex flex-wrap gap-1.5">{ids.map(renderChip)}</div>;
 
-  const order: RuleCategory[] = ['noon', 'meem', 'ghunna', 'qalqalah', 'lam', 'ra', 'madd', 'waqf'];
+  const order: RuleCategory[] = ['noon', 'meem', 'ghunna', 'qalqalah', 'idgham', 'lam', 'ra', 'madd', 'hamza', 'waqf'];
   return (
     <div className="space-y-2.5">
       {order.map((cat) => {

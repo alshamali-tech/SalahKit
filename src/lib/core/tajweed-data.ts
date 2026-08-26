@@ -103,7 +103,8 @@ export const TAJWEED_CONCEPTS: readonly TajweedConcept[] = [
     points: [
       'Natural madd (ا و ي after their matching vowel) is two counts — the baseline of all stretching. The dagger-alif of ذَٰلِكَ and هَٰذَا also counts as two.',
       'Madd wajib muttasil stretches 4–5 counts when a hamzah follows in the same word: جَاءَ، السَّمَاء.',
-      'Madd lazim stretches a full six counts when a shaddah or sukun follows: الضَّالِّينَ، الْحَاقَّة.',
+      'Madd lazim stretches a full six counts when a shaddah or sukun follows: الضَّالِّينَ، دَابَّة.',
+      'Stopping creates its own madds: arid (stretching before the last letter when your stop turns it saakin), leen (a soft و/ي at the end of a word), and the pronoun hum of silah on هُ.',
       'Consistency beats length: whatever measure you choose, never shorten it mid-ayah.',
     ],
     practice: 'جَاءَ نَصْرُ اللَّهِ ۝ وَلَا الضَّالِّينَ',
