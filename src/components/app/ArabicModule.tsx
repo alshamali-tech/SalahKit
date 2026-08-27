@@ -4,9 +4,6 @@ import type { ArabicLetter } from '../../lib/core/arabic-data';
 import { useT } from '../../lib/use-locale';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
-import { TajweedToggle } from '../tajweed/TajweedToggle';
-import { getJSON, setJSON } from '../../lib/utils/storage';
-import { STORAGE_KEYS } from '../../lib/core/constants';
 import { HarakatSection, GrammarSection, VocabSection } from './arabic-sections';
 
 type TabId = 'letters' | 'harakat' | 'grammar' | 'vocab';

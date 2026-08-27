@@ -108,17 +108,17 @@ export const GRAMMAR_TOPICS: readonly GrammarTopic[] = [
   {
     id: 'word-types', titleEn: 'The three word types', titleAr: 'أقسام الكلمة',
     explain: 'Every Arabic word is a noun (ism), a verb (fi‘l), or a particle (harf). Recognising which one you have is the first step to reading any ayah.',
-    example: 'اللهُ نُورُ السَّمَاوَاتِ', gloss: 'Allah (noun) · is the Light (noun) · of the heavens (noun) — “Allah is the Light of the heavens” (24:35)',
+    example: 'اللهُ نُورُ السَّمَاوَاتِ وَالْأَرْضِ', gloss: 'Allah (noun) · Light (noun) · the heavens and the earth (nouns) — “Allah is the Light of the heavens and the earth” (24:35)',
   },
   {
     id: 'nominal', titleEn: 'The nominal sentence', titleAr: 'الجملة الاسمية',
     explain: 'A sentence that starts with a noun: a subject (mubtada) followed by a predicate (khabar). There is no word for “is” — it is implied.',
-    example: 'اللهُ رَبُّنَا', gloss: 'Allah (subject) · our Lord (predicate) — “Allah is our Lord”',
+    example: 'اللَّهُ الصَّمَدُ', gloss: 'Allah (subject) · the Eternal Refuge (predicate) — “Allah is the Eternal Refuge” (112:2)',
   },
   {
     id: 'verbal', titleEn: 'The verbal sentence', titleAr: 'الجملة الفعلية',
-    explain: 'A sentence that starts with a verb, then its doer (fa‘il). Arabic verbs carry the tense; the doer often follows the verb.',
-    example: 'خَلَقَ اللهُ الإِنْسَانَ', gloss: 'Created (verb) · Allah (doer) · the human (object) — “Allah created the human”',
+    explain: 'A sentence that starts with a verb, then its doer (fa‘il) and object (maf‘ul). Arabic verbs carry the tense; the doer often follows the verb.',
+    example: 'خَلَقَ الْإِنسَانَ مِنْ عَلَقٍ', gloss: 'He created (verb) · the human (object) · from a clinging clot — (96:2); the doer “He” is implied in the verb',
   },
   {
     id: 'irab', titleEn: 'Case endings (i‘rab)', titleAr: 'الإعراب',
@@ -148,7 +148,7 @@ export const GRAMMAR_TOPICS: readonly GrammarTopic[] = [
   {
     id: 'dual-plural', titleEn: 'Dual & sound plurals', titleAr: 'المثنى والجمع',
     explain: 'Arabic has a dual (two of something): -āni / -ayni. Masculine human plurals end -ūna / -īna. You will see both constantly.',
-    example: 'مُسْلِمَانِ · مُسْلِمُونَ', gloss: 'two Muslims (dual) · Muslims (plural) — e.g. الَّذِينَ آمَنُوا “those who believed”',
+    example: 'مُسْلِمَانِ · مُسْلِمُونَ', gloss: 'two Muslims (dual) · Muslims (plural) — as in وَالْمُؤْمِنُونَ وَالْمُؤْمِنَاتُ “the believing men and women” (9:71)',
   },
   {
     id: 'negation', titleEn: 'Negation', titleAr: 'النفي',
