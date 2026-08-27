@@ -3,7 +3,6 @@ import {
   countHadiths,
   filterHadiths,
   hadithOfTheDay,
-  HADITH_BOOK_LABELS,
   HADITH_CATEGORY_LABELS,
   HADITH_CATEGORY_ORDER,
   searchHadiths,
@@ -14,6 +13,7 @@ import { emitToast } from '../../lib/messaging';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
 import { HadithLibraryFull } from './HadithLibraryFull';
+import type { FavoriteSnapshot } from './HadithLibraryFull';
 import type { Hadith, HadithBook, HadithCategory } from '../../types';
 
 type CategoryFilter = HadithCategory | 'all' | 'favorites';
@@ -166,7 +166,9 @@ function HadithCard({
  */
 export function HadithList(): JSX.Element {
   const [view, setView] = useState<'library' | 'curated'>('library');
-  const [book, setBook] = useState<HadithBook | 'all'>('all');
+  // Collection filter was removed from the curated view (the full
+  // Sahihayn browser handles collections); curated search spans both.
+  const book: HadithBook | 'all' = 'all';
   const [category, setCategory] = useState<CategoryFilter>('all');
   const [query, setQuery] = useState('');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -196,9 +198,9 @@ export function HadithList(): JSX.Element {
     return list;
   }, [book, category, query, favorites]);
 
-  /** Toggles a favorite with an optimistic local update. */
-  async function toggleFavorite(hadithId: string): Promise<void> {
-    const isFav = await toggleHadithFavorite(hadithId);
+  /** Toggles a favorite with an optimistic local update and snapshot. */
+  async function toggleFavorite(hadithId: string, snapshot?: FavoriteSnapshot): Promise<void> {
+    const isFav = await toggleHadithFavorite(hadithId, snapshot);
     setFavorites((prev) => {
       const next = new Set(prev);
       if (isFav) next.add(hadithId);
@@ -223,7 +225,7 @@ export function HadithList(): JSX.Element {
     );
   }
 
-  const books: readonly (HadithBook | 'all')[] = ['all', 'bukhari', 'muslim'];
+
 
   return (
     <div className="space-y-5">
@@ -315,26 +317,6 @@ export function HadithList(): JSX.Element {
       {/* Controls */}
       <div className="space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-          <div className="flex shrink-0 rounded-lg border border-[var(--border)] overflow-hidden">
-            {books.map((b) => (
-              <button
-                key={b}
-                type="button"
-                aria-pressed={book === b}
-                onClick={() => setBook(b)}
-                className={[
-                  'h-10 px-3.5 text-xs font-bold transition-colors duration-150 whitespace-nowrap',
-                  'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[var(--primary)]',
-                  book === b
-                    ? 'bg-[var(--primary)] text-[var(--primary-fg)]'
-                    : 'bg-[var(--card)] text-[var(--muted)] hover:text-[var(--fg)]',
-                ].join(' ')}
-              >
-                {HADITH_BOOK_LABELS[b]}
-              </button>
-            ))}
-          </div>
-
           <div className="relative flex-1 min-w-0">
             <svg
               aria-hidden="true"
@@ -458,7 +440,7 @@ export function HadithList(): JSX.Element {
 
       {view === 'library' ? (
         <div key="library" className="animate-[fadeIn_200ms_ease-out]">
-          <HadithLibraryFull favorites={favorites} onToggle={(id) => void toggleFavorite(id)} />
+          <HadithLibraryFull favorites={favorites} onToggle={(id, snapshot) => void toggleFavorite(id, snapshot)} />
         </div>
       ) : null}
 

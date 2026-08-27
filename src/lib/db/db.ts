@@ -297,20 +297,42 @@ export async function getFavoriteHadithIds(): Promise<Set<string>> {
   }
 }
 
+/** A stored hadith favorite, including its text snapshot. */
+export interface StoredFavorite extends HadithFavoriteRow {}
+
 /**
  * Toggles a hadith in the favorites list (optimistic-UI friendly).
+ * When adding, an optional snapshot of the text is stored so the
+ * favorite can be rendered later without any network access.
  * @param hadithId - Hadith identifier.
+ * @param snapshot - Optional text snapshot (arabic/english/collection).
  * @returns True when the hadith is now favorited, false when removed.
  */
-export async function toggleHadithFavorite(hadithId: string): Promise<boolean> {
+export async function toggleHadithFavorite(
+  hadithId: string,
+  snapshot?: Omit<HadithFavoriteRow, 'hadithId' | 'addedAt'>
+): Promise<boolean> {
   const db = getDb();
   const existing = await db.hadithFavorites.get(hadithId);
   if (existing) {
     await db.hadithFavorites.delete(hadithId);
     return false;
   }
-  await db.hadithFavorites.put({ hadithId, addedAt: Date.now() });
+  await db.hadithFavorites.put({ hadithId, addedAt: Date.now(), ...(snapshot ?? {}) });
   return true;
+}
+
+/**
+ * Returns every stored hadith favorite (newest first), with snapshots.
+ * @returns Array of favorite rows.
+ */
+export async function listHadithFavorites(): Promise<HadithFavoriteRow[]> {
+  try {
+    const rows = await getDb().hadithFavorites.toArray();
+    return rows.sort((a, b) => b.addedAt - a.addedAt);
+  } catch {
+    return [];
+  }
 }
 
 /**

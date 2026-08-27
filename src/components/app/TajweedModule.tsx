@@ -13,17 +13,11 @@ import { RuleCheck } from '../tajweed/RuleCheck';
 import { SifaatExplorer } from '../tajweed/SifaatExplorer';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
+import { useT } from '../../lib/use-locale';
 
 type TabId = 'path' | 'tree' | 'check' | 'map' | 'sifaat' | 'lab';
 
-const TABS: readonly { id: TabId; label: string; hint: string }[] = [
-  { id: 'path', label: 'Guided Path', hint: 'Chain of mastery' },
-  { id: 'tree', label: 'The Noon Tree', hint: 'One letter, five fates' },
-  { id: 'check', label: 'Real Examples', hint: 'Verified ayah by ayah' },
-  { id: 'map', label: 'Letter Map', hint: 'The whole graph' },
-  { id: 'sifaat', label: 'Ṣifāt', hint: 'Letter characteristics' },
-  { id: 'lab', label: 'Live Lab', hint: 'Annotate any ayah' },
-];
+const TAB_IDS: readonly TabId[] = ['path', 'tree', 'check', 'map', 'sifaat', 'lab'];
 
 const OPENING_LINE = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
 
@@ -33,6 +27,7 @@ const OPENING_LINE = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ ال�
  * @returns The rendered module.
  */
 export function TajweedModule(): JSX.Element {
+  const { t } = useT();
   const [tab, setTab] = useState<TabId>('path');
   const [sweep, setSweep] = useState<number>(0);
   const masteredCount = getJSON<string[]>(STORAGE_KEYS.tajweedProgress, []).length;
@@ -43,7 +38,10 @@ export function TajweedModule(): JSX.Element {
   }, []);
 
   const focus = sweep < RULE_ORDER.length ? RULE_ORDER[sweep] : null;
-  const activeTab = TABS.find((t) => t.id === tab) ?? TABS[0];
+  const ui = {
+    tabs: TAB_IDS.map((id) => ({ id, label: t(`modulesUi.tajweed.tabs.${id}`), hint: t(`modulesUi.tajweed.hints.${id}`) })),
+  };
+  const activeTab = ui.tabs.find((x) => x.id === tab) ?? ui.tabs[0];
 
   return (
     <div className="space-y-5">
@@ -57,33 +55,31 @@ export function TajweedModule(): JSX.Element {
         <div className="relative flex flex-col lg:flex-row gap-6 lg:items-center px-2 py-4">
           <div className="min-w-0 flex-1 text-center lg:text-left">
             <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[var(--primary)]">
-              Learn to recite · تعلّم التجويد
+              {t('modulesUi.tajweed.introKicker')} · تعلّم التجويد
             </p>
             <h2 className="mt-1.5 text-3xl font-extrabold tracking-tight text-[var(--fg)] sm:text-4xl">
-              Tajweed <span className="arabic text-2xl text-[var(--accent-strong)]">تَجْوِيد</span>
+              {t('modulesUi.tajweed.introTitle')} <span className="arabic text-2xl text-[var(--accent-strong)]">تَجْوِيد</span>
             </h2>
             <p className="mt-1.5 text-sm leading-relaxed text-[var(--muted)] max-w-md mx-auto lg:mx-0">
-              The rules of beautiful recitation — taught as a chain, explored as a tree,
-              and mapped as a graph. Every color below is a rule; watch them sweep.
+              {t('modulesUi.tajweed.introSub')}
             </p>
             <div className="mt-3 flex flex-wrap justify-center lg:justify-start gap-2">
-              <Badge tone="success">100% on-device</Badge>
-              <Badge tone="primary">{masteredCount}/6 concepts mastered</Badge>
-              <Badge tone="neutral">{RULE_ORDER.length} rules detected</Badge>
+              <Badge tone="primary">{masteredCount}/6 {t('modulesUi.tajweed.masteredOf')}</Badge>
+              <Badge tone="neutral">{RULE_ORDER.length} {t('modulesUi.tajweed.labFound').toLowerCase()}</Badge>
             </div>
           </div>
           <div className="min-w-0 lg:w-[46%]">
             <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-inner">
               <div className="mb-2.5 flex items-center justify-between gap-2">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-[var(--primary)]">The Basmala · light lam of Allah</span>
-                <TajweedAudio compact surah={1} from={1} to={1} label="Listen to the Basmala" />
+                <TajweedAudio compact surah={1} from={1} to={1} label={t('modulesUi.tajweed.introListen')} />
               </div>
               <p className="arabic text-xl sm:text-2xl text-[var(--fg)] text-right leading-[2.2]" aria-label="Annotated opening ayah">
                 <TajweedText text={OPENING_LINE} focus={focus} />
               </p>
               <div className="mt-3 flex items-center justify-between gap-2 border-t border-[var(--border)] pt-2.5">
                 <span className="text-[11px] font-bold text-[var(--muted)] truncate" aria-live="polite">
-                  {focus ? `Sweeping: ${TAJWEED_RULES[focus].label}` : 'All rules together'}
+                  {focus ? TAJWEED_RULES[focus].label : ''}
                 </span>
                 <span className="flex gap-1" aria-hidden="true">
                   {RULE_ORDER.slice(0, 6).map((r, i) => (
@@ -108,24 +104,24 @@ export function TajweedModule(): JSX.Element {
 
       <div className="sticky top-16 z-30 -mx-4 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--bg)_90%,transparent)] px-4 py-2 backdrop-blur-md">
         <div className="flex gap-1 overflow-x-auto" role="tablist" aria-label="Tajweed views">
-          {TABS.map((t) => {
-            const active = t.id === tab;
+          {ui.tabs.map((tb) => {
+            const active = tb.id === tab;
             return (
               <button
-                key={t.id}
+                key={tb.id}
                 role="tab"
                 type="button"
                 aria-selected={active}
-                onClick={() => setTab(t.id)}
+                onClick={() => setTab(tb.id)}
                 className={[
                   'relative shrink-0 rounded-lg px-3.5 py-2 text-sm font-bold whitespace-nowrap transition-all duration-150',
                   'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--primary)]',
                   active ? 'bg-[color-mix(in_srgb,var(--primary)_13%,transparent)] text-[var(--primary)]' : 'text-[var(--muted)] hover:text-[var(--fg)] hover:bg-[var(--hover)]',
                 ].join(' ')}
               >
-                {t.label}
+                {tb.label}
                 <span className={['block text-[10px] font-semibold', active ? 'text-[var(--primary)] opacity-80' : 'opacity-60'].join(' ')}>
-                  {t.hint}
+                  {tb.hint}
                 </span>
               </button>
             );
@@ -146,6 +142,8 @@ export function TajweedModule(): JSX.Element {
           <RuleCheck />
         ) : tab === 'map' ? (
           <LetterMap />
+        ) : tab === 'sifaat' ? (
+          <SifaatExplorer />
         ) : (
           <TajweedLab />
         )}

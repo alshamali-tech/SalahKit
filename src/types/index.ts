@@ -133,6 +133,15 @@ export interface HadithFavoriteRow {
   hadithId: string;
   /** Epoch ms when favorited. */
   addedAt: number;
+  /** Text snapshot so favorites render offline without re-fetching. */
+  arabic?: string;
+  english?: string;
+  /** Collection id, e.g. "bukhari". */
+  collection?: string;
+  /** In-book number. */
+  num?: number;
+  /** Grading, e.g. "Sahih". */
+  grade?: string;
 }
 
 /** Quran reading bookmark: a saved surah:ayah position (schema v5). */

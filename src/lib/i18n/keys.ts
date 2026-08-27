@@ -4,7 +4,7 @@
  */
 
 /** Supported interface languages. */
-export type LocaleId = 'en' | 'ar' | 'fr' | 'ur' | 'tr' | 'id';
+export type LocaleId = 'en' | 'ar';
 
 /** One FAQ entry (localised). */
 export interface FaqEntry {
@@ -87,4 +87,41 @@ export interface TranslationKeys {
   offline: { message: string };
   donation: { toastTitle: string; toastBody: string; notNow: string };
   footer: { line: string; tools: string; support: string; builtWith: string };
+  /** Per-tool UI chrome (headings, tabs, buttons, empty states). */
+  modulesUi: {
+    tajweed: {
+      introKicker: string; introTitle: string; introSub: string; introListen: string;
+      tabs: { path: string; tree: string; check: string; map: string; sifaat: string; lab: string };
+      hints: { path: string; tree: string; check: string; map: string; sifaat: string; lab: string };
+      masteredOf: string; markMastered: string; mastered: string;
+      practice: string; labPlaceholder: string; labLive: string; labFound: string;
+      engineAgrees: string; engineMismatch: string; verified: string;
+      lettersTitle: string; zonesTitle: string;
+    };
+    hadith: {
+      ofTheDay: string; fullTitle: string; fullSub: string;
+      curatedTitle: string; curatedSub: string;
+      myFavorites: string; noFavoritesTitle: string; noFavoritesSub: string;
+      searchPlaceholder: string; hadiths: string; allSections: string;
+      loadingSection: string; cantLoad: string; tryOnline: string; tryAgain: string;
+      offlineNote: string; footerNote: string; addedFav: string; removedFav: string;
+      hadithCopied: string; copyUnavailable: string;
+    };
+    hifz: {
+      stepListen: string; stepRecite: string; stepReview: string;
+      listenChunk: string; allChunks: string; reciteThenTap: string;
+      revealAll: string; checked: string;
+      again: string; hard: string; good: string; easy: string;
+      saveContinue: string;
+    };
+    quran: {
+      listenSurah: string; chooseSurah: string; bookmarks: string; continueReading: string;
+      playAyah: string; offlineLocal: string; loadingSurah: string; copiedAyah: string;
+    };
+    arabic: {
+      searchLetters: string; hearIt: string; joins: string; neverJoins: string;
+      startsWith: string;
+      tabs: { letters: string; harakat: string; grammar: string; vocab: string };
+    };
+  };
 }

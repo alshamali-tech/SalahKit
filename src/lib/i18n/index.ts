@@ -3,10 +3,9 @@
  * page and common actions are localised; Quran text is ALWAYS Arabic
  * and is never translated. Right-to-left locales flip <html dir>.
  *
- * Performance: only the English dictionary ships in the initial
- * bundle. Every other language is code-split and fetched the moment
- * it is chosen (or restored from storage), so first paint never pays
- * for five unused dictionaries.
+ * Only English and Arabic are offered. The English dictionary ships
+ * in the initial bundle; Arabic is code-split and fetched the moment
+ * it is chosen (or restored from storage).
  */
 import { en } from './locales/en';
 import type { TranslationKeys, LocaleId } from './keys';
@@ -36,14 +35,10 @@ interface LocaleMeta {
   rtl: boolean;
 }
 
-/** All supported locales, in switcher order. */
+/** All supported locales, in switcher order (English + Arabic only). */
 export const LOCALES: readonly LocaleMeta[] = [
   { id: 'en', native: 'English', english: 'English', lang: 'en', rtl: false },
   { id: 'ar', native: 'العربية', english: 'Arabic', lang: 'ar', rtl: true },
-  { id: 'fr', native: 'Français', english: 'French', lang: 'fr', rtl: false },
-  { id: 'ur', native: 'اردو', english: 'Urdu', lang: 'ur', rtl: true },
-  { id: 'tr', native: 'Türkçe', english: 'Turkish', lang: 'tr', rtl: false },
-  { id: 'id', native: 'Bahasa Indonesia', english: 'Indonesian', lang: 'id', rtl: false },
 ];
 
 /** Default interface language. */
@@ -58,10 +53,6 @@ const dicts: Partial<Record<LocaleId, TranslationKeys>> = { en };
 /** Code-split loaders — one chunk per non-English language. */
 const loaders: Partial<Record<LocaleId, () => Promise<Record<string, TranslationKeys>>>> = {
   ar: () => import('./locales/ar'),
-  fr: () => import('./locales/fr'),
-  ur: () => import('./locales/ur'),
-  tr: () => import('./locales/tr'),
-  id: () => import('./locales/id'),
 };
 
 const dictListeners = new Set<() => void>();
