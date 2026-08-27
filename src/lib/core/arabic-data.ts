@@ -91,7 +91,7 @@ export const HARAKAT: readonly Harakah[] = [
   { mark: '\u064F', shown: 'بُ', nameAr: 'ضَمَّة', nameEn: 'Damma', sound: 'short “u” as in put', example: 'كُتُب', hl: 'كُ' },
   { mark: '\u0652', shown: 'بْ', nameAr: 'سُكُون', nameEn: 'Sukun', sound: 'no vowel — the letter is “still”', example: 'مِنْ', hl: 'نْ' },
   { mark: '\u0651', shown: 'بّ', nameAr: 'شَدَّة', nameEn: 'Shadda', sound: 'doubles the letter (press it)', example: 'رَبِّ', hl: 'بِّ' },
-  { mark: '\u064B', shown: 'بً', nameAr: 'فَتْحَتَان', nameEn: 'Fathatan', sound: '“an” — tanween fath', example: 'كِتَابًا', hl: 'بًا' },
+  { mark: '\u064B', shown: 'بًا', nameAr: 'فَتْحَتَان', nameEn: 'Fathatan', sound: '“an” — tanween fath (written with an alif)', example: 'كِتَابًا', hl: 'بًا' },
   { mark: '\u064D', shown: 'بٍ', nameAr: 'كَسْرَتَان', nameEn: 'Kasratan', sound: '“in” — tanween kasr', example: 'كِتَابٍ', hl: 'بٍ' },
   { mark: '\u064C', shown: 'بٌ', nameAr: 'ضَمَّتَان', nameEn: 'Dammatan', sound: '“un” — tanween damm', example: 'كِتَابٌ', hl: 'بٌ' },
 ];

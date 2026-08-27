@@ -27,78 +27,38 @@ const ZONE_COLORS: Record<string, string> = {
   Jawf: '#1864ab', Throat: '#2b8a3e', Tongue: '#e8590c', Lips: '#c92a2a', Nasal: '#d6336c',
 };
 
-/** Strips diacritics and folds hamza/alif variants for matching. */
-function normalizeForMatch(s: string): string {
-  return s
-    .replace(/[\u0610-\u061a\u064b-\u065f\u0670]/g, '')
-    .replace(/[أإآٱ]/g, 'ا')
-    .replace(/ى/g, 'ي')
-    .replace(/ة/g, 'ه');
-}
-
-/** Splits a word into clusters of base letter + attached diacritics. */
-function clustersOf(word: string): string[] {
-  const out: string[] = [];
-  let cur = '';
+/** The first letter cluster of a word (letter + its diacritics). */
+function firstCluster(word: string): string {
+  let out = '';
   for (const ch of Array.from(word)) {
     const c = ch.codePointAt(0) ?? 0;
     const isMark =
       (c >= 0x0610 && c <= 0x061a) || (c >= 0x064b && c <= 0x065f) || c === 0x0670;
-    if (isMark) cur += ch;
-    else {
-      if (cur) out.push(cur);
-      cur = ch;
-    }
+    if (!isMark && out !== '') break;
+    out += ch;
   }
-  if (cur) out.push(cur);
-  return out;
-}
-
-/**
- * Example word with the taught letter emphasized, so a beginner sees
- * exactly where it appears — including its diacritics.
- * @param props - word and the letter's isolated base form.
- * @returns The word with its first occurrence of the letter highlighted.
- */
-function LetterExample({ word, base }: { word: string; base: string }): JSX.Element {
-  const target = normalizeForMatch(base);
-  const clusters = clustersOf(word);
-  const idx = clusters.findIndex((c) => normalizeForMatch(c) === target);
-  if (idx === -1) return <>{word}</>;
-  const prefix = clusters.slice(0, idx).join('');
-  const hit = clusters[idx];
-  const suffix = clusters.slice(idx + 1).join('');
-  return (
-    <>
-      {prefix}
-      <span className="rounded-md bg-[color-mix(in_srgb,var(--primary)_16%,transparent)] px-0.5 text-[var(--primary)]">
-        {hit}
-      </span>
-      {suffix}
-    </>
-  );
+  return out === '' ? word : out;
 }
 
 /**
  * Letter detail card: shows all four contextual forms, the sound,
  * articulation zone and an example word you can hear.
+ *
+ * The four shapes use the stored Arabic Presentation Forms (the correct
+ * pre-shaped Unicode codepoints) rendered in a UI font stack that
+ * reliably carries them — ZWJ sequences leak artifacts in Quran fonts.
+ * The example word is kept as ONE unbroken text run (Arabic letters
+ * must join); the taught letter is shown as a separate callout chip so
+ * no span boundary ever splits the cursive script.
  * @param props - letter to display.
  * @returns The rendered detail card.
  */
-/** Zero-width joiner — forces a letter into its contextual (joined) shape. */
-const ZWJ = '\u200D';
-
 function LetterDetail({ letter }: { letter: ArabicLetter }): JSX.Element {
-  // Build the four contextual shapes from the base letter with ZWJ so
-  // every font renders a correctly-joined glyph (presentation-form
-  // codepoints render as tofu in many fonts). Non-joining letters
-  // (alif, dal, dhal, ra, zay, waw) have no initial/medial forms.
-  const base = letter.isolated;
   const forms: { label: string; glyph: string; shown: boolean }[] = [
-    { label: 'Isolated', glyph: base, shown: true },
-    { label: 'Initial', glyph: base + ZWJ, shown: letter.joins },
-    { label: 'Medial', glyph: ZWJ + base + ZWJ, shown: letter.joins },
-    { label: 'Final', glyph: ZWJ + base, shown: true },
+    { label: 'Isolated', glyph: letter.isolated, shown: true },
+    { label: 'Initial', glyph: letter.initial, shown: letter.joins },
+    { label: 'Medial', glyph: letter.medial, shown: letter.joins },
+    { label: 'Final', glyph: letter.final, shown: true },
   ];
   return (
     <Card className="animate-[fadeIn_200ms_ease-out]">
@@ -132,7 +92,7 @@ function LetterDetail({ letter }: { letter: ArabicLetter }): JSX.Element {
         {forms.map((f) => (
           <div key={f.label} className="rounded-xl border border-[var(--border)] bg-[var(--field)] p-2 text-center">
             {f.shown ? (
-              <p className="arabic text-3xl text-[var(--fg)] leading-none" dir="rtl">{f.glyph}</p>
+              <p className="arabic-ui text-3xl text-[var(--fg)] leading-none" dir="rtl">{f.glyph}</p>
             ) : (
               <p className="text-3xl leading-none text-[var(--muted)]" aria-hidden="true">—</p>
             )}
@@ -141,12 +101,19 @@ function LetterDetail({ letter }: { letter: ArabicLetter }): JSX.Element {
         ))}
       </div>
 
-      <div className="mt-4 flex items-center justify-between gap-2 rounded-xl border border-[var(--border)] bg-[var(--field)] p-3">
-        <div>
-          <p className="arabic text-2xl text-[var(--fg)] text-right leading-relaxed">
-            <LetterExample word={letter.example} base={letter.isolated} />
+      <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-[var(--field)] p-3">
+        <span
+          dir="rtl"
+          title="This is the letter being taught, with its diacritics"
+          className="arabic-ui flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--primary)_14%,transparent)] text-3xl leading-none text-[var(--primary)]"
+        >
+          {firstCluster(letter.example)}
+        </span>
+        <div className="min-w-0 flex-1 text-right">
+          <p className="arabic-ui text-2xl text-[var(--fg)] leading-relaxed">{letter.example}</p>
+          <p className="mt-0.5 text-xs text-[var(--muted)]">
+            {letter.exampleEn} — starts with {letter.nameEn.toLowerCase()}
           </p>
-          <p className="mt-0.5 text-xs text-[var(--muted)]">{letter.exampleEn}</p>
         </div>
       </div>
     </Card>

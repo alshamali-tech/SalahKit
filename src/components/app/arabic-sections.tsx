@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import { HARAKAT, GRAMMAR_TOPICS, VOCABULARY } from '../../lib/core/arabic-data';
 import type { GrammarTopic, Harakah } from '../../lib/core/arabic-data';
 import { useState } from 'react';
@@ -6,28 +5,44 @@ import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
 import { TajweedText } from '../tajweed/TajweedText';
 
+/** Counts base letters (ignores diacritics) in a string. */
+function letterCount(s: string): number {
+  let n = 0;
+  for (const ch of Array.from(s)) {
+    const c = ch.codePointAt(0) ?? 0;
+    if (!((c >= 0x0610 && c <= 0x061a) || (c >= 0x064b && c <= 0x065f) || c === 0x0670)) n += 1;
+  }
+  return n;
+}
+
 /**
- * Renders an example word with the exact syllable carrying the haraka
- * highlighted, so a beginner can see precisely where the mark sits.
- * @param props - the haraka whose example is shown.
- * @returns The rendered example with the marked syllable emphasized.
+ * Shows where the haraka sits in the example word WITHOUT splitting the
+ * word into spans — a span boundary breaks Arabic cursive joining, so
+ * the word stays one unbroken text run and the marked cluster appears
+ * as a separate colored chip on the side where it occurs (right for
+ * early letters, left for later ones, in RTL reading order).
+ * @param props - the harakah entry.
+ * @returns The word plus a callout chip for the marked cluster.
  */
-function HighlightedExample({ h }: { h: Harakah }): JSX.Element {
-  const parts = h.example.split(h.hl);
-  // No highlight possible (single occurrence guard).
-  if (parts.length === 1) return <span>{h.example}</span>;
+function MarkedWord({ h }: { h: Harakah }): JSX.Element {
+  const pos = h.example.indexOf(h.hl);
+  const total = letterCount(h.example);
+  const before = pos >= 0 ? letterCount(h.example.slice(0, pos)) : 0;
+  const early = pos >= 0 && before + 1 <= total / 2;
+  const chip = (
+    <span
+      dir="rtl"
+      title="The letter carrying this mark"
+      className="arabic-ui inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--primary)_14%,transparent)] px-2 text-2xl leading-none text-[var(--primary)]"
+    >
+      {h.hl}
+    </span>
+  );
   return (
-    <span>
-      {parts.map((part, i) => (
-        <Fragment key={i}>
-          {i > 0 ? (
-            <span className="rounded-md bg-[color-mix(in_srgb,var(--primary)_18%,transparent)] px-0.5 font-bold text-[var(--primary)]">
-              {h.hl}
-            </span>
-          ) : null}
-          {part}
-        </Fragment>
-      ))}
+    <span className="flex items-center justify-end gap-2.5" dir="rtl">
+      {early ? chip : null}
+      <span className="arabic-ui text-2xl leading-loose text-[var(--fg)]">{h.example}</span>
+      {!early ? chip : null}
     </span>
   );
 }
@@ -48,7 +63,7 @@ export function HarakatSection({ speak }: HarakatProps): JSX.Element {
       {HARAKAT.map((h) => (
         <Card key={h.nameEn} hover className="flex flex-col">
           <div className="flex items-center justify-between">
-            <span className="arabic flex h-14 w-14 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--primary)_10%,transparent)] text-4xl text-[var(--primary)] leading-none">
+            <span className="arabic-ui flex h-14 w-14 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--primary)_10%,transparent)] text-4xl text-[var(--primary)] leading-none">
               {h.shown}
             </span>
             <button
@@ -64,9 +79,9 @@ export function HarakatSection({ speak }: HarakatProps): JSX.Element {
             {h.nameEn} <span className="arabic text-base text-[var(--muted)]">{h.nameAr}</span>
           </p>
           <p className="mt-0.5 text-xs text-[var(--muted)]">{h.sound}</p>
-          <p className="arabic mt-auto pt-2 text-xl text-[var(--fg)] text-right leading-loose">
-            <HighlightedExample h={h} />
-          </p>
+          <div className="mt-auto pt-2">
+            <MarkedWord h={h} />
+          </div>
         </Card>
       ))}
     </div>

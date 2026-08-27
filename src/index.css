@@ -152,6 +152,19 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Arabic for teaching UI (letter forms, chips): a stack that reliably
+   carries the Arabic Presentation Forms used for contextual shapes.
+   Amiri Quran is deliberately excluded — it is a mushaf face. */
+.arabic-ui {
+  direction: rtl;
+  font-family: "Scheherazade New", "Amiri", "Noto Naskh Arabic",
+    "Traditional Arabic", "Geeza Pro", "Arabic Typesetting", "Segoe UI",
+    Georgia, serif;
+  line-height: 1.9;
+  letter-spacing: 0;
+  font-feature-settings: "liga" 1, "calt" 1;
+}
+
 /* Ambient geometric lattice layer (eight-point star tile) */
 .bg-pattern {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Cpath d='M42 10l7 16.5L65.5 34l-16.5 7.5L42 58l-7-16.5L18.5 34l16.5-7.5z' fill='none' stroke='%230f766e' stroke-opacity='0.55'/%3E%3C/svg%3E");
