@@ -1,9 +1,36 @@
+import { Fragment } from 'react';
 import { HARAKAT, GRAMMAR_TOPICS, VOCABULARY } from '../../lib/core/arabic-data';
-import type { GrammarTopic } from '../../lib/core/arabic-data';
+import type { GrammarTopic, Harakah } from '../../lib/core/arabic-data';
 import { useState } from 'react';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
 import { TajweedText } from '../tajweed/TajweedText';
+
+/**
+ * Renders an example word with the exact syllable carrying the haraka
+ * highlighted, so a beginner can see precisely where the mark sits.
+ * @param props - the haraka whose example is shown.
+ * @returns The rendered example with the marked syllable emphasized.
+ */
+function HighlightedExample({ h }: { h: Harakah }): JSX.Element {
+  const parts = h.example.split(h.hl);
+  // No highlight possible (single occurrence guard).
+  if (parts.length === 1) return <span>{h.example}</span>;
+  return (
+    <span>
+      {parts.map((part, i) => (
+        <Fragment key={i}>
+          {i > 0 ? (
+            <span className="rounded-md bg-[color-mix(in_srgb,var(--primary)_18%,transparent)] px-0.5 font-bold text-[var(--primary)]">
+              {h.hl}
+            </span>
+          ) : null}
+          {part}
+        </Fragment>
+      ))}
+    </span>
+  );
+}
 
 export interface HarakatProps {
   speak: (text: string) => void;
@@ -37,7 +64,9 @@ export function HarakatSection({ speak }: HarakatProps): JSX.Element {
             {h.nameEn} <span className="arabic text-base text-[var(--muted)]">{h.nameAr}</span>
           </p>
           <p className="mt-0.5 text-xs text-[var(--muted)]">{h.sound}</p>
-          <p className="arabic mt-auto pt-2 text-xl text-[var(--fg)] text-right leading-loose">{h.example}</p>
+          <p className="arabic mt-auto pt-2 text-xl text-[var(--fg)] text-right leading-loose">
+            <HighlightedExample h={h} />
+          </p>
         </Card>
       ))}
     </div>

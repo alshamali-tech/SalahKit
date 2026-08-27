@@ -76,18 +76,24 @@ export interface Harakah {
   sound: string;
   /** A Quranic example. */
   example: string;
+  /**
+   * The exact syllable substring that carries the mark, so the UI can
+   * highlight precisely where the harakah sits (includes its combining
+   * marks, e.g. 'نْ' = ن + sukun).
+   */
+  hl: string;
 }
 
 /** The short vowels and key marks a beginner must recognise. */
 export const HARAKAT: readonly Harakah[] = [
-  { mark: '\u064E', shown: 'بَ', nameAr: 'فَتْحَة', nameEn: 'Fatha', sound: 'short “a” as in cat', example: 'كَتَبَ' },
-  { mark: '\u0650', shown: 'بِ', nameAr: 'كَسْرَة', nameEn: 'Kasra', sound: 'short “i” as in sit', example: 'بِسْمِ' },
-  { mark: '\u064F', shown: 'بُ', nameAr: 'ضَمَّة', nameEn: 'Damma', sound: 'short “u” as in put', example: 'كُتُب' },
-  { mark: '\u0652', shown: 'بْ', nameAr: 'سُكُون', nameEn: 'Sukun', sound: 'no vowel — the letter is “still”', example: 'مِنْ' },
-  { mark: '\u0651', shown: 'بّ', nameAr: 'شَدَّة', nameEn: 'Shadda', sound: 'doubles the letter (press it)', example: 'مُحَمَّد' },
-  { mark: '\u064B', shown: 'بً', nameAr: 'فَتْحَتَان', nameEn: 'Fathatan', sound: '“an” — tanween fath', example: 'كِتَابًا' },
-  { mark: '\u064D', shown: 'بٍ', nameAr: 'كَسْرَتَان', nameEn: 'Kasratan', sound: '“in” — tanween kasr', example: 'كِتَابٍ' },
-  { mark: '\u064C', shown: 'بٌ', nameAr: 'ضَمَّتَان', nameEn: 'Dammatan', sound: '“un” — tanween damm', example: 'كِتَابٌ' },
+  { mark: '\u064E', shown: 'بَ', nameAr: 'فَتْحَة', nameEn: 'Fatha', sound: 'short “a” as in cat', example: 'كَتَبَ', hl: 'كَ' },
+  { mark: '\u0650', shown: 'بِ', nameAr: 'كَسْرَة', nameEn: 'Kasra', sound: 'short “i” as in sit', example: 'بِسْمِ', hl: 'بِ' },
+  { mark: '\u064F', shown: 'بُ', nameAr: 'ضَمَّة', nameEn: 'Damma', sound: 'short “u” as in put', example: 'كُتُب', hl: 'كُ' },
+  { mark: '\u0652', shown: 'بْ', nameAr: 'سُكُون', nameEn: 'Sukun', sound: 'no vowel — the letter is “still”', example: 'مِنْ', hl: 'نْ' },
+  { mark: '\u0651', shown: 'بّ', nameAr: 'شَدَّة', nameEn: 'Shadda', sound: 'doubles the letter (press it)', example: 'رَبِّ', hl: 'بِّ' },
+  { mark: '\u064B', shown: 'بً', nameAr: 'فَتْحَتَان', nameEn: 'Fathatan', sound: '“an” — tanween fath', example: 'كِتَابًا', hl: 'بًا' },
+  { mark: '\u064D', shown: 'بٍ', nameAr: 'كَسْرَتَان', nameEn: 'Kasratan', sound: '“in” — tanween kasr', example: 'كِتَابٍ', hl: 'بٍ' },
+  { mark: '\u064C', shown: 'بٌ', nameAr: 'ضَمَّتَان', nameEn: 'Dammatan', sound: '“un” — tanween damm', example: 'كِتَابٌ', hl: 'بٌ' },
 ];
 
 /** One Quran-focused grammar topic. */
