@@ -33,12 +33,20 @@ const ZONE_COLORS: Record<string, string> = {
  * @param props - letter to display.
  * @returns The rendered detail card.
  */
+/** Zero-width joiner — forces a letter into its contextual (joined) shape. */
+const ZWJ = '\u200D';
+
 function LetterDetail({ letter }: { letter: ArabicLetter }): JSX.Element {
-  const forms: { label: string; glyph: string }[] = [
-    { label: 'Isolated', glyph: letter.isolated },
-    { label: 'Final', glyph: letter.final },
-    { label: 'Initial', glyph: letter.initial },
-    { label: 'Medial', glyph: letter.medial },
+  // Build the four contextual shapes from the base letter with ZWJ so
+  // every font renders a correctly-joined glyph (presentation-form
+  // codepoints render as tofu in many fonts). Non-joining letters
+  // (alif, dal, dhal, ra, zay, waw) have no initial/medial forms.
+  const base = letter.isolated;
+  const forms: { label: string; glyph: string; shown: boolean }[] = [
+    { label: 'Isolated', glyph: base, shown: true },
+    { label: 'Initial', glyph: base + ZWJ, shown: letter.joins },
+    { label: 'Medial', glyph: ZWJ + base + ZWJ, shown: letter.joins },
+    { label: 'Final', glyph: ZWJ + base, shown: true },
   ];
   return (
     <Card className="animate-[fadeIn_200ms_ease-out]">
@@ -71,7 +79,11 @@ function LetterDetail({ letter }: { letter: ArabicLetter }): JSX.Element {
       <div className="mt-4 grid grid-cols-4 gap-2">
         {forms.map((f) => (
           <div key={f.label} className="rounded-xl border border-[var(--border)] bg-[var(--field)] p-2 text-center">
-            <p className="arabic text-3xl text-[var(--fg)] leading-none">{f.glyph}</p>
+            {f.shown ? (
+              <p className="arabic text-3xl text-[var(--fg)] leading-none" dir="rtl">{f.glyph}</p>
+            ) : (
+              <p className="text-3xl leading-none text-[var(--muted)]" aria-hidden="true">—</p>
+            )}
             <p className="mt-1.5 text-[10px] font-bold uppercase tracking-wide text-[var(--muted)]">{f.label}</p>
           </div>
         ))}
