@@ -21,6 +21,7 @@ export function getAppVersion(): string {
 
 /** Per-module page titles (S10 pattern). */
 export const MODULE_TITLES: Readonly<Record<ModuleId, string>> = {
+  dashboard: 'Dashboard',
   prayer: 'Free Prayer Times',
   qibla: 'Qibla Direction',
   hijri: 'Hijri Calendar Converter',

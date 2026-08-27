@@ -1,0 +1,53 @@
+import { useEffect, useState } from 'react';
+import { streakReport } from '../../../lib/core/streaks/streak';
+import type { DayCompletion } from '../../../lib/core/streaks/streak';
+import { listPrayerLogs } from '../../../lib/db/db';
+import { Card } from '../../ui/Card';
+
+const PRAYERS = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
+
+/**
+ * Prayer streak card for the dashboard hub, sourced from the tracker.
+ * @returns The rendered streak card.
+ */
+export function StreakCard(): JSX.Element {
+  const [report, setReport] = useState({ current: 0, best: 0, percent: 0 });
+
+  useEffect(() => {
+    let cancelled = false;
+    void listPrayerLogs().then((logs) => {
+      if (cancelled) return;
+      const days = new Map<string, DayCompletion>();
+      for (const log of logs) {
+        const done = PRAYERS.filter((p) => log[p]).length;
+        days.set(log.dateISO, { done, total: PRAYERS.length });
+      }
+      setReport(streakReport(days, new Date(), PRAYERS.length));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return (
+    <Card className="flex flex-col justify-between">
+      <div>
+        <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[var(--accent-strong)]">Streak</p>
+        <p className="mt-1.5 text-4xl font-extrabold tnum text-[var(--fg)]">
+          {report.current}
+          <span className="ml-1.5 text-sm font-bold text-[var(--muted)]">
+            day{report.current === 1 ? '' : 's'}
+          </span>
+        </p>
+      </div>
+      <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-2 text-xs text-[var(--muted)]">
+        <span>
+          Best <strong className="tnum text-[var(--fg)]">{report.best}</strong>
+        </span>
+        <span>
+          This week <strong className="tnum text-[var(--fg)]">{report.percent}%</strong>
+        </span>
+      </div>
+    </Card>
+  );
+}

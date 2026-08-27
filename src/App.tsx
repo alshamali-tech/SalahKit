@@ -38,6 +38,7 @@ const ArabicModule = lazy(() => import('./components/app/ArabicModule').then((m)
 const UpdateBanner = lazy(() => import('./components/app/UpdateBanner').then((m) => ({ default: m.UpdateBanner })));
 const SettingsPanel = lazy(() => import('./components/settings/SettingsPanel').then((m) => ({ default: m.SettingsPanel })));
 const QuranAudioDock = lazy(() => import('./components/app/QuranAudioDock').then((m) => ({ default: m.QuranAudioDock })));
+const DashboardPage = lazy(() => import('./components/app/dashboard/DashboardPage').then((m) => ({ default: m.DashboardPage })));
 
 // Apply the persisted locale (lang + direction) before first paint.
 initLocale();
@@ -79,6 +80,8 @@ function ModuleView({ module }: { module: ModuleId }): JSX.Element {
       return <LegalPage kind="privacy" />;
     case 'terms':
       return <LegalPage kind="terms" />;
+    case 'dashboard':
+      return <DashboardPage />;
     case 'prayer':
     default:
       return <PrayerTimes />;

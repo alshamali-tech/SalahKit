@@ -4,7 +4,7 @@
  */
 
 /** Supported interface languages. */
-export type LocaleId = 'en' | 'ar';
+export type LocaleId = 'en' | 'ar' | 'fr' | 'id' | 'tr' | 'ur';
 
 /** One FAQ entry (localised). */
 export interface FaqEntry {

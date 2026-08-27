@@ -6,6 +6,7 @@ import type { ModuleId } from '../types';
 
 /** All routable tool modules. */
 const MODULE_IDS: readonly ModuleId[] = [
+  'dashboard',
   'prayer',
   'qibla',
   'hijri',
@@ -50,7 +51,7 @@ export function parseHash(hash: string): Route {
   if (clean === '/') return { view: 'landing' };
   if (clean === '/privacy') return { view: 'tools', module: 'privacy' };
   if (clean === '/terms') return { view: 'tools', module: 'terms' };
-  if (clean === '/tools') return { view: 'tools', module: 'prayer' };
+  if (clean === '/tools' || clean === '/dashboard') return { view: 'tools', module: 'dashboard' };
   const match = clean.match(/^\/tools\/([a-z-]+)\/?$/);
   if (match && match[1] && isModuleId(match[1])) {
     return { view: 'tools', module: match[1] };

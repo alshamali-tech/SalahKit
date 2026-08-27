@@ -35,10 +35,14 @@ interface LocaleMeta {
   rtl: boolean;
 }
 
-/** All supported locales, in switcher order (English + Arabic only). */
+/** All supported locales, in switcher order. */
 export const LOCALES: readonly LocaleMeta[] = [
   { id: 'en', native: 'English', english: 'English', lang: 'en', rtl: false },
   { id: 'ar', native: 'العربية', english: 'Arabic', lang: 'ar', rtl: true },
+  { id: 'ur', native: 'اردو', english: 'Urdu', lang: 'ur', rtl: true },
+  { id: 'fr', native: 'Français', english: 'French', lang: 'fr', rtl: false },
+  { id: 'tr', native: 'Türkçe', english: 'Turkish', lang: 'tr', rtl: false },
+  { id: 'id', native: 'Bahasa Indonesia', english: 'Indonesian', lang: 'id', rtl: false },
 ];
 
 /** Default interface language. */
@@ -53,6 +57,10 @@ const dicts: Partial<Record<LocaleId, TranslationKeys>> = { en };
 /** Code-split loaders — one chunk per non-English language. */
 const loaders: Partial<Record<LocaleId, () => Promise<Record<string, TranslationKeys>>>> = {
   ar: () => import('./locales/ar'),
+  ur: () => import('./locales/ur'),
+  fr: () => import('./locales/fr'),
+  tr: () => import('./locales/tr'),
+  id: () => import('./locales/id'),
 };
 
 const dictListeners = new Set<() => void>();

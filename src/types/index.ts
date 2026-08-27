@@ -10,6 +10,7 @@ export type Revelation = 'Makkan' | 'Madinan';
 
 /** Tool modules available in the app shell. */
 export type ModuleId =
+  | 'dashboard'
   | 'prayer'
   | 'qibla'
   | 'hijri'

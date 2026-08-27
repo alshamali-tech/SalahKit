@@ -60,7 +60,7 @@ export function Hero(): JSX.Element {
           <div className="mt-7 flex flex-wrap items-center gap-3">
             <button
               type="button"
-              onClick={() => navigate('/tools/prayer')}
+              onClick={() => navigate('/dashboard')}
               className="inline-flex h-12 items-center gap-2 rounded-lg bg-[var(--primary)] px-6 text-sm font-bold text-[var(--primary-fg)] shadow-lg shadow-teal-900/20 hover:brightness-110 active:scale-[0.97] transition-all whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
             >
               {t('landing.ctaTools')}
