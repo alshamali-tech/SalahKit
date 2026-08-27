@@ -14,23 +14,33 @@ export interface ModalProps {
 
 /**
  * Accessible modal dialog (S6): aria-modal, labelled by title, Escape
- * closes, focus moves in on open and back on close, body scroll locks,
- * content capped at 90vh with internal scroll (viewport rules).
+ * closes, focus moves in on open (preferring an [autofocus] field so
+ * search boxes are live immediately) and back on close, body scroll
+ * locks, content capped at 90vh with internal scroll (viewport rules).
+ * The focus routine runs once per open and is immune to the parent
+ * re-rendering with a fresh onClose identity.
  * @param props - open/onClose/title/children.
  * @returns The dialog, or null when closed.
  */
 export function Modal({ open, onClose, title, children }: ModalProps): JSX.Element | null {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const restoreRef = useRef<HTMLElement | null>(null);
+  // Keep the latest handler without re-running the focus effect.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     if (!open) return;
     restoreRef.current = document.activeElement as HTMLElement | null;
-    closeRef.current?.focus();
+    // Prefer an explicit autofocus target (e.g. a search input),
+    // otherwise park focus on the close button.
+    const auto = panelRef.current?.querySelector<HTMLElement>('[autofocus]');
+    (auto ?? closeRef.current)?.focus();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const onKey = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') onCloseRef.current();
     };
     window.addEventListener('keydown', onKey);
     return () => {
@@ -38,7 +48,7 @@ export function Modal({ open, onClose, title, children }: ModalProps): JSX.Eleme
       document.body.style.overflow = previousOverflow;
       restoreRef.current?.focus?.();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
 
@@ -51,10 +61,11 @@ export function Modal({ open, onClose, title, children }: ModalProps): JSX.Eleme
         type="button"
         aria-label="Close dialog"
         className="absolute inset-0 bg-black/55 backdrop-blur-[2px] cursor-default animate-[fadeIn_150ms_ease-out]"
-        onClick={onClose}
+        onClick={() => onCloseRef.current()}
         tabIndex={-1}
       />
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-label={title}
@@ -65,7 +76,7 @@ export function Modal({ open, onClose, title, children }: ModalProps): JSX.Eleme
           <button
             ref={closeRef}
             type="button"
-            onClick={onClose}
+            onClick={() => onCloseRef.current()}
             aria-label="Close"
             className="shrink-0 inline-flex h-9 w-9 items-center justify-center rounded-lg text-[var(--muted)] hover:bg-[var(--hover)] hover:text-[var(--fg)] focus-visible:outline-2 focus-visible:outline-[var(--primary)] transition-colors"
           >

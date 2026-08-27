@@ -219,7 +219,8 @@ curl -sI https://<your-host>/ | grep -iE 'content-security-policy|permissions-po
 - **Unit** (Vitest): prayer-engine, qibla, hijri round-trips, zakat, validators, DB CRUD, cache TTL, backup/restore, speech-match, hifz scheduler, and the tajweed golden suite.
 - **Integration**: PrayerTimes renders + calculates; QuranReader navigates surahs.
 - **E2E** (Playwright + axe): landing, tool navigation, settings persistence, offline mode via network blocking, viewports 320/768/1024/1440, WCAG 2.1 AA scan.
-- **Budget**: `scripts/check-bundle.sh` fails CI if initial JS exceeds 200KB gzipped (current: ~133KB).
+- **Budget**: `scripts/check-bundle.sh` fails CI if initial JS exceeds 200KB gzipped (current: ~105KB).
+- **Code-splitting**: each tool is a lazy chunk; non-English UI dictionaries, the settings/data-manager panel, the audio dock and the update banner all load on demand, so first paint only pays for the landing shell and core engines.
 
 ## Support the developer
 

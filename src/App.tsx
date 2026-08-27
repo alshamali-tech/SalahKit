@@ -11,11 +11,11 @@ import { Header } from './components/ui/Header';
 import { Sidebar } from './components/ui/Sidebar';
 import { Footer } from './components/ui/Footer';
 import { ToastHost } from './components/ui/Toast';
-import { SettingsPanel } from './components/settings/SettingsPanel';
+
 import { Landing } from './components/landing/Landing';
 import { OfflineBanner } from './components/app/OfflineBanner';
 import { DonationToast } from './components/donation/DonationToast';
-import { QuranAudioDock } from './components/app/QuranAudioDock';
+
 import type { ModuleId } from './types';
 
 /* Tool modules are code-split: the initial bundle carries only the
@@ -36,6 +36,8 @@ const TajweedModule = lazy(() => import('./components/app/TajweedModule').then((
 const LegalPage = lazy(() => import('./components/app/LegalPage').then((m) => ({ default: m.LegalPage })));
 const ArabicModule = lazy(() => import('./components/app/ArabicModule').then((m) => ({ default: m.ArabicModule })));
 const UpdateBanner = lazy(() => import('./components/app/UpdateBanner').then((m) => ({ default: m.UpdateBanner })));
+const SettingsPanel = lazy(() => import('./components/settings/SettingsPanel').then((m) => ({ default: m.SettingsPanel })));
+const QuranAudioDock = lazy(() => import('./components/app/QuranAudioDock').then((m) => ({ default: m.QuranAudioDock })));
 
 // Apply the persisted locale (lang + direction) before first paint.
 initLocale();
@@ -181,9 +183,13 @@ export default function App(): JSX.Element {
       <Footer />
 
       {sidebarOpen ? <Sidebar onClose={() => setSidebarOpen(false)} /> : null}
-      <SettingsPanel />
+      <Suspense fallback={null}>
+        <SettingsPanel />
+      </Suspense>
       <DonationToast />
-      <QuranAudioDock />
+      <Suspense fallback={null}>
+        <QuranAudioDock />
+      </Suspense>
       <Suspense fallback={null}>
         <UpdateBanner />
       </Suspense>

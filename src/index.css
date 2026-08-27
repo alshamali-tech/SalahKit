@@ -194,8 +194,8 @@ body {
 }
 
 @keyframes drift {
-  from { background-position: 0 0; }
-  to { background-position: 168px 84px; }
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(84px, 84px, 0); }
 }
 
 @keyframes pulseDot {
@@ -223,8 +223,12 @@ body {
   animation: moduleIn 240ms ease-out both;
 }
 
+/* Oversized by one tile (84px) so the translate loops seamlessly.
+   Transform-based → runs on the compositor, no layout/paint cost. */
 .drift-slow {
+  inset: -96px;
   animation: drift 90s linear infinite;
+  will-change: transform;
 }
 
 @media (prefers-reduced-motion: reduce) {

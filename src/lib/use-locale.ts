@@ -1,13 +1,16 @@
 /**
  * Locale state + `t()` accessor for React components (S16).
  * The active locale lives in localStorage (a UI preference, like the
- * theme) and is mirrored into <html lang/dir> for correct rendering.
+ * theme) and is mirrored into <html lang/dir> immediately; the locale
+ * dictionary streams in asynchronously and re-renders once loaded.
  */
 import { useCallback, useSyncExternalStore } from 'react';
 import {
   getLocale,
   applyLocaleToDocument,
   translate,
+  ensureLocale,
+  onDictLoaded,
   DEFAULT_LOCALE,
   STORAGE_LOCALE_KEY,
 } from './i18n';
@@ -25,10 +28,23 @@ function readStoredLocale(): LocaleId {
 }
 
 let current: LocaleId = readStoredLocale();
+/** Bumped whenever the active dictionary changes, to re-render hooks. */
+let dictVersion = 0;
 const listeners = new Set<() => void>();
 
+function notify(): void {
+  listeners.forEach((l) => l());
+}
+
+// Re-render subscribers when any dictionary finishes loading.
+onDictLoaded(() => {
+  dictVersion += 1;
+  notify();
+});
+
 /**
- * Applies a locale to storage + document and notifies subscribers.
+ * Applies a locale to storage + document immediately, then streams in
+ * its dictionary (English renders in the meantime).
  * @param id - Locale to activate.
  */
 export function setLocaleGlobal(id: LocaleId): void {
@@ -39,12 +55,14 @@ export function setLocaleGlobal(id: LocaleId): void {
     // Storage unavailable; keep the in-memory choice.
   }
   applyLocaleToDocument(getLocale(id));
-  listeners.forEach((l) => l());
+  notify();
+  void ensureLocale(id);
 }
 
-/** Applies the persisted locale once at boot. */
+/** Applies the persisted locale once at boot and preloads its dictionary. */
 export function initLocale(): void {
   applyLocaleToDocument(getLocale(current));
+  void ensureLocale(current);
 }
 
 function subscribe(cb: () => void): () => void {
@@ -54,14 +72,14 @@ function subscribe(cb: () => void): () => void {
   };
 }
 
-function getSnapshot(): LocaleId {
-  return current;
+function getSnapshot(): string {
+  return `${current}:${dictVersion}`;
 }
 
-/** Returns the current LocaleInfo reactively. */
+/** Returns the current LocaleInfo reactively (updates on dict load). */
 function useLocaleInfo(): LocaleInfo {
-  const id = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  return getLocale(id);
+  const snap = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  return getLocale(snap.split(':')[0] ?? DEFAULT_LOCALE);
 }
 
 /**
