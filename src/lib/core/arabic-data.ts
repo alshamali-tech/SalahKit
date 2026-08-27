@@ -20,6 +20,10 @@ export interface ArabicLetter {
   nameEn: string;
   /** Approximate sound hint for beginners. */
   sound: string;
+  /** Optional teaching note (alternate shapes, carriers, gotchas). */
+  note?: string;
+  /** The exact cluster of the example word that IS this letter. */
+  chip?: string;
   /** Articulation zone (links to the Tajweed makharij). */
   zone: string;
   /** A common example word. */
@@ -32,7 +36,26 @@ export interface ArabicLetter {
 
 /** The 28 letters of the Arabic alphabet, in traditional order. */
 export const ARABIC_LETTERS: readonly ArabicLetter[] = [
-  { isolated: 'ا', final: 'ﺎ', initial: 'ا', medial: 'ﺎ', nameAr: 'أَلِف', nameEn: 'Alif', sound: 'long “aa” (no consonant sound of its own)', zone: 'Jawf', example: 'قَالَ', exampleEn: 'he said', joins: false },
+  {
+    isolated: 'ا', final: 'ﺎ', initial: 'ا', medial: 'ﺎ',
+    nameAr: 'أَلِف', nameEn: 'Alif',
+    sound: 'long “aa” — the letter itself is silent; it stretches the vowel before it',
+    zone: 'Jawf',
+    example: 'كِتَابٌ', exampleEn: 'a book — the long “aa” lives in the middle',
+    chip: 'ا',
+    note: 'Alif never starts a word on its own — a word-initial “a” is hamza (أ). At the end of some words it appears as the bent form ى (alif maqsura): مُوسَى، هُدًى.',
+    joins: false,
+  },
+  {
+    isolated: 'ء', final: 'ء', initial: 'ء', medial: 'ء',
+    nameAr: 'هَمْزَة', nameEn: 'Hamza',
+    sound: 'a glottal stop — a sharp catch in the throat',
+    zone: 'Throat',
+    example: 'سُؤَالٌ', exampleEn: 'a question — here the hamza rides on waw (ؤ)',
+    chip: 'ؤ',
+    note: 'Hamza rides on carriers: أ إ ؤ ئ — or stands alone (ء). As hamzat al-wasl (ٱ) at a word start it is dropped when you keep reading.',
+    joins: true,
+  },
   { isolated: 'ب', final: 'ﺐ', initial: 'ﺑ', medial: 'ﺒ', nameAr: 'بَاء', nameEn: 'Ba', sound: '“b” as in bed', zone: 'Lips', example: 'بَاب', exampleEn: 'door', joins: true },
   { isolated: 'ت', final: 'ﺖ', initial: 'ﺗ', medial: 'ﺘ', nameAr: 'تَاء', nameEn: 'Ta', sound: '“t” as in top', zone: 'Tongue', example: 'تَمْر', exampleEn: 'dates', joins: true },
   { isolated: 'ث', final: 'ﺚ', initial: 'ﺛ', medial: 'ﺜ', nameAr: 'ثَاء', nameEn: 'Tha', sound: '“th” as in think', zone: 'Tongue', example: 'ثَعْلَب', exampleEn: 'fox', joins: true },

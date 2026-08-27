@@ -35,7 +35,7 @@ const FEATURES: readonly Feature[] = [
     span: '', accent: 'amber',
   },
   {
-    module: 'arabic', title: 'Arabic Foundations', icon: 'M3 15c2.5-1 3.5-4.5 3.5-9M3 8.5c1.5 0 3 .5 4 1.5M11 15V6.5M11 6.5c1.5-1 3-1 4 .5 1 1.5.5 3.5-1 4.5l3 4',
+    module: 'arabic', title: 'Arabic Foundations', icon: 'M13 4.5v9a2.5 2.5 0 0 1-2.5 2.5M10.4 3.4l5.2-1.8M5 15.5c1.5-1.8 2.3-4 2.3-6.5M5 9.2c1.2.2 2.3.7 3.1 1.5',
     blurb: 'Letters with their four forms, harakat, Quran grammar and vocabulary — offline and audible.',
     span: '', accent: 'primary',
   },

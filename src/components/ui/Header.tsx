@@ -80,9 +80,12 @@ export function Header(): JSX.Element {
               module === 'privacy' || module === 'terms' ? 'text-[var(--primary)]' : 'text-[var(--fg)]',
             ].join(' ')}
           >
-            <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-              <circle cx="10" cy="10" r="2.6" />
-              <path d="M10 1.8l1 2.3a6 6 0 0 1 2 .8l2.4-.7 1.4 2.4-1.5 1.9a6 6 0 0 1 0 2.3l1.5 1.9-1.4 2.4-2.4-.7a6 6 0 0 1-2 .8l-1 2.3H8l-1-2.3a6 6 0 0 1-2-.8l-2.4.7L1.2 13l1.5-1.9a6 6 0 0 1 0-2.3L1.2 6.9l1.4-2.4 2.4.7a6 6 0 0 1 2-.8l1-2.3z" strokeLinejoin="round" />
+            <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+              <circle cx="10" cy="10" r="2.8" />
+              <path
+                d="M10 1l1.1 2.3c.7.1 1.4.4 2 .7l2.4-.9 1.5 1.5-.9 2.4c.3.6.6 1.3.7 2L19.1 10l-2.3 1.1c-.1.7-.4 1.4-.7 2l.9 2.4-1.5 1.5-2.4-.9c-.6.3-1.3.6-2 .7L10 19.1l-1.1-2.3c-.7-.1-1.4-.4-2-.7l-2.4.9-1.5-1.5.9-2.4c-.3-.6-.6-1.3-.7-2L.9 10l2.3-1.1c.1-.7.4-1.4.7-2L3 4.5l1.5-1.5 2.4.9c.6-.3 1.3-.6 2-.7L10 1z"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         </div>

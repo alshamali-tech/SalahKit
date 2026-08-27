@@ -21,7 +21,7 @@ export interface DonationLink {
 
 /** Configured donation destinations (S11: Ko-fi primary, BMC, PayPal). */
 export const DONATION_LINKS: readonly DonationLink[] = [
-  { id: 'kofi', label: 'Ko-fi', url: 'https://ko-fi.com/salahkit', primary: true },
+  { id: 'kofi', label: 'Ko-fi', url: 'https://ko-fi.com/mammonalshamali', primary: true },
   { id: 'bmc', label: 'Buy Me a Coffee', url: 'https://www.buymeacoffee.com/salahkit', primary: false },
   { id: 'paypal', label: 'PayPal', url: 'https://www.paypal.com/donate/?hosted_button_id=salahkit', primary: false },
 ];

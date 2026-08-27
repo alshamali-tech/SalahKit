@@ -1,25 +1,47 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ARABIC_LETTERS } from '../../lib/core/arabic-data';
 import type { ArabicLetter } from '../../lib/core/arabic-data';
 import { useT } from '../../lib/use-locale';
+import { emitToast } from '../../lib/messaging';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
 import { HarakatSection, GrammarSection, VocabSection } from './arabic-sections';
 
 type TabId = 'letters' | 'harakat' | 'grammar' | 'vocab';
 
-/** Speaks Arabic text using the browser voice, when available. */
-export function speakArabic(text: string): void {
+/**
+ * Speaks Arabic text using the browser's speech synthesis. Voices load
+ * asynchronously in most browsers, so we query (and warm) them first.
+ * @param text - Arabic text to pronounce.
+ * @returns True when speech was started, false when unavailable.
+ */
+export function speakArabic(text: string): boolean {
   try {
-    if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
+    const synth = window.speechSynthesis;
+    synth.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'ar-SA';
-    const arVoice = window.speechSynthesis.getVoices().find((v) => v.lang.startsWith('ar'));
+    u.rate = 0.9;
+    // getVoices() can be empty until the 'voiceschanged' event fires;
+    // calling it here triggers the load on browsers that defer it.
+    const voices = synth.getVoices();
+    const arVoice = voices.find((v) => v.lang.toLowerCase().startsWith('ar'));
     if (arVoice) u.voice = arVoice;
-    window.speechSynthesis.speak(u);
+    synth.speak(u);
+    return true;
   } catch {
-    // No TTS voice installed; the button simply does nothing.
+    return false;
+  }
+}
+
+/** Warms the voice list once so "Hear it" works on the first tap. */
+function warmVoices(): void {
+  try {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.getVoices();
+  } catch {
+    // Voices simply stay unloaded; speakArabic retries on demand.
   }
 }
 
@@ -71,6 +93,11 @@ function LetterDetail({ letter }: { letter: ArabicLetter }): JSX.Element {
             {letter.nameEn} <span className="arabic text-lg text-[var(--muted)]">{letter.nameAr}</span>
           </p>
           <p className="mt-0.5 text-sm text-[var(--muted)]">{letter.sound}</p>
+          {letter.note ? (
+            <p className="mt-1 rounded-lg bg-[color-mix(in_srgb,var(--accent)_10%,transparent)] px-2.5 py-1.5 text-xs leading-snug text-[var(--accent-strong)]">
+              {letter.note}
+            </p>
+          ) : null}
           <div className="mt-1.5 flex flex-wrap items-center gap-2">
             <span className="text-[11px] font-extrabold uppercase tracking-wide" style={{ color: ZONE_COLORS[letter.zone] }}>
               {letter.zone}
@@ -78,7 +105,15 @@ function LetterDetail({ letter }: { letter: ArabicLetter }): JSX.Element {
             <Badge tone={letter.joins ? 'primary' : 'neutral'}>{letter.joins ? 'Joins letters' : 'Never joins left'}</Badge>
             <button
               type="button"
-              onClick={() => speakArabic(letter.example)}
+              onClick={() => {
+                if (!speakArabic(letter.example)) {
+                  emitToast({
+                    title: 'No speech voice available',
+                    body: 'Your browser or OS has no Arabic voice installed, so audio can’t play here.',
+                    tone: 'warning',
+                  });
+                }
+              }}
               className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[color-mix(in_srgb,var(--accent)_14%,transparent)] px-3 text-xs font-bold text-[var(--accent-strong)] hover:bg-[var(--accent)] hover:text-[#3b2305] transition-colors"
             >
               <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 4l10 6-10 6z" /></svg>
@@ -104,16 +139,14 @@ function LetterDetail({ letter }: { letter: ArabicLetter }): JSX.Element {
       <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-[var(--field)] p-3">
         <span
           dir="rtl"
-          title="This is the letter being taught, with its diacritics"
+          title={`The ${letter.nameEn} as it appears in the example`}
           className="arabic-ui flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--primary)_14%,transparent)] text-3xl leading-none text-[var(--primary)]"
         >
-          {firstCluster(letter.example)}
+          {letter.chip ?? firstCluster(letter.example)}
         </span>
         <div className="min-w-0 flex-1 text-right">
           <p className="arabic-ui text-2xl text-[var(--fg)] leading-relaxed">{letter.example}</p>
-          <p className="mt-0.5 text-xs text-[var(--muted)]">
-            {letter.exampleEn} — starts with {letter.nameEn.toLowerCase()}
-          </p>
+          <p className="mt-0.5 text-xs text-[var(--muted)]">{letter.exampleEn}</p>
         </div>
       </div>
     </Card>
@@ -131,6 +164,11 @@ export function ArabicModule(): JSX.Element {
   const [tab, setTab] = useState<TabId>('letters');
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<ArabicLetter>(ARABIC_LETTERS[0]);
+
+  // Preload speech voices so "Hear it" responds on the first tap.
+  useEffect(() => {
+    warmVoices();
+  }, []);
 
   const letters = useMemo(() => {
     const q = query.trim().toLowerCase();
