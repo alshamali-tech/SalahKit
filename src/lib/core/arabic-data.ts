@@ -32,7 +32,7 @@ export interface ArabicLetter {
 
 /** The 28 letters of the Arabic alphabet, in traditional order. */
 export const ARABIC_LETTERS: readonly ArabicLetter[] = [
-  { isolated: 'ا', final: 'ﺎ', initial: 'ا', medial: 'ﺎ', nameAr: 'أَلِف', nameEn: 'Alif', sound: 'long “aa” (no consonant sound of its own)', zone: 'Jawf', example: 'أَسَد', exampleEn: 'lion', joins: false },
+  { isolated: 'ا', final: 'ﺎ', initial: 'ا', medial: 'ﺎ', nameAr: 'أَلِف', nameEn: 'Alif', sound: 'long “aa” (no consonant sound of its own)', zone: 'Jawf', example: 'قَالَ', exampleEn: 'he said', joins: false },
   { isolated: 'ب', final: 'ﺐ', initial: 'ﺑ', medial: 'ﺒ', nameAr: 'بَاء', nameEn: 'Ba', sound: '“b” as in bed', zone: 'Lips', example: 'بَاب', exampleEn: 'door', joins: true },
   { isolated: 'ت', final: 'ﺖ', initial: 'ﺗ', medial: 'ﺘ', nameAr: 'تَاء', nameEn: 'Ta', sound: '“t” as in top', zone: 'Tongue', example: 'تَمْر', exampleEn: 'dates', joins: true },
   { isolated: 'ث', final: 'ﺚ', initial: 'ﺛ', medial: 'ﺜ', nameAr: 'ثَاء', nameEn: 'Tha', sound: '“th” as in think', zone: 'Tongue', example: 'ثَعْلَب', exampleEn: 'fox', joins: true },
@@ -134,7 +134,7 @@ export const GRAMMAR_TOPICS: readonly GrammarTopic[] = [
   {
     id: 'definite', titleEn: 'The definite article ال', titleAr: 'أَل التعريف',
     explain: 'ال makes a noun definite (“the”). Before sun letters it melts into the next letter (الشَّمْس), before moon letters it is clear (القَمَر) — the same rule as tajweed’s lam.',
-    example: 'الشَّمْسُ وَالقَمَرُ', gloss: 'the sun · and the moon — “the sun and the moon” (55:5)',
+    example: 'وَالشَّمْسُ وَالْقَمَرُ بِحُسْبَانٍ', gloss: 'and the sun · and the moon · by precise calculation — “And the sun and the moon move by precise calculation” (55:5)',
   },
   {
     id: 'pronouns', titleEn: 'Attached pronouns', titleAr: 'الضمائر المتصلة',
@@ -176,7 +176,7 @@ export const VOCABULARY: readonly VocabWord[] = [
   { ar: 'الله', en: 'Allah (God)', freq: '2,699×' },
   { ar: 'رَبّ', en: 'Lord, Sustainer', freq: '970×' },
   { ar: 'كِتَاب', en: 'book, scripture', freq: '230×' },
-  { ar: 'الَّذِي', en: 'the one who / which', freq: '1,400×' },
+  { ar: 'الَّذِي', en: 'the one who / which', freq: '620×' },
   { ar: 'آمَنَ', en: 'to believe', freq: '810×' },
   { ar: 'يَوْم', en: 'day', freq: '405×' },
   { ar: 'أَرْض', en: 'earth', freq: '461×' },

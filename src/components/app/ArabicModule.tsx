@@ -27,6 +27,58 @@ const ZONE_COLORS: Record<string, string> = {
   Jawf: '#1864ab', Throat: '#2b8a3e', Tongue: '#e8590c', Lips: '#c92a2a', Nasal: '#d6336c',
 };
 
+/** Strips diacritics and folds hamza/alif variants for matching. */
+function normalizeForMatch(s: string): string {
+  return s
+    .replace(/[\u0610-\u061a\u064b-\u065f\u0670]/g, '')
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه');
+}
+
+/** Splits a word into clusters of base letter + attached diacritics. */
+function clustersOf(word: string): string[] {
+  const out: string[] = [];
+  let cur = '';
+  for (const ch of Array.from(word)) {
+    const c = ch.codePointAt(0) ?? 0;
+    const isMark =
+      (c >= 0x0610 && c <= 0x061a) || (c >= 0x064b && c <= 0x065f) || c === 0x0670;
+    if (isMark) cur += ch;
+    else {
+      if (cur) out.push(cur);
+      cur = ch;
+    }
+  }
+  if (cur) out.push(cur);
+  return out;
+}
+
+/**
+ * Example word with the taught letter emphasized, so a beginner sees
+ * exactly where it appears — including its diacritics.
+ * @param props - word and the letter's isolated base form.
+ * @returns The word with its first occurrence of the letter highlighted.
+ */
+function LetterExample({ word, base }: { word: string; base: string }): JSX.Element {
+  const target = normalizeForMatch(base);
+  const clusters = clustersOf(word);
+  const idx = clusters.findIndex((c) => normalizeForMatch(c) === target);
+  if (idx === -1) return <>{word}</>;
+  const prefix = clusters.slice(0, idx).join('');
+  const hit = clusters[idx];
+  const suffix = clusters.slice(idx + 1).join('');
+  return (
+    <>
+      {prefix}
+      <span className="rounded-md bg-[color-mix(in_srgb,var(--primary)_16%,transparent)] px-0.5 text-[var(--primary)]">
+        {hit}
+      </span>
+      {suffix}
+    </>
+  );
+}
+
 /**
  * Letter detail card: shows all four contextual forms, the sound,
  * articulation zone and an example word you can hear.
@@ -91,7 +143,9 @@ function LetterDetail({ letter }: { letter: ArabicLetter }): JSX.Element {
 
       <div className="mt-4 flex items-center justify-between gap-2 rounded-xl border border-[var(--border)] bg-[var(--field)] p-3">
         <div>
-          <p className="arabic text-2xl text-[var(--fg)] text-right leading-relaxed">{letter.example}</p>
+          <p className="arabic text-2xl text-[var(--fg)] text-right leading-relaxed">
+            <LetterExample word={letter.example} base={letter.isolated} />
+          </p>
           <p className="mt-0.5 text-xs text-[var(--muted)]">{letter.exampleEn}</p>
         </div>
       </div>
