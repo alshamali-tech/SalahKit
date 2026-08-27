@@ -32,17 +32,22 @@ function MarkedWord({ h }: { h: Harakah }): JSX.Element {
   const chip = (
     <span
       dir="rtl"
-      title="The letter carrying this mark"
+      title={`${h.hl} — the Ba carrying the ${h.nameEn}`}
       className="arabic-ui inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--primary)_14%,transparent)] px-2 text-2xl leading-none text-[var(--primary)]"
     >
       {h.hl}
     </span>
   );
   return (
-    <span className="flex items-center justify-end gap-2.5" dir="rtl">
-      {early ? chip : null}
-      <span className="arabic-ui text-2xl leading-loose text-[var(--fg)]">{h.example}</span>
-      {!early ? chip : null}
+    <span className="block">
+      <span className="flex items-center justify-end gap-2.5" dir="rtl">
+        {early ? chip : null}
+        <span className="arabic-ui text-2xl leading-loose text-[var(--fg)]">{h.example}</span>
+        {!early ? chip : null}
+      </span>
+      <span className="mt-1 block text-right text-[11px] font-semibold text-[var(--muted)]">
+        {h.exampleEn}
+      </span>
     </span>
   );
 }
