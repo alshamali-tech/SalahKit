@@ -165,6 +165,7 @@ function HadithCard({
  * @returns The rendered module.
  */
 export function HadithList(): JSX.Element {
+  const [view, setView] = useState<'library' | 'curated'>('library');
   const [book, setBook] = useState<HadithBook | 'all'>('all');
   const [category, setCategory] = useState<CategoryFilter>('all');
   const [query, setQuery] = useState('');
@@ -263,6 +264,54 @@ export function HadithList(): JSX.Element {
         </div>
       </Card>
 
+      {/* View switcher — the full streamed library is the default */}
+      <div role="tablist" aria-label="Hadith views" className="grid grid-cols-2 gap-1 rounded-xl bg-[var(--hover)] p-1">
+        <button
+          role="tab"
+          type="button"
+          aria-selected={view === 'library'}
+          onClick={() => setView('library')}
+          className={[
+            'flex items-center justify-center gap-2.5 rounded-lg px-3 py-2.5 text-left transition-all duration-150',
+            'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--primary)]',
+            view === 'library' ? 'bg-[var(--card)] shadow-sm' : 'hover:bg-[color-mix(in_srgb,var(--card)_55%,transparent)]',
+          ].join(' ')}
+        >
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true" className={view === 'library' ? 'text-[var(--primary)]' : 'text-[var(--muted)]'}>
+            <path d="M3 4.5A1.5 1.5 0 0 1 4.5 3h11A1.5 1.5 0 0 1 17 4.5v11a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3 15.5zM3 7h14M7 7v10" strokeLinejoin="round" />
+          </svg>
+          <span className="min-w-0">
+            <span className={['block text-sm font-extrabold truncate', view === 'library' ? 'text-[var(--primary)]' : 'text-[var(--fg)]'].join(' ')}>
+              The Full Sahihayn
+            </span>
+            <span className="block text-[10px] font-bold text-[var(--muted)]">streamed · cached offline</span>
+          </span>
+        </button>
+        <button
+          role="tab"
+          type="button"
+          aria-selected={view === 'curated'}
+          onClick={() => setView('curated')}
+          className={[
+            'flex items-center justify-center gap-2.5 rounded-lg px-3 py-2.5 text-left transition-all duration-150',
+            'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--primary)]',
+            view === 'curated' ? 'bg-[var(--card)] shadow-sm' : 'hover:bg-[color-mix(in_srgb,var(--card)_55%,transparent)]',
+          ].join(' ')}
+        >
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true" className={view === 'curated' ? 'text-[var(--accent-strong)]' : 'text-[var(--muted)]'}>
+            <path d="M10 2.6l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.5 5-.7z" strokeLinejoin="round" />
+          </svg>
+          <span className="min-w-0">
+            <span className={['block text-sm font-extrabold truncate', view === 'curated' ? 'text-[var(--accent-strong)]' : 'text-[var(--fg)]'].join(' ')}>
+              Curated Gems
+            </span>
+            <span className="block text-[10px] font-bold text-[var(--muted)]">{countHadiths('all', 'all')} hand-picked · instant</span>
+          </span>
+        </button>
+      </div>
+
+      {view === 'curated' ? (
+        <>
       {/* Controls */}
       <div className="space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -404,11 +453,19 @@ export function HadithList(): JSX.Element {
         </Card>
       )}
 
-      <HadithLibraryFull favorites={favorites} onToggle={(id) => void toggleFavorite(id)} />
+        </>
+      ) : null}
+
+      {view === 'library' ? (
+        <div key="library" className="animate-[fadeIn_200ms_ease-out]">
+          <HadithLibraryFull favorites={favorites} onToggle={(id) => void toggleFavorite(id)} />
+        </div>
+      ) : null}
 
       <p className="text-xs text-[var(--muted)] text-center pt-2">
-        Curated gems above; the complete collections stream below. Reference numbers follow
-        standard editions of Sahih al-Bukhari and Sahih Muslim.
+        Sahih al-Bukhari and Sahih Muslim — the two most authentic collections. The curated gems
+        ship with the app for instant, offline access; the full library streams section by
+        section from the free hadith-api CDN and stays cached on your device.
       </p>
     </div>
   );

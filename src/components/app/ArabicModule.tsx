@@ -98,13 +98,6 @@ export function ArabicModule(): JSX.Element {
   const [tab, setTab] = useState<TabId>('letters');
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<ArabicLetter>(ARABIC_LETTERS[0]);
-  const [tajweedOn, setTajweedOn] = useState(() => getJSON(STORAGE_KEYS.tajweedOverlay, false));
-
-  /** Persists the tajweed overlay preference (shared with the Reader). */
-  function toggleTajweed(on: boolean): void {
-    setTajweedOn(on);
-    setJSON(STORAGE_KEYS.tajweedOverlay, on);
-  }
 
   const letters = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -142,7 +135,6 @@ export function ArabicModule(): JSX.Element {
               each one a stepping stone to reading and understanding it.
             </p>
           </div>
-          <TajweedToggle on={tajweedOn} onChange={toggleTajweed} />
         </div>
       </Card>
 
@@ -208,7 +200,7 @@ export function ArabicModule(): JSX.Element {
         ) : tab === 'harakat' ? (
           <HarakatSection speak={speakArabic} />
         ) : tab === 'grammar' ? (
-          <GrammarSection tajweedOn={tajweedOn} />
+          <GrammarSection tajweedOn={false} />
         ) : (
           <VocabSection speak={speakArabic} />
         )}
