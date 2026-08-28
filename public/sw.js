@@ -5,10 +5,10 @@
  * Navigations are network-first (always fresh when online), static
  * assets cache-first with background refresh (instant offline).
  */
-const CACHE_VERSION = 'salahkit-v3';
+const CACHE_VERSION = 'salahkit-v4';
 
 /** App shell precached on install. */
-const PRECACHE_URLS = ['/', '/index.html', '/manifest.json', '/favicon.svg'];
+const PRECACHE_URLS = ['/', '/index.html', '/offline.html', '/manifest.json', '/favicon.svg'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -57,8 +57,14 @@ async function navigationStrategy(request) {
     }
     return response;
   } catch {
-    const cached = (await caches.match('/index.html')) || (await caches.match('/'));
-    return cached || Response.error();
+    const cached =
+      (await caches.match(request)) ||
+      (await caches.match('/index.html')) ||
+      (await caches.match('/'));
+    if (cached) return cached;
+    // Last resort: the styled offline page.
+    const offline = await caches.match('/offline.html');
+    return offline || Response.error();
   }
 }
 
