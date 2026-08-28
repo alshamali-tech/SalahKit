@@ -5,6 +5,7 @@ import { toISODate } from '../../lib/core/validator';
 import { findCity } from '../../lib/core/geo';
 import { formatClockTime } from '../../lib/utils/format';
 import { useApp } from '../../store';
+import { useT } from '../../lib/use-locale';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -20,6 +21,7 @@ import type { CalcMethodId, Madhab } from '../../types';
  */
 export function PrayerTimes(): JSX.Element {
   const { settings, updateSettings } = useApp();
+  const { t } = useT();
   const [now, setNow] = useState(() => new Date());
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -54,7 +56,7 @@ export function PrayerTimes(): JSX.Element {
               className="w-full flex items-center justify-between gap-3 rounded-lg border border-[var(--border)] bg-[var(--field)] px-3 py-2.5 text-left hover:border-[var(--primary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--primary)]"
             >
               <span className="min-w-0">
-                <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[var(--muted)]">City</span>
+                <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[var(--muted)]">{t('modulesUi.prayer.city')}</span>
                 <span className="block truncate text-sm font-bold text-[var(--fg)]">
                   {city.name}, {city.country}
                 </span>
@@ -65,7 +67,7 @@ export function PrayerTimes(): JSX.Element {
               </svg>
             </button>
             <div>
-              <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[var(--muted)] mb-1.5">Asr madhab</span>
+              <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[var(--muted)] mb-1.5">{t('modulesUi.prayer.asrMadhab')}</span>
               <div className="flex rounded-lg border border-[var(--border)] overflow-hidden">
                 {(['shafi', 'hanafi'] as const).map((m: Madhab) => (
                   <button
@@ -116,27 +118,26 @@ export function PrayerTimes(): JSX.Element {
                 ) : null}
               </div>
               <p className="mt-2 text-lg font-bold tnum text-[var(--fg)]">{formatClockTime(at)}</p>
-              {isNext ? <Badge tone="primary" className="mt-1.5">Up next</Badge> : null}
+              {isNext ? <Badge tone="primary" className="mt-1.5">{t('modulesUi.prayer.upNext')}</Badge> : null}
             </Card>
           );
         })}
       </div>
 
       <Card>
-        <h3 className="text-sm font-extrabold text-[var(--fg)] mb-3">Calculation method</h3>
+        <h3 className="text-sm font-extrabold text-[var(--fg)] mb-3">{t('modulesUi.prayer.method')}</h3>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr]">
           <MethodSelector value={settings.calcMethod} onChange={onMethod} />
           <div className="rounded-lg border border-[var(--border)] bg-[var(--field)] p-3 text-xs leading-relaxed text-[var(--muted)] min-w-0">
-            <p className="font-bold text-[var(--fg)] mb-1">Which one is right?</p>
-            Follow the authority your local masjid uses. Umm al-Qura sets Isha 90 minutes after
-            Maghrib; the others use twilight angles. All five are computed live on this device.
+            <p className="font-bold text-[var(--fg)] mb-1">{t('modulesUi.prayer.whichRight')}</p>
+            {t('modulesUi.prayer.whichRightBody')}
           </div>
         </div>
       </Card>
 
       <p className="flex flex-wrap items-center gap-2 text-xs text-[var(--muted)]">
-        <Badge tone="success">100% on-device</Badge>
-        Computed with open astronomical math — works with zero connectivity. Verify critical timings with your local mosque.
+        <Badge tone="success">{t('modulesUi.prayer.onDevice')}</Badge>
+        {t('modulesUi.prayer.computedNote')}
       </p>
 
       <LocationPicker open={pickerOpen} onClose={() => setPickerOpen(false)} />

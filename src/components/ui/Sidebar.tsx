@@ -2,6 +2,7 @@ import { DONATION_LINKS } from '../../lib/donation';
 import { useT } from '../../lib/use-locale';
 import { useApp } from '../../store';
 import { Badge } from './Badge';
+import { ModuleIcon } from './ModuleIcon';
 import type { ModuleId } from '../../types';
 
 interface NavItem {
@@ -115,9 +116,9 @@ export function Sidebar({ onClose }: SidebarProps): JSX.Element {
                           : 'text-[var(--fg)] opacity-80 hover:opacity-100 hover:bg-[var(--hover)] font-medium',
                       ].join(' ')}
                     >
-                      <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden="true">
-                        <path d={item.d} />
-                      </svg>
+                      <span className="shrink-0 inline-flex">
+                        <ModuleIcon module={item.module} d={item.d} size={19} />
+                      </span>
                       <span className="truncate">{t(`modules.${item.module}`)}</span>
                       {active ? <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[var(--primary)] shrink-0" aria-hidden="true" /> : null}
                     </button>

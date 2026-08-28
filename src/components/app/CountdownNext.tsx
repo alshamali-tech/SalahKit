@@ -6,6 +6,7 @@ import { toISODate } from '../../lib/core/validator';
 import { findCity } from '../../lib/core/geo';
 import { formatClockTime, formatCountdown, formatFullDate, formatHijriLong } from '../../lib/utils/format';
 import { useApp } from '../../store';
+import { useT } from '../../lib/use-locale';
 import { Badge } from '../ui/Badge';
 
 /**
@@ -15,6 +16,7 @@ import { Badge } from '../ui/Badge';
  */
 export function CountdownNext(): JSX.Element {
   const settings = useApp((s) => s.settings);
+  const { t } = useT();
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -49,7 +51,7 @@ export function CountdownNext(): JSX.Element {
     <div className="min-w-0 flex-1">
       <div className="flex flex-wrap items-center gap-2">
         <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[var(--primary)]">
-          Next prayer · {PRAYER_LABELS[next.name]}
+          {t('modulesUi.prayer.nextPrayer')} · {PRAYER_LABELS[next.name]}
         </p>
         <Badge tone="neutral">{city.name}</Badge>
       </div>
@@ -57,7 +59,7 @@ export function CountdownNext(): JSX.Element {
         <span className="text-5xl font-extrabold tracking-tight tnum text-[var(--fg)] sm:text-6xl">
           {formatCountdown(next.at.getTime() - now.getTime())}
         </span>
-        <span className="text-lg font-semibold text-[var(--muted)]">at {formatClockTime(next.at)}</span>
+        <span className="text-lg font-semibold text-[var(--muted)]">{t('modulesUi.prayer.at')} {formatClockTime(next.at)}</span>
       </div>
       <div
         className="mt-4 h-1.5 w-full max-w-md rounded-full bg-[var(--hover)] overflow-hidden"

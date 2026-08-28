@@ -1,6 +1,7 @@
 import { navigate } from '../../lib/router';
 import { useT } from '../../lib/use-locale';
 import type { ModuleId } from '../../types';
+import { ModuleIcon } from '../ui/ModuleIcon';
 
 interface Feature {
   module: ModuleId;
@@ -129,9 +130,7 @@ export function Features(): JSX.Element {
                   : 'bg-[color-mix(in_srgb,var(--primary)_13%,transparent)] text-[var(--primary)]',
               ].join(' ')}
             >
-              <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d={f.icon} />
-              </svg>
+              <ModuleIcon module={f.module} d={f.icon} size={22} />
             </span>
             <span className="min-w-0">
               <span className="flex items-center gap-2 text-base font-extrabold text-[var(--fg)]">

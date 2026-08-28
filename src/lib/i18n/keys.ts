@@ -145,5 +145,39 @@ export interface TranslationKeys {
       startsWith: string;
       tabs: { letters: string; harakat: string; grammar: string; vocab: string };
     };
+    prayer: {
+      city: string; changeCity: string; method: string; whichRight: string; whichRightBody: string;
+      asrMadhab: string; upNext: string; onDevice: string; computedNote: string;
+      nextPrayer: string; at: string;
+    };
+    qibla: {
+      bearing: string; liveCompass: string; manualDial: string; sensorBlocked: string; paused: string;
+      acquiring: string; facing: string; turnRight: string; turnLeft: string; toGo: string;
+      qiblaIs: string; fromNorth: string; declination: string; trueNorth: string; unavailable: string;
+      noaaLive: string; noaaCached: string; yourCity: string; cityNote: string; enable: string;
+      holdFlat: string; toKaaba: string; fromCity: string;
+    };
+    hijri: {
+      today: string; gToH: string; hToG: string; gDate: string; day: string; month: string; year: string;
+      hijriMonths: string; pickValid: string; enterValid: string; fromWord: string; tabularNote: string;
+      ummAlQura: string; localTabular: string; offlineLocal: string;
+    };
+    calendar: {
+      hijriMonth: string; prevMonth: string; nextMonth: string; todayBtn: string; today: string;
+      jumuah: string; daysThisMonth: string;
+    };
+    tracker: {
+      streak: string; day: string; days: string; thisWeek: string; undo: string; noteToday: string;
+      notePlaceholder: string; saveNote: string; noteSaved: string; dayHeader: string;
+    };
+    dhikr: {
+      todaysDhikr: string; target: string; dhikrPhrase: string; private: string; privateNote: string;
+      undo: string; reset: string; of: string;
+    };
+    zakat: {
+      wealth: string; currency: string; saveRecord: string; zakatDue: string; nisabMet: string;
+      belowNisab: string; monthly: string; totalAssets: string; netDebts: string; silverNisab: string;
+      goldNisab: string; saved: string; undoDelete: string;
+    };
   };
 }

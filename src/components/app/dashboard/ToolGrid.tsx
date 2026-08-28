@@ -2,6 +2,7 @@ import { navigate } from '../../../lib/router';
 import { useT } from '../../../lib/use-locale';
 import type { ModuleId } from '../../../types';
 import { Badge } from '../../ui/Badge';
+import { ModuleIcon } from '../../ui/ModuleIcon';
 
 interface Tool {
   module: ModuleId;
@@ -41,9 +42,7 @@ export function ToolGrid(): JSX.Element {
           className="group flex flex-col items-start gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 text-left transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-[color-mix(in_srgb,var(--primary)_45%,var(--border))] hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
         >
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] text-[var(--primary)] transition-transform duration-200 group-hover:scale-110">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d={tool.icon} />
-            </svg>
+            <ModuleIcon module={tool.module} d={tool.icon} size={20} />
           </span>
           <span className="min-w-0">
             <span className="block truncate text-sm font-extrabold text-[var(--fg)]">

@@ -14,6 +14,7 @@ import {
 import { fetchDeclination } from '../../lib/external/declination';
 import type { DeclinationResult } from '../../lib/external/declination';
 import { useApp } from '../../store';
+import { useT } from '../../lib/use-locale';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -43,6 +44,7 @@ const STATUS_HINTS: Readonly<Record<CompassStatus, string>> = {
  */
 export function QiblaCompass(): JSX.Element {
   const { settings, updateSettings } = useApp();
+  const { t } = useT();
   const [status, setStatus] = useState<CompassStatus>('starting');
   const [heading, setHeading] = useState<number | null>(null);
   const [declination, setDeclination] = useState<DeclinationResult | null>(null);
@@ -152,18 +154,18 @@ export function QiblaCompass(): JSX.Element {
             {status === 'live' ? (
               <Badge tone="success">
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--success)] animate-[pulseDot_1.6s_ease-in-out_infinite]" aria-hidden="true" />
-                Live compass
+                {t('modulesUi.qibla.liveCompass')}
               </Badge>
             ) : status === 'manual' ? (
-              <Badge tone="neutral">Manual dial</Badge>
+              <Badge tone="neutral">{t('modulesUi.qibla.manualDial')}</Badge>
             ) : status === 'denied' ? (
-              <Badge tone="danger">Sensor blocked</Badge>
+              <Badge tone="danger">{t('modulesUi.qibla.sensorBlocked')}</Badge>
             ) : (
-              <Badge tone="warning">{status === 'stale' ? 'Paused' : 'Acquiring…'}</Badge>
+              <Badge tone="warning">{status === 'stale' ? t('modulesUi.qibla.paused') : t('modulesUi.qibla.acquiring')}</Badge>
             )}
             {sensorLive && declination ? (
               <Badge tone="primary">
-                True north {declination.value >= 0 ? '+' : ''}
+                {t('modulesUi.qibla.trueNorth')} {declination.value >= 0 ? '+' : ''}
                 {declination.value.toFixed(1)}°
               </Badge>
             ) : null}
@@ -180,15 +182,15 @@ export function QiblaCompass(): JSX.Element {
           <div className="text-center min-w-0">
             {aligned ? (
               <p className="text-2xl sm:text-3xl font-extrabold text-[var(--success)] animate-[fadeIn_200ms_ease-out]">
-                Facing the Qibla
+                {t('modulesUi.qibla.facing')}
               </p>
             ) : delta !== null ? (
               <p className="text-2xl sm:text-3xl font-extrabold text-[var(--fg)]">
-                Turn {delta > 0 ? 'right' : 'left'} · <span className="tnum">{Math.abs(Math.round(delta))}°</span> to go
+                {delta > 0 ? t('modulesUi.qibla.turnRight') : t('modulesUi.qibla.turnLeft')} · <span className="tnum">{Math.abs(Math.round(delta))}°</span> {t('modulesUi.qibla.toGo')}
               </p>
             ) : (
               <p className="text-lg font-bold text-[var(--fg)]">
-                Qibla is at <span className="tnum">{Math.round(bearing)}°</span> from north
+                {t('modulesUi.qibla.qiblaIs')} <span className="tnum">{Math.round(bearing)}°</span> {t('modulesUi.qibla.fromNorth')}
               </p>
             )}
             <p className="mt-1.5 text-xs text-[var(--muted)] max-w-sm">{STATUS_HINTS[status]}</p>
@@ -200,7 +202,7 @@ export function QiblaCompass(): JSX.Element {
                 <circle cx="10" cy="10" r="7" />
                 <path d="M13 7l-2.2 5.2L5.6 14l1.8-4.8z" strokeLinejoin="round" />
               </svg>
-              Enable compass
+              {t('modulesUi.qibla.enable')}
             </Button>
           ) : null}
         </div>
@@ -208,14 +210,14 @@ export function QiblaCompass(): JSX.Element {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card tone="raised">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--primary)]">Qibla bearing</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--primary)]">{t('modulesUi.qibla.bearing')}</p>
           <p className="mt-1 text-4xl font-extrabold tnum text-[var(--fg)]">
             {bearing.toFixed(1)}°
             <span className="ml-2 text-base font-bold text-[var(--muted)]">{compassPoint(bearing)}</span>
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
-            <Badge tone="primary">From {city.name}</Badge>
-            <Badge tone="neutral">{formatDistanceKm(distance)} to Kaaba</Badge>
+            <Badge tone="primary">{t('modulesUi.qibla.fromCity')} {city.name}</Badge>
+            <Badge tone="neutral">{formatDistanceKm(distance)} {t('modulesUi.qibla.toKaaba')}</Badge>
           </div>
         </Card>
 
