@@ -36,6 +36,8 @@ export const MODULE_TITLES: Readonly<Record<ModuleId, string>> = {
   hadith: 'Hadith Library',
   tajweed: 'Tajweed Trainer',
   arabic: 'Arabic Foundations',
+  donate: 'Support the Developer',
+  about: 'About',
   privacy: 'Privacy Policy',
   terms: 'Terms of Service',
 };
@@ -99,6 +101,8 @@ export const SITEMAP_PATHS: readonly string[] = [
   '/tools/hadith',
   '/tools/tajweed',
   '/tools/arabic',
+  '/donate',
+  '/about',
   '/privacy',
   '/terms',
 ];

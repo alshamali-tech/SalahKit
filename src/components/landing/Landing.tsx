@@ -3,6 +3,8 @@ import { Hero } from './Hero';
 import { Features } from './Features';
 import { FAQ } from './FAQ';
 import { Comparison } from './Comparison';
+import { PrivacySection } from './PrivacySection';
+import { OfflineSection } from './OfflineSection';
 import { DonationFooter } from '../donation/DonationFooter';
 
 /**
@@ -62,6 +64,8 @@ export function Landing(): JSX.Element {
       <div ref={featuresRef}>
         <Features />
       </div>
+      <PrivacySection />
+      <OfflineSection />
       <div ref={compareRef}>
         <Comparison />
       </div>

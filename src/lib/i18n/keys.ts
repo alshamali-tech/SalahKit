@@ -78,6 +78,17 @@ export interface TranslationKeys {
     supportSub: string;
     supportBtn: string;
     faq: readonly FaqEntry[];
+    /** Privacy section (optional — locales fall back to English). */
+    privacyKicker?: string;
+    privacyTitle?: string;
+    privacySub?: string;
+    privacyProof?: string;
+    privacyItems?: readonly string[];
+    /** Offline-first section (optional — locales fall back to English). */
+    offlineKicker?: string;
+    offlineTitle?: string;
+    offlineSub?: string;
+    offlineSteps?: readonly { title: string; body: string }[];
   };
   settings: {
     title: string; city: string; method: string; asrMadhab: string; shafi: string;
@@ -87,6 +98,17 @@ export interface TranslationKeys {
   offline: { message: string };
   donation: { toastTitle: string; toastBody: string; notNow: string };
   footer: { line: string; tools: string; support: string; builtWith: string };
+  /** About page/panel (optional — locales fall back to English). */
+  about?: {
+    title: string;
+    mission: string;
+    sourcesTitle: string;
+    /** Descriptions aligned by index with the source list in AboutPanel. */
+    sourceDescs: readonly string[];
+    license: string;
+  };
+  /** Donate page (optional — locales fall back to English). */
+  donate?: { title: string; sub: string; note: string; faq: readonly FaqEntry[] };
   /** Per-tool UI chrome (headings, tabs, buttons, empty states). */
   modulesUi: {
     tajweed: {

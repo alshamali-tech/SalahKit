@@ -16,6 +16,7 @@ import { emitToast } from '../../lib/messaging';
 import { DonationModal } from '../donation/DonationModal';
 import { DataManager } from './DataManager';
 import { PrivacyInfo } from './PrivacyInfo';
+import { AboutPanel } from './AboutPanel';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -344,6 +345,7 @@ export function SettingsPanel(): JSX.Element {
 
           <PrivacyInfo />
           <VersionCard />
+          <AboutPanel />
           <ReminderCard />
           <DataManager />
         </div>

@@ -25,6 +25,9 @@ export type ModuleId =
   | 'hadith'
   | 'tajweed'
   | 'arabic'
+  | 'dashboard'
+  | 'donate'
+  | 'about'
   | 'privacy'
   | 'terms';
 

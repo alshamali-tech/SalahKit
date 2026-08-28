@@ -21,6 +21,9 @@ const MODULE_IDS: readonly ModuleId[] = [
   'hadith',
   'tajweed',
   'arabic',
+  'dashboard',
+  'donate',
+  'about',
   'privacy',
   'terms',
 ];
@@ -51,6 +54,8 @@ export function parseHash(hash: string): Route {
   if (clean === '/') return { view: 'landing' };
   if (clean === '/privacy') return { view: 'tools', module: 'privacy' };
   if (clean === '/terms') return { view: 'tools', module: 'terms' };
+  if (clean === '/donate') return { view: 'tools', module: 'donate' };
+  if (clean === '/about') return { view: 'tools', module: 'about' };
   if (clean === '/tools' || clean === '/dashboard') return { view: 'tools', module: 'dashboard' };
   const match = clean.match(/^\/tools\/([a-z-]+)\/?$/);
   if (match && match[1] && isModuleId(match[1])) {
@@ -68,6 +73,8 @@ export function routeToPath(route: Route): string {
   if (route.view === 'landing') return '/';
   if (route.module === 'privacy') return '/privacy';
   if (route.module === 'terms') return '/terms';
+  if (route.module === 'donate') return '/donate';
+  if (route.module === 'about') return '/about';
   return `/tools/${route.module}`;
 }
 

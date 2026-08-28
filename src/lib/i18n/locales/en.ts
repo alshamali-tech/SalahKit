@@ -81,6 +81,26 @@ export const en: TranslationKeys = {
       { q: 'Why no app in the stores?', a: 'SalahKit is a PWA: open it in your browser, then “Add to Home Screen” — full screen, own icon, offline, and it checks for updates automatically. No store fees, no permission prompts.' },
       { q: 'Is a tip required?', a: 'Never. Tips are voluntary and handled entirely by the external provider. They unlock nothing, because nothing is locked.' },
     ],
+    privacyKicker: 'Privacy by architecture',
+    privacyTitle: 'Nothing to collect. Nowhere to send it.',
+    privacySub: 'SalahKit has no servers, no accounts and no analytics pipeline — so there is nothing to leak, sell or subpoena. Your prayer log, dhikr counts and Zakat records live in your browser’s IndexedDB and nowhere else.',
+    privacyProof: 'Read the full policy',
+    privacyItems: [
+      'No cookies — not even “necessary” ones',
+      'No analytics, no telemetry, no crash reporting',
+      'No advertising identifiers or fingerprinting',
+      'No accounts, no email, no phone number',
+      'No third-party trackers on any page',
+      'Export, import or wipe everything from Settings',
+    ],
+    offlineKicker: 'Offline-first',
+    offlineTitle: 'Airplane mode is a feature, not a failure state',
+    offlineSub: 'Prayer times are computed from solar math on your device. The Quran, tajweed, Arabic and the 99 Names ship with the app. What little is fetched — Hijri refinement, hadith sections, audio — is cached the first time and yours forever.',
+    offlineSteps: [
+      { title: 'Compute locally', body: 'Astronomy, qibla bearing, Hijri conversion and tajweed rules run in pure TypeScript on your device — zero network involved.' },
+      { title: 'Cache first', body: 'Anything fetched (hadith sections, recitation audio, calendar refinement) is stored in IndexedDB and served from cache on every later visit.' },
+      { title: 'Degrade gracefully', body: 'When a source is unreachable, the built-in engine takes over silently. You see a small offline badge — never a broken screen.' },
+    ],
   },
   settings: {
     title: 'Settings', city: 'City', method: 'Calculation method', asrMadhab: 'Asr madhab',
@@ -98,6 +118,28 @@ export const en: TranslationKeys = {
   footer: {
     line: 'A free, offline-first Islamic toolkit. Your data always stays on your device — forever.',
     tools: 'Tools', support: 'Support', builtWith: 'Built with ihsan.',
+  },
+  about: {
+    title: 'About SalahKit',
+    mission: 'SalahKit is an independent, free-forever Islamic toolkit built on a simple premise: worship tools should not spy on the people who use them. Everything runs in your browser; optional network features are keyless, cached, and attributed below.',
+    sourcesTitle: 'Data sources & attribution',
+    sourceDescs: [
+      'Optional refinement of prayer times and Hijri dates. Keyless public API; requests carry only the city or date you chose.',
+      'Quran text, translations and reciter audio streams, served from a public CDN and cached in your browser.',
+      'The full Sahih al-Bukhari and Sahih Muslim, streamed section by section under an open license. Nothing is bundled with the app.',
+      'Magnetic declination for the Qibla compass, from the public NOAA geomag service.',
+      'Quran script is public domain and verified against the standard mushaf; rule colors follow open astronomical and tajweed references.',
+    ],
+    license: 'Released under the MIT license. Content attributions belong to their respective owners.',
+  },
+  donate: {
+    title: 'Support the developer',
+    sub: 'SalahKit is free forever — no ads, no subscriptions, no locked features. It is built and maintained in personal time, and voluntary tips keep the hosting and the work going.',
+    note: 'Tips are handled entirely by the external providers (Ko-fi, Buy Me a Coffee, PayPal). SalahKit never sees your payment details, and donating unlocks nothing — because nothing is locked.',
+    faq: [
+      { q: 'Does a tip unlock premium features?', a: 'No. Every tool is free for everyone, permanently. A tip is simply a gift — sadaqah jariyah — that helps the project continue.' },
+      { q: 'Why not ads or subscriptions instead?', a: 'Because worship tools should not surveil or bill their users. Voluntary support keeps SalahKit honest: accountable to users, not to advertisers.' },
+    ],
   },
   modulesUi: {
     tajweed: {
