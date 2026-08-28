@@ -1,7 +1,7 @@
 /**
  * Per-module icon. Most modules draw a stroked SVG path on a 20x20
- * grid; the Arabic Foundations module instead shows the first two
- * letters of the alphabet (alef, ba) as living glyphs.
+ * grid; the Arabic Foundations module instead shows the letter alef
+ * (ا) as a living glyph — the first letter of the Arabic alphabet.
  */
 export interface ModuleIconProps {
   /** Module id; 'arabic' gets the letter treatment. */
@@ -22,10 +22,19 @@ const ARABIC_STACK =
 
 export function ModuleIcon({ module, d, size = 20 }: ModuleIconProps): JSX.Element {
   if (module === 'arabic') {
+    // A single alef (ا): tall vertical stroke with a small foot, drawn
+    // as a path so it renders identically on every platform/font.
     return (
       <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true">
-        <text x="2" y="9.5" fontSize="9" fontWeight="700" fill="currentColor" style={{ fontFamily: ARABIC_STACK }}>أ</text>
-        <text x="10" y="17.5" fontSize="9" fontWeight="700" fill="currentColor" style={{ fontFamily: ARABIC_STACK }}>ب</text>
+        <path
+          d="M10 2.6v13.2c0 .8-.5 1.4-1.3 1.5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="13.4" cy="4.4" r="1.1" fill="currentColor" />
       </svg>
     );
   }
