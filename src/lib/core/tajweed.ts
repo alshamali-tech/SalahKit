@@ -368,7 +368,9 @@ function checkRa(c: Cluster, clusters: Cluster[], i: number): boolean {
     const next = clusters[i + 1];
     if (prev) {
       if (prev.marks.has(KASRA)) {
-        assign(c, next && ISTIALA_LETTERS.has(next.base) ? 'ra-tafkhim' : 'ra-tarqeeq');
+        // Saakin ra after kasra before an isti'la letter (فِرْقٍ): both
+        // heavy and light are permitted — mark it as jawaz.
+        assign(c, next && ISTIALA_LETTERS.has(next.base) ? 'ra-jawaz' : 'ra-tarqeeq');
       } else if (prev.base === YA && isSaakin(prev)) assign(c, 'ra-tarqeeq');
       else if (prev.marks.has(FATHA) || prev.marks.has(DAMMA)) assign(c, 'ra-tafkhim');
     }

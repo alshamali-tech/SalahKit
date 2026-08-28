@@ -17,6 +17,7 @@ export type RuleCategory =
   | 'ra'
   | 'madd'
   | 'hamza'
+  | 'isti'
   | 'waqf';
 
 /** Every rule the engine can detect. */
@@ -42,6 +43,7 @@ export type TajweedRuleId =
   | 'lam-allah-tarqeeq'
   | 'ra-tafkhim'
   | 'ra-tarqeeq'
+  | 'ra-jawaz'
   | 'madd'
   | 'madd-badal'
   | 'madd-wajib'
@@ -49,9 +51,11 @@ export type TajweedRuleId =
   | 'madd-lazim'
   | 'madd-arrid'
   | 'madd-leen'
+  | 'madd-farq'
   | 'madd-silah-sughra'
   | 'madd-silah-kubra'
   | 'hamza-wasl'
+  | 'istiala'
   | 'waqf';
 
 /** Render treatment: recolour the glyphs, or keep ink + underline. */
@@ -205,6 +209,12 @@ export const TAJWEED_RULES: Readonly<Record<TajweedRuleId, TajweedRule>> = {
     desc: 'Light ra: carries kasra, or is saakin after kasra / ya sakinah (رِحْلَةَ).',
     descAr: 'ترقيق الراء عند الكسر',
   },
+  'ra-jawaz': {
+    label: 'Ra — two faces', arabic: 'راء جواز الوجهين', category: 'ra', color: 'var(--tw-ra-jawaz)',
+    duration: null, ghunnah: false, priority: 46, style: 'recolor',
+    desc: 'Both heavy and light are permitted — e.g. فِرْقٍ (26:63) and مِصْرَ at waqf. Scholars prefer one face; either is valid.',
+    descAr: 'جواز الوجهين في الراء نحو فِرْقٍ ومِصْرَ عند الوقف',
+  },
   madd: {
     label: 'Madd tabee’i', arabic: 'مد طبيعي', category: 'madd', color: 'var(--tw-madd)',
     duration: 2, ghunnah: false, priority: 30, style: 'recolor',
@@ -247,6 +257,12 @@ export const TAJWEED_RULES: Readonly<Record<TajweedRuleId, TajweedRule>> = {
     desc: 'Soft saakin و/ي after a fatha when you stop (خَوْفٍ، بَيْتٍ) — stretch gently 2, 4 or 6.',
     descAr: 'مد اللين: واو أو ياء ساكنتان بعد فتح عند الوقف',
   },
+  'madd-farq': {
+    label: 'Madd farq', arabic: 'مد فرق', category: 'madd', color: 'var(--tw-madd-farq)',
+    duration: 6, ghunnah: false, priority: 82, style: 'recolor',
+    desc: 'A 6-count stretch that marks a QUESTION. Occurs in only 4 places: قُلْ آلذَّكَرَيْنِ (6:143-144), قُلْ آللَّهُ أَذِنَ لَكُمْ (10:59) and آلْآنَ (10:51, 10:91).',
+    descAr: 'مد الفرق: ست حركات لتمييز الاستفهام — قُلْ آلذَّكَرَيْنِ، قُلْ آللَّهُ، آلْآنَ',
+  },
   'madd-silah-sughra': {
     label: 'Madd silah sughra', arabic: 'مد صلة صغرى', category: 'madd', color: 'var(--tw-madd-silah-sughra)',
     duration: 2, ghunnah: false, priority: 44, style: 'recolor',
@@ -265,6 +281,12 @@ export const TAJWEED_RULES: Readonly<Record<TajweedRuleId, TajweedRule>> = {
     desc: 'The small ٱ: pronounced only when starting, dropped in flow. Found in the article ال, certain nouns (اسم, ابن, امرأة), 5/6-letter past verbs and 3-letter imperatives. Its vowel when starting: kasra after a saakin, else from the word.',
     descAr: 'همزة الوصل: تنطق ابتداءً وتسقط وصلاً — في ال التعريف وأسماء والأفعال الخماسية والسداسية وأمر الثلاثي',
   },
+  istiala: {
+    label: 'Heavy letters (istiʿlāʾ)', arabic: 'حروف الاستعلاء', category: 'isti', color: 'var(--tw-istiala)',
+    duration: null, ghunnah: false, priority: 35, style: 'recolor',
+    desc: 'The seven letters خ ص ض غ ط ق ظ are ALWAYS pronounced heavy — lift the back of the tongue toward the palate. Strongest with fatha, then damma, then kasra (خُصَّ ضَغْطٍ قِظْ).',
+    descAr: 'حروف الاستعلاء السبعة تُفخَّم دائمًا: خ ص ض غ ط ق ظ — ارفع أقصى اللسان نحو الحنك',
+  },
   waqf: {
     label: 'Waqf', arabic: 'علامات الوقف', category: 'waqf', color: 'var(--tw-waqf)',
     duration: null, ghunnah: false, priority: 20, style: 'underline-solid',
@@ -280,10 +302,10 @@ export const RULE_ORDER: readonly TajweedRuleId[] = [
   'qalqalah', 'qalqalah-wusta', 'qalqalah-kubra',
   'idgham-mutamathil', 'idgham-mutajanis', 'idgham-mutaqarib',
   'lam-shamsi', 'lam-qamari', 'lam-allah-tafkhim', 'lam-allah-tarqeeq',
-  'ra-tafkhim', 'ra-tarqeeq',
+  'ra-tafkhim', 'ra-tarqeeq', 'ra-jawaz',
   'madd', 'madd-badal', 'madd-wajib', 'madd-jaiz', 'madd-lazim',
-  'madd-arrid', 'madd-leen', 'madd-silah-sughra', 'madd-silah-kubra',
-  'hamza-wasl', 'waqf',
+  'madd-arrid', 'madd-leen', 'madd-farq', 'madd-silah-sughra', 'madd-silah-kubra',
+  'hamza-wasl', 'istiala', 'waqf',
 ];
 
 /** Category display order + labels for the grouped legend. */
@@ -297,6 +319,7 @@ export const RULE_CATEGORIES: readonly { id: RuleCategory; label: string }[] = [
   { id: 'ra', label: 'Ra' },
   { id: 'madd', label: 'Madd' },
   { id: 'hamza', label: 'Hamza' },
+  { id: 'isti', label: 'Heavy Letters' },
   { id: 'waqf', label: 'Waqf' },
 ];
 
@@ -319,3 +342,88 @@ export const MUTAJANIS_PAIRS: Readonly<Record<string, string>> = {
 export const MUTAQARIB_PAIRS: Readonly<Record<string, string>> = {
   ل: 'ر', ق: 'ك', ب: 'م',
 };
+
+/** The seven isti'la letters — always heavy (خُصَّ ضَغْطٍ قِظْ). */
+export const ISTIALA_LETTERS: ReadonlySet<string> = new Set([
+  'خ', 'ص', 'ض', 'غ', 'ط', 'ق', 'ظ',
+]);
+
+/** The four agreed sakt positions in Hafs (brief pause, no breath). */
+export const SAKT_POSITIONS: readonly string[] = [
+  'عِوَجًا ۜ قَيِّمًا (Al-Kahf 18:1-2)',
+  'مَرْقَدِنَا ۜ هَٰذَا (Ya-Sin 36:52)',
+  'مَنْ ۜ رَاقٍ (Al-Qiyamah 75:27)',
+  'كَلَّا ۜ بَلْ رَانَ (Al-Mutaffifin 83:14)',
+];
+
+/** A documented exception / special-case ayah. */
+export interface TajweedException {
+  /** Short reference, e.g. "10:91". */
+  ref: string;
+  /** The word or phrase involved. */
+  word: string;
+  /** Which rule is the exception to, or the special rule. */
+  rule: TajweedRuleId;
+  /** English explanation. */
+  en: string;
+  /** Arabic explanation. */
+  ar: string;
+}
+
+/**
+ * Special ayahs that deviate from the general rule and must be
+ * memorised as exceptions (al-mustathnayāt). The engine detects what it
+ * can programmatically; this table documents the rest for the learner.
+ */
+export const TAJWEED_EXCEPTIONS: readonly TajweedException[] = [
+  {
+    ref: '2:255 (Ayat al-Kursi)', word: 'الْحَيُّ الْقَيُّومُ', rule: 'madd-lazim',
+    en: 'The doubled ي in الْحَيُّ and الْقَيُّومُ carries a shaddah after a madd letter — a 6-count madd lazim kalimi muthaqqal, not the usual 2 counts.',
+    ar: 'الياء المشددة بعد حرف المد في الحيّ والقيوم مد لازم مثقل بست حركات',
+  },
+  {
+    ref: '1:7', word: 'الضَّالِّينَ', rule: 'madd-lazim',
+    en: 'A shaddah-ed lam follows the madd alif — 6 counts (muthaqqal). Classic example of madd lazim kalimi.',
+    ar: 'اللام المشددة بعد الألف في الضالين مد لازم مثقل بست حركات',
+  },
+  {
+    ref: '10:51, 10:91', word: 'آلْآنَ', rule: 'madd-farq',
+    en: 'Madd farq (6 counts) distinguishes the question "Now?" from a statement. One of only 4 places in the Quran.',
+    ar: 'مد الفرق في آلآن ست حركات لتمييز الاستفهام',
+  },
+  {
+    ref: '6:143-144', word: 'قُلْ آلذَّكَرَيْنِ', rule: 'madd-farq',
+    en: 'Madd farq (6 counts) marks the interrogative — without it the verse would read as a statement.',
+    ar: 'مد الفرق في قل آلذكرين ست حركات لتمييز الاستفهام',
+  },
+  {
+    ref: '10:59', word: 'قُلْ آللَّهُ أَذِنَ لَكُمْ', rule: 'madd-farq',
+    en: 'Madd farq (6 counts) on the question "Has Allah permitted you?" — the fourth madd-farq position.',
+    ar: 'مد الفرق في قل آلله أذن لكم ست حركات',
+  },
+  {
+    ref: '2:125', word: 'وَإِذْ جَعَلْنَا', rule: 'ghunna',
+    en: 'Words like إِذْ and إِذًا end in a saakin ذ, not a noon — no noon rules apply despite the similar shape.',
+    ar: 'إذ تنتهي بذال ساكنة لا نون فلا تجري عليها أحكام النون',
+  },
+  {
+    ref: '26:63', word: 'فِرْقٍ', rule: 'ra-jawaz',
+    en: 'The ra is saakin after a kasra but followed by a heavy ق — both heavy and light are permitted (jawaz al-wajhayn).',
+    ar: 'راء فِرْق ساكنة بعد كسر وبعدها قاف — يجوز فيها الوجهان',
+  },
+  {
+    ref: '2:61', word: 'مِصْرَ', rule: 'ra-jawaz',
+    en: 'At waqf, the ra of مِصْرَ follows a kasra but the word ends in a heavy context — both faces permitted, heavy preferred.',
+    ar: 'راء مصر عند الوقف يجوز فيها الوجهان والتفخيم أولى',
+  },
+  {
+    ref: '18:1, 36:52, 75:27, 83:14', word: 'ۜ (sakt sign)', rule: 'waqf',
+    en: 'The small ص-like mark (ۜ) means a sakt: pause briefly WITHOUT breathing, then continue. Four agreed positions in Hafs.',
+    ar: 'علامة السكت ۜ تعني وقفة يسيرة من غير تنفس في المواضع الأربعة',
+  },
+  {
+    ref: '2:245, 57:11', word: 'يَبْسُطُ / بَصْطَةً', rule: 'istiala',
+    en: 'The ص is written with a small ط-like shape in some mushafs but pronounced as a plain ص — do not add a qalqalah or extra heaviness.',
+    ar: 'الصاد المهملة في يبصط وبصطة تلفظ صادًا عادية من غير قلقلة',
+  },
+];

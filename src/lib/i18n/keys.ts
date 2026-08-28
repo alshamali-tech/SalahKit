@@ -3,8 +3,8 @@
  * to this shape; `translate()` falls back to English for missing keys.
  */
 
-/** Supported interface languages. */
-export type LocaleId = 'en' | 'ar' | 'fr' | 'id' | 'tr' | 'ur';
+/** Supported interface languages (English + Arabic). */
+export type LocaleId = 'en' | 'ar';
 
 /** One FAQ entry (localised). */
 export interface FaqEntry {

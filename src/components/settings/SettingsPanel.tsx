@@ -13,6 +13,8 @@ import {
 } from '../../lib/use-reminders';
 import type { ReminderConfig } from '../../lib/core/reminders';
 import { emitToast } from '../../lib/messaging';
+import { LOCALES } from '../../lib/i18n';
+import { useT } from '../../lib/use-locale';
 import { DonationModal } from '../donation/DonationModal';
 import { DataManager } from './DataManager';
 import { PrivacyInfo } from './PrivacyInfo';
@@ -250,6 +252,7 @@ function ReminderCard(): JSX.Element {
  */
 export function SettingsPanel(): JSX.Element {
   const { settingsOpen, setSettingsOpen, settings, updateSettings, theme, setTheme } = useApp();
+  const { locale, t, setLocale } = useT();
   const [donateOpen, setDonateOpen] = useState(false);
 
   /** Applies a city selection to settings. */
@@ -319,6 +322,31 @@ export function SettingsPanel(): JSX.Element {
                     ].join(' ')}
                   >
                     {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-wider text-[var(--muted)] mb-1.5">
+                {t('settings.language')}
+              </span>
+              <div className="flex rounded-lg border border-[var(--border)] overflow-hidden">
+                {LOCALES.map((l) => (
+                  <button
+                    key={l.id}
+                    type="button"
+                    aria-pressed={locale.id === l.id}
+                    onClick={() => setLocale(l.id)}
+                    className={[
+                      'h-11 flex-1 text-sm font-semibold transition-colors duration-150',
+                      'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[var(--primary)]',
+                      locale.id === l.id
+                        ? 'bg-[var(--primary)] text-[var(--primary-fg)]'
+                        : 'bg-[var(--field)] text-[var(--muted)] hover:text-[var(--fg)]',
+                      l.rtl ? 'arabic text-base' : '',
+                    ].join(' ')}
+                  >
+                    {l.native}
                   </button>
                 ))}
               </div>
