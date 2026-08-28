@@ -94,6 +94,13 @@ export interface TranslationKeys {
     title: string; city: string; method: string; asrMadhab: string; shafi: string;
     hanafi: string; theme: string; light: string; dark: string; plan: string;
     planNote: string; language: string; support: string; supportNote: string; donate: string;
+    versionTitle: string; versionNote: string; checkNow: string; checkingBtn: string;
+    latestToast: string; foundToast: string; foundBody: string;
+    remindersTitle: string; remindersNote: string; enableNotifs: string; sysOn: string; inApp: string;
+    allReminders: string; prayerReminders: string; leadTime: string; morningAdhkar: string;
+    eveningAdhkar: string; hifzReview: string;
+    yourData: string; exportJson: string; importBackup: string; clearAll: string;
+    clearConfirm: string; yesDelete: string; cancelBtn: string;
   };
   offline: { message: string };
   donation: { toastTitle: string; toastBody: string; notNow: string };
@@ -135,15 +142,23 @@ export interface TranslationKeys {
       revealAll: string; checked: string;
       again: string; hard: string; good: string; easy: string;
       saveContinue: string;
+      allCaughtUp: string; chunkSizeNote: string; newBadge: string; chunkLogged: string;
+      changeChunk: string; surahOffline: string; back: string; learnNew: string;
+      queueCleared: string; queueClearedBody: string; learnMore: string; recheckQueue: string;
+      memorizeFirst: string; voiceUnavailable: string; voiceFallback: string;
+      listeningRecite: string; micReady: string; micChecking: string; micTap: string;
     };
     quran: {
       listenSurah: string; chooseSurah: string; bookmarks: string; continueReading: string;
       playAyah: string; offlineLocal: string; loadingSurah: string; copiedAyah: string;
+      loading: string; justDownloaded: string; onDevice: string; offlineCopy: string;
+      yourBookmarks: string; copyUnavailable: string;
     };
     arabic: {
       searchLetters: string; hearIt: string; joins: string; neverJoins: string;
       startsWith: string;
       tabs: { letters: string; harakat: string; grammar: string; vocab: string };
+      highFreq: string;
     };
     prayer: {
       city: string; changeCity: string; method: string; whichRight: string; whichRightBody: string;
@@ -156,6 +171,9 @@ export interface TranslationKeys {
       qiblaIs: string; fromNorth: string; declination: string; trueNorth: string; unavailable: string;
       noaaLive: string; noaaCached: string; yourCity: string; cityNote: string; enable: string;
       holdFlat: string; toKaaba: string; fromCity: string;
+      hints: { manual: string; ask: string; denied: string; starting: string; calibrating: string; stale: string };
+      hubNeedle: string; hubCalibrating: string; hubQibla: string;
+      hubTurnRight: string; hubTurnLeft: string; hubPaused: string;
     };
     hijri: {
       today: string; gToH: string; hToG: string; gDate: string; day: string; month: string; year: string;
@@ -178,6 +196,21 @@ export interface TranslationKeys {
       wealth: string; currency: string; saveRecord: string; zakatDue: string; nisabMet: string;
       belowNisab: string; monthly: string; totalAssets: string; netDebts: string; silverNisab: string;
       goldNisab: string; saved: string; undoDelete: string;
+      gold: string; silver: string; goldPrice: string; silverPrice: string; cash: string;
+      investments: string; otherAssets: string; debts: string; disclaimer: string;
+    };
+    dashboard: {
+      nextPrayer: string; today: string; ah: string; streak: string; day: string; days: string;
+      best: string; thisWeek: string; tools: string;
+    };
+    names: { searchTitle: string; searchPh: string; of99: string; noMatch: string; noMatchHint: string };
+    duas: {
+      adhkar: string; searchPh: string; noFavs: string; noFavsSub: string; noMatch: string; noMatchHint: string;
+      cats: {
+        all: string; favorites: string; morning: string; evening: string; salah: string; quran: string;
+        prophetic: string; home: string; daily: string; travel: string; nature: string; hardship: string; sleep: string;
+      };
     };
   };
+  update: { ready: string; body: string; reload: string; later: string };
 }

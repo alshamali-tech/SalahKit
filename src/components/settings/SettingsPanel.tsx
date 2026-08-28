@@ -355,8 +355,8 @@ export function SettingsPanel(): JSX.Element {
 
           <section aria-label="Plan" className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--border)] bg-[var(--field)] px-3 py-2.5">
             <div className="min-w-0">
-              <p className="text-sm font-bold text-[var(--fg)]">Plan</p>
-              <p className="text-xs text-[var(--muted)]">Every feature is included. Forever.</p>
+              <p className="text-sm font-bold text-[var(--fg)]">{t('settings.plan')}</p>
+              <p className="text-xs text-[var(--muted)]">{t('settings.planNote')}</p>
             </div>
             <Badge tone="success">{getPlanLabel(getPlan())}</Badge>
           </section>
@@ -364,10 +364,10 @@ export function SettingsPanel(): JSX.Element {
           <section aria-label="Support" className="rounded-lg border border-[color-mix(in_srgb,var(--accent)_40%,var(--border))] bg-[color-mix(in_srgb,var(--accent)_8%,transparent)] px-3 py-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="min-w-0">
-                <p className="text-sm font-bold text-[var(--fg)]">Support SalahKit</p>
-                <p className="text-xs text-[var(--muted)]">Free forever. No ads. If this helps, consider supporting the developer.</p>
+                <p className="text-sm font-bold text-[var(--fg)]">{t('settings.support')}</p>
+                <p className="text-xs text-[var(--muted)]">{t('settings.supportNote')}</p>
               </div>
-              <Button variant="amber" size="sm" onClick={() => setDonateOpen(true)}>Donate</Button>
+              <Button variant="amber" size="sm" onClick={() => setDonateOpen(true)}>{t('settings.donate')}</Button>
             </div>
           </section>
 

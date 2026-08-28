@@ -222,7 +222,7 @@ export function QiblaCompass(): JSX.Element {
         </Card>
 
         <Card hover>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--primary)]">Magnetic declination</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--primary)]">{t('modulesUi.qibla.declination')}</p>
           <p className="mt-1 text-2xl font-extrabold tnum text-[var(--fg)]">
             {declination ? `${declination.value >= 0 ? '+' : '−'}${Math.abs(declination.value).toFixed(1)}°` : '…'}
           </p>

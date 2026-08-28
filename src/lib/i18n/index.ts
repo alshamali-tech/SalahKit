@@ -8,6 +8,7 @@
  * it is chosen (or restored from storage).
  */
 import { en } from './locales/en';
+import { setFormatLocale } from '../utils/format';
 import type { TranslationKeys, LocaleId } from './keys';
 
 export type { TranslationKeys, LocaleId };
@@ -128,6 +129,8 @@ export function translate(locale: LocaleInfo, key: string): string {
  * @param locale - Locale info to apply.
  */
 export function applyLocaleToDocument(locale: LocaleInfo): void {
+  // Keep date/number/currency formatters in sync with the UI language.
+  setFormatLocale(locale.lang);
   if (typeof document === 'undefined') return;
   document.documentElement.lang = locale.lang;
   document.documentElement.dir = locale.rtl ? 'rtl' : 'ltr';

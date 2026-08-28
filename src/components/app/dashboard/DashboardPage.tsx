@@ -28,7 +28,7 @@ export function DashboardPage(): JSX.Element {
 
       <div>
         <h3 className="mb-3 text-sm font-extrabold uppercase tracking-[0.16em] text-[var(--muted)]">
-          Tools
+          {t('modulesUi.dashboard.tools')}
         </h3>
         <ToolGrid />
       </div>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useT } from '../../lib/use-locale';
 import { computeZakat, monthlyEquivalent } from '../../lib/core/zakat';
 import { parseNumber } from '../../lib/core/validator';
 import { addZakatRecord, deleteZakatRecord, listZakatRecords } from '../../lib/db/db';
@@ -41,6 +42,7 @@ const INITIAL_FORM: FormState = {
  * @returns The rendered module.
  */
 export function ZakatCalc(): JSX.Element {
+  const { t } = useT();
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [currency, setCurrency] = useState<string>('USD');
   const [records, setRecords] = useState<ZakatRecordRow[]>([]);
@@ -113,7 +115,7 @@ export function ZakatCalc(): JSX.Element {
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 items-start">
       <Card>
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <h3 className="text-sm font-bold text-[var(--fg)]">Your zakatable wealth</h3>
+          <h3 className="text-sm font-bold text-[var(--fg)]">{t('modulesUi.zakat.wealth')}</h3>
           <Select
             label="Currency"
             id="zakat-currency"
@@ -124,14 +126,14 @@ export function ZakatCalc(): JSX.Element {
           />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Input label="Gold" id="z-gold" inputMode="decimal" suffix="g" value={form.goldGrams} onChange={(e) => setField('goldGrams', e.target.value)} />
-          <Input label="Silver" id="z-silver" inputMode="decimal" suffix="g" value={form.silverGrams} onChange={(e) => setField('silverGrams', e.target.value)} />
-          <Input label="Gold price / gram" id="z-gold-price" inputMode="decimal" suffix={currency} value={form.goldPrice} onChange={(e) => setField('goldPrice', e.target.value)} />
-          <Input label="Silver price / gram" id="z-silver-price" inputMode="decimal" suffix={currency} value={form.silverPrice} onChange={(e) => setField('silverPrice', e.target.value)} />
-          <Input label="Cash & bank balances" id="z-cash" inputMode="decimal" suffix={currency} value={form.cash} onChange={(e) => setField('cash', e.target.value)} />
-          <Input label="Investments" id="z-investments" inputMode="decimal" suffix={currency} value={form.investments} onChange={(e) => setField('investments', e.target.value)} />
-          <Input label="Other assets" id="z-other" inputMode="decimal" suffix={currency} value={form.otherAssets} onChange={(e) => setField('otherAssets', e.target.value)} />
-          <Input label="Debts due now" id="z-debts" inputMode="decimal" suffix={currency} value={form.debts} onChange={(e) => setField('debts', e.target.value)} />
+          <Input label={t('modulesUi.zakat.gold')} id="z-gold" inputMode="decimal" suffix="g" value={form.goldGrams} onChange={(e) => setField('goldGrams', e.target.value)} />
+          <Input label={t('modulesUi.zakat.silver')} id="z-silver" inputMode="decimal" suffix="g" value={form.silverGrams} onChange={(e) => setField('silverGrams', e.target.value)} />
+          <Input label={t('modulesUi.zakat.goldPrice')} id="z-gold-price" inputMode="decimal" suffix={currency} value={form.goldPrice} onChange={(e) => setField('goldPrice', e.target.value)} />
+          <Input label={t('modulesUi.zakat.silverPrice')} id="z-silver-price" inputMode="decimal" suffix={currency} value={form.silverPrice} onChange={(e) => setField('silverPrice', e.target.value)} />
+          <Input label={t('modulesUi.zakat.cash')} id="z-cash" inputMode="decimal" suffix={currency} value={form.cash} onChange={(e) => setField('cash', e.target.value)} />
+          <Input label={t('modulesUi.zakat.investments')} id="z-investments" inputMode="decimal" suffix={currency} value={form.investments} onChange={(e) => setField('investments', e.target.value)} />
+          <Input label={t('modulesUi.zakat.otherAssets')} id="z-other" inputMode="decimal" suffix={currency} value={form.otherAssets} onChange={(e) => setField('otherAssets', e.target.value)} />
+          <Input label={t('modulesUi.zakat.debts')} id="z-debts" inputMode="decimal" suffix={currency} value={form.debts} onChange={(e) => setField('debts', e.target.value)} />
         </div>
       </Card>
 
@@ -139,7 +141,7 @@ export function ZakatCalc(): JSX.Element {
         <Card tone="raised">
           <div className="flex items-center justify-between gap-2">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--primary)]">Zakat due (2.5%)</p>
-            {result.nisabMet ? <Badge tone="accent">Nisab met</Badge> : <Badge tone="neutral">Below nisab</Badge>}
+            {result.nisabMet ? <Badge tone="accent">{t('modulesUi.zakat.nisabMet')}</Badge> : <Badge tone="neutral">{t('modulesUi.zakat.belowNisab')}</Badge>}
           </div>
           <p className="mt-2 text-4xl font-extrabold tnum text-[var(--fg)]">
             {formatCurrency(result.zakatDue, currency)}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { streakReport } from '../../../lib/core/streaks/streak';
 import type { DayCompletion } from '../../../lib/core/streaks/streak';
 import { listPrayerLogs } from '../../../lib/db/db';
+import { useT } from '../../../lib/use-locale';
 import { Card } from '../../ui/Card';
 
 const PRAYERS = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
@@ -11,6 +12,7 @@ const PRAYERS = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
  * @returns The rendered streak card.
  */
 export function StreakCard(): JSX.Element {
+  const { t } = useT();
   const [report, setReport] = useState({ current: 0, best: 0, percent: 0 });
 
   useEffect(() => {
@@ -32,20 +34,22 @@ export function StreakCard(): JSX.Element {
   return (
     <Card className="flex flex-col justify-between">
       <div>
-        <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[var(--accent-strong)]">Streak</p>
+        <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[var(--accent-strong)]">
+          {t('modulesUi.dashboard.streak')}
+        </p>
         <p className="mt-1.5 text-4xl font-extrabold tnum text-[var(--fg)]">
           {report.current}
-          <span className="ml-1.5 text-sm font-bold text-[var(--muted)]">
-            day{report.current === 1 ? '' : 's'}
+          <span className="ms-1.5 text-sm font-bold text-[var(--muted)]">
+            {report.current === 1 ? t('modulesUi.dashboard.day') : t('modulesUi.dashboard.days')}
           </span>
         </p>
       </div>
       <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-2 text-xs text-[var(--muted)]">
         <span>
-          Best <strong className="tnum text-[var(--fg)]">{report.best}</strong>
+          {t('modulesUi.dashboard.best')} <strong className="tnum text-[var(--fg)]">{report.best}</strong>
         </span>
         <span>
-          This week <strong className="tnum text-[var(--fg)]">{report.percent}%</strong>
+          {t('modulesUi.dashboard.thisWeek')} <strong className="tnum text-[var(--fg)]">{report.percent}%</strong>
         </span>
       </div>
     </Card>
