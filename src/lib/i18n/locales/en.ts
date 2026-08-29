@@ -250,6 +250,7 @@ export const en: TranslationKeys = {
       },
       hubNeedle: 'needle', hubCalibrating: 'calibrating', hubQibla: 'Qibla',
       hubTurnRight: 'turn right ↻', hubTurnLeft: 'turn left ↺', hubPaused: 'paused',
+      bundledNote: 'True north from the bundled geomagnetic model (WMM-2020, epoch 2024) — accurate offline to about ±0.5°.',
     },
     hijri: {
       today: 'Today', gToH: 'Gregorian → Hijri', hToG: 'Hijri → Gregorian', gDate: 'Gregorian date',

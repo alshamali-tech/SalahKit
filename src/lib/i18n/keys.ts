@@ -177,6 +177,7 @@ export interface TranslationKeys {
       hints: { manual: string; ask: string; denied: string; starting: string; calibrating: string; stale: string };
       hubNeedle: string; hubCalibrating: string; hubQibla: string;
       hubTurnRight: string; hubTurnLeft: string; hubPaused: string;
+      bundledNote: string;
     };
     hijri: {
       today: string; gToH: string; hToG: string; gDate: string; day: string; month: string; year: string;
@@ -228,4 +229,17 @@ export interface TranslationKeys {
   contact?: { title: string; bugs: string; email: string; linkedin: string };
   /** Tajweed accuracy disclaimer (optional — locales fall back to English). */
   tajweedDisclaimer?: { title: string; body: string; dismiss: string; readerNote: string };
+  /** Method transparency on the prayer page (optional — English fallback). */
+  prayerParams?: { title: string; fajr: string; isha: string; ishaInterval: string; asr: string; rounding: string };
+  /** Hijri moon-sighting adjustment (optional — English fallback). */
+  hijriAdjust?: { title: string; note: string; verify: string; days: string };
+  /** Install guide (optional — English fallback). */
+  install?: {
+    title: string; sub: string; installed: string;
+    iosTitle: string; ios1: string; ios2: string; ios3: string;
+    androidTitle: string; android1: string; android2: string;
+    desktopTitle: string; desktop1: string;
+  };
+  /** Device clock skew warning (optional — English fallback). */
+  clock?: { offA: string; offB: string };
 }

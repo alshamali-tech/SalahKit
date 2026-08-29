@@ -12,7 +12,13 @@ import {
   supportsOrientation,
 } from '../../lib/utils/heading';
 import { fetchDeclination } from '../../lib/external/declination';
-import type { DeclinationResult } from '../../lib/external/declination';
+import { bundledDeclination, formatDeclination } from '../../lib/core/geomag/declination';
+
+/** Declination value plus where it came from (for the status card). */
+interface CompassDeclination {
+  value: number;
+  source: 'bundled' | 'noaa' | 'cache';
+}
 import { useApp } from '../../store';
 import { useT } from '../../lib/use-locale';
 import { Badge } from '../ui/Badge';
@@ -47,7 +53,7 @@ export function QiblaCompass(): JSX.Element {
   const { t } = useT();
   const [status, setStatus] = useState<CompassStatus>('starting');
   const [heading, setHeading] = useState<number | null>(null);
-  const [declination, setDeclination] = useState<DeclinationResult | null>(null);
+  const [declination, setDeclination] = useState<CompassDeclination | null>(null);
   const [permissionAsked, setPermissionAsked] = useState(false);
   const smoothedRef = useRef<number | null>(null);
   const lastEventRef = useRef(0);
@@ -66,17 +72,24 @@ export function QiblaCompass(): JSX.Element {
     [settings.latitude, settings.longitude]
   );
 
+  // Offline-first true north: the bundled WMM model applies instantly;
+  // NOAA Geomag refines it only when it returns a live/cached value.
   useEffect(() => {
     let cancelled = false;
+    const bundled = bundledDeclination(settings.city, settings.latitude, settings.longitude);
+    declinationRef.current = bundled.value;
+    setDeclination({ value: bundled.value, source: 'bundled' });
     void fetchDeclination(settings.latitude, settings.longitude).then((d) => {
-      if (cancelled) return;
-      declinationRef.current = d.value;
-      setDeclination(d);
+      if (cancelled || !d) return;
+      if (d.source === 'noaa' || d.source === 'cache') {
+        declinationRef.current = d.value;
+        setDeclination({ value: d.value, source: d.source });
+      }
     });
     return () => {
       cancelled = true;
     };
-  }, [settings.latitude, settings.longitude]);
+  }, [settings.latitude, settings.longitude, settings.city]);
 
   useEffect(() => {
     if (!supportsOrientation()) {
@@ -227,9 +240,15 @@ export function QiblaCompass(): JSX.Element {
             {declination ? `${declination.value >= 0 ? '+' : '−'}${Math.abs(declination.value).toFixed(1)}°` : '…'}
           </p>
           <p className="mt-1.5 text-xs leading-relaxed text-[var(--muted)]">
-            {declination?.source === 'unavailable'
-              ? 'Unavailable offline — compass points magnetic north until NOAA is reachable.'
-              : `Applied for true north · source: ${declination?.source === 'noaa' ? 'NOAA Geomag (live)' : 'NOAA Geomag (cached 30d)'}.`}
+            {declination
+              ? `${formatDeclination(declination.value)} · ${
+                  declination.source === 'bundled'
+                    ? t('modulesUi.qibla.bundledNote')
+                    : declination.source === 'noaa'
+                      ? t('modulesUi.qibla.noaaLive')
+                      : t('modulesUi.qibla.noaaCached')
+                }`
+              : ''}
           </p>
         </Card>
 
