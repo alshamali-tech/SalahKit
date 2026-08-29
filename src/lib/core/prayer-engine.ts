@@ -15,6 +15,7 @@ import {
   sunDeclinationDeg,
 } from './solar-math';
 import { isValidLatitude, isValidLongitude, isValidISODate } from './validator';
+import { adjustHighLatHours, DEFAULT_HIGH_LAT_RULE } from './highlat';
 import type { CalcMethodId, Madhab, PrayerName, PrayerTimesResult } from './types';
 
 const HOURS_PER_DEG = 1 / 15;
@@ -58,17 +59,28 @@ function computeRawHours(
   const asrAlt = asrAltitudeDeg(latitude, dec, ASR_SHADOW_FACTOR[madhab]);
   const asrHA = hourAngleDeg(latitude, dec, asrAlt);
   const sunset = noon + sunriseHA * HOURS_PER_DEG;
-  const isha =
+  const ishaRaw =
     preset.ishaIntervalMin !== undefined
       ? sunset + preset.ishaIntervalMin / 60
       : noon + hourAngleDeg(latitude, dec, -preset.ishaAngle) * HOURS_PER_DEG;
+  const sunrise = noon - sunriseHA * HOURS_PER_DEG;
+  // High-latitude repair: above ~48° the twilight angles are never
+  // reached in summer; clamp via the configured deterministic rule.
+  const highLat = adjustHighLatHours(
+    { fajr: noon - fajrHA * HOURS_PER_DEG, sunrise, sunset, isha: ishaRaw },
+    latitude,
+    preset.fajrAngle,
+    preset.ishaAngle ?? 17,
+    preset.ishaIntervalMin,
+    DEFAULT_HIGH_LAT_RULE
+  );
   return {
-    fajr: noon - fajrHA * HOURS_PER_DEG,
-    sunrise: noon - sunriseHA * HOURS_PER_DEG,
+    fajr: highLat.fajr,
+    sunrise,
     dhuhr: noon + 2 / 60,
     asr: noon + asrHA * HOURS_PER_DEG,
     maghrib: sunset + 1 / 60,
-    isha,
+    isha: highLat.isha,
   };
 }
 

@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { computePrayerTimes, nextPrayer } from '../../lib/core/prayer-engine';
-import { PRAYER_LABELS, PRAYER_LABELS_AR, PRAYER_ORDER, TICK_INTERVAL_MS } from '../../lib/core/constants';
+import { PRAYER_LABELS, PRAYER_LABELS_AR, PRAYER_ORDER } from '../../lib/core/constants';
 import { toISODate } from '../../lib/core/validator';
 import { findCity } from '../../lib/core/geo';
 import { formatClockTime } from '../../lib/utils/format';
+import { useWallClock } from '../../lib/utils/wallclock';
+import { buildPrayerIcs, downloadIcs } from '../../lib/export/ics';
 import { useApp } from '../../store';
 import { useT } from '../../lib/use-locale';
 import { Badge } from '../ui/Badge';
@@ -22,13 +24,25 @@ import type { CalcMethodId, Madhab } from '../../types';
 export function PrayerTimes(): JSX.Element {
   const { settings, updateSettings } = useApp();
   const { t } = useT();
-  const [now, setNow] = useState(() => new Date());
+  // Wall-clock derived — never accumulates ticks, wakes on visibility.
+  const now = useWallClock(1000);
   const [pickerOpen, setPickerOpen] = useState(false);
 
-  useEffect(() => {
-    const id = window.setInterval(() => setNow(new Date()), TICK_INTERVAL_MS);
-    return () => window.clearInterval(id);
-  }, []);
+  /** Hands a month of computed times to the OS calendar (ICS). */
+  function exportMonth(): void {
+    const city = findCity(settings.city);
+    downloadIcs(
+      buildPrayerIcs({
+        latitude: settings.latitude,
+        longitude: settings.longitude,
+        method: settings.calcMethod,
+        madhab: settings.madhab,
+        days: 30,
+        cityName: city.name,
+      }),
+      city.name
+    );
+  }
 
   const todayISO = toISODate(now);
   const today = useMemo(
@@ -139,6 +153,15 @@ export function PrayerTimes(): JSX.Element {
         <Badge tone="success">{t('modulesUi.prayer.onDevice')}</Badge>
         {t('modulesUi.prayer.computedNote')}
       </p>
+      <div className="mt-3">
+        <Button variant="outline" size="sm" onClick={exportMonth}>
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+            <rect x="3" y="4" width="14" height="13" rx="2" />
+            <path d="M3 8h14M7 2.5V5M13 2.5V5M7.5 12l2 2 3.5-4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {t('modulesUi.prayer.icsExport')}
+        </Button>
+      </div>
 
       <LocationPicker open={pickerOpen} onClose={() => setPickerOpen(false)} />
     </div>

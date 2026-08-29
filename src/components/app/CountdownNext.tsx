@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useWallClock } from '../../lib/utils/wallclock';
 import { addDaysISO, computePrayerTimes, nextPrayer, previousPrayer } from '../../lib/core/prayer-engine';
 import { PRAYER_LABELS, TICK_INTERVAL_MS } from '../../lib/core/constants';
 import { gregorianToHijri } from '../../lib/core/hijri';
@@ -17,12 +18,8 @@ import { Badge } from '../ui/Badge';
 export function CountdownNext(): JSX.Element {
   const settings = useApp((s) => s.settings);
   const { t } = useT();
-  const [now, setNow] = useState(() => new Date());
-
-  useEffect(() => {
-    const id = window.setInterval(() => setNow(new Date()), TICK_INTERVAL_MS);
-    return () => window.clearInterval(id);
-  }, []);
+  // Wall-clock derived: never accumulates ticks, wakes on visibility.
+  const now = useWallClock(1000);
 
   const todayISO = toISODate(now);
   const today = useMemo(

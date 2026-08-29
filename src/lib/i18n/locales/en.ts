@@ -228,6 +228,7 @@ export const en: TranslationKeys = {
       asrMadhab: 'Asr madhab', upNext: 'Up next', onDevice: '100% on-device',
       computedNote: 'Computed with open astronomical math — works with zero connectivity. Verify critical timings with your local mosque.',
       nextPrayer: 'Next prayer', at: 'at',
+      icsExport: 'Export month to calendar (.ics)',
     },
     qibla: {
       bearing: 'Qibla bearing', liveCompass: 'Live compass', manualDial: 'Manual dial',
@@ -304,6 +305,21 @@ export const en: TranslationKeys = {
   update: {
     ready: 'Update ready', body: 'A new version of SalahKit is available. Reload to continue with the latest.',
     reload: 'Reload', later: 'Later',
+  },
+  storage: {
+    title: 'Your data lives only on this device',
+    subtitle: 'Browser storage is best-effort — the OS can reclaim it under pressure. A backup is your guarantee.',
+    usage: 'Storage used', ofQuota: 'of quota', persisted: 'Persistent', bestEffort: 'Best-effort',
+    makePersistent: 'Request persistent storage', persistedDone: 'Persistence requested',
+    lastBackup: 'Last backup', neverBackedUp: 'Never backed up', exportNow: 'Back up now',
+    backupDone: 'Backup downloaded',
+    ephemeralTitle: 'Private or limited storage detected',
+    ephemeralBody: 'This browser may erase SalahKit’s data when the window closes or storage runs low. Export a backup regularly.',
+    gapTitle: 'Welcome back',
+    gapBody: 'You were away a while. On some devices (notably iPhones), browser data can expire after ~7 days without a visit — your streaks and logs survived this time, but export a backup to be safe.',
+    trackedNoBackup: 'You have tracked prayers but never exported a backup. One tap keeps them safe.',
+    quotaTitle: 'Storage full',
+    quotaBody: 'The browser could not save data. Export a backup, then clear old audio caches or site data.',
   },
   contact: {
     title: 'Contact the developer',

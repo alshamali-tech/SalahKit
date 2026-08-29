@@ -4,6 +4,7 @@ import { watchRoute } from './lib/router';
 import { initLocale } from './lib/use-locale';
 import { initUpdateWatcher } from './lib/sw-update';
 import { useReminders } from './lib/use-reminders';
+import { ensurePersistentStorage, touchLastVisit } from './lib/utils/capabilities';
 import { isOnline, watchConnectivity } from './lib/utils/offline';
 import { buildPageTitle } from './lib/seo';
 import { SkipLink } from './components/ui/SkipLink';
@@ -110,6 +111,13 @@ export default function App(): JSX.Element {
   useEffect(() => {
     void boot();
   }, [boot]);
+
+  // P0 storage survival: ask for persistent storage once and record
+  // the visit gap (drives the iOS-style "welcome back" notice).
+  useEffect(() => {
+    void ensurePersistentStorage();
+    touchLastVisit();
+  }, []);
 
   useEffect(() => {
     syncFromHash();

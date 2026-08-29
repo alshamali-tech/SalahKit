@@ -166,7 +166,7 @@ export interface TranslationKeys {
     prayer: {
       city: string; changeCity: string; method: string; whichRight: string; whichRightBody: string;
       asrMadhab: string; upNext: string; onDevice: string; computedNote: string;
-      nextPrayer: string; at: string;
+      nextPrayer: string; at: string; icsExport: string;
     };
     qibla: {
       bearing: string; liveCompass: string; manualDial: string; sensorBlocked: string; paused: string;
@@ -216,6 +216,14 @@ export interface TranslationKeys {
     };
   };
   update: { ready: string; body: string; reload: string; later: string };
+  /** Storage health & data-survival card (optional — falls back to English). */
+  storage?: {
+    title: string; subtitle: string; usage: string; ofQuota: string; persisted: string;
+    bestEffort: string; makePersistent: string; persistedDone: string; lastBackup: string;
+    neverBackedUp: string; exportNow: string; backupDone: string;
+    ephemeralTitle: string; ephemeralBody: string; gapTitle: string; gapBody: string;
+    trackedNoBackup: string; quotaTitle: string; quotaBody: string;
+  };
   /** Contact the developer (optional — locales fall back to English). */
   contact?: { title: string; bugs: string; email: string; linkedin: string };
   /** Tajweed accuracy disclaimer (optional — locales fall back to English). */
