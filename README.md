@@ -63,9 +63,14 @@ core works with no network at all. Sources are attributed in `/about` and in
 Donations never unlock features and are never required. If SalahKit helps
 you, consider supporting the developer:
 
-- Ko-fi — https://ko-fi.com/salahkit (primary)
-- Buy Me a Coffee — https://www.buymeacoffee.com/salahkit
-- PayPal — https://www.paypal.com/donate/?hosted_button_id=salahkit
+- Ko-fi — https://ko-fi.com/mammonalshamali
+
+## Contact
+
+Bug reports and feature requests are welcome:
+
+- Email — mamoonalshamali@gmail.com
+- LinkedIn — https://www.linkedin.com/in/mammon-alshamali-366b10406/
 
 ## License
 

@@ -132,6 +132,8 @@ export const en: TranslationKeys = {
   footer: {
     line: 'A free, offline-first Islamic toolkit. Your data always stays on your device — forever.',
     tools: 'Tools', support: 'Support', builtWith: 'Built with ihsan.',
+    offlineFirst: 'Offline-first', noAds: 'No ads · No tracking',
+    privacy: 'Privacy Policy', terms: 'Terms of Service',
   },
   about: {
     title: 'About SalahKit',
@@ -302,5 +304,16 @@ export const en: TranslationKeys = {
   update: {
     ready: 'Update ready', body: 'A new version of SalahKit is available. Reload to continue with the latest.',
     reload: 'Reload', later: 'Later',
+  },
+  contact: {
+    title: 'Contact the developer',
+    bugs: 'Found a bug or want a feature? Get in touch:',
+    email: 'Email', linkedin: 'LinkedIn',
+  },
+  tajweedDisclaimer: {
+    title: 'A note on accuracy',
+    body: 'The tajweed engine is a learning aid, not a substitute for a qualified teacher. It aims to be correct but may contain mistakes. Always verify with a certified reciter (mus-haf or ijazah holder) before relying on it.',
+    dismiss: 'Understood',
+    readerNote: 'Tajweed colors are a learning aid — verify with a qualified teacher.',
   },
 };

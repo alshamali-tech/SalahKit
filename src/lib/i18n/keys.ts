@@ -104,7 +104,10 @@ export interface TranslationKeys {
   };
   offline: { message: string };
   donation: { toastTitle: string; toastBody: string; notNow: string };
-  footer: { line: string; tools: string; support: string; builtWith: string };
+  footer: {
+    line: string; tools: string; support: string; builtWith: string;
+    offlineFirst: string; noAds: string; privacy: string; terms: string;
+  };
   /** About page/panel (optional — locales fall back to English). */
   about?: {
     title: string;
@@ -213,4 +216,8 @@ export interface TranslationKeys {
     };
   };
   update: { ready: string; body: string; reload: string; later: string };
+  /** Contact the developer (optional — locales fall back to English). */
+  contact?: { title: string; bugs: string; email: string; linkedin: string };
+  /** Tajweed accuracy disclaimer (optional — locales fall back to English). */
+  tajweedDisclaimer?: { title: string; body: string; dismiss: string; readerNote: string };
 }

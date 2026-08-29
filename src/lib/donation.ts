@@ -10,7 +10,7 @@ import type { UserFlagsRow } from '../types';
 /** One external donation destination. */
 export interface DonationLink {
   /** Stable identifier. */
-  id: 'kofi' | 'bmc' | 'paypal';
+  id: 'kofi';
   /** Button label. */
   label: string;
   /** External URL (opens in a new tab with rel="noopener"). */
@@ -19,12 +19,14 @@ export interface DonationLink {
   primary: boolean;
 }
 
-/** Configured donation destinations (S11: Ko-fi primary, BMC, PayPal). */
+/** Configured donation destination — Ko-fi only. */
 export const DONATION_LINKS: readonly DonationLink[] = [
   { id: 'kofi', label: 'Ko-fi', url: 'https://ko-fi.com/mammonalshamali', primary: true },
-  { id: 'bmc', label: 'Buy Me a Coffee', url: 'https://www.buymeacoffee.com/salahkit', primary: false },
-  { id: 'paypal', label: 'PayPal', url: 'https://www.paypal.com/donate/?hosted_button_id=salahkit', primary: false },
 ];
+
+/** Developer contact for bug reports and feature requests. */
+export const DEVELOPER_EMAIL = 'mamoonalshamali@gmail.com';
+export const DEVELOPER_LINKEDIN = 'https://www.linkedin.com/in/mammon-alshamali-366b10406/';
 
 /** Halal, guilt-free framing used everywhere donations appear (S11). */
 export const DONATION_TAGLINE =
