@@ -47,6 +47,8 @@ export interface SettingsRow {
   theme: ThemeMode;
   /** Madhab for Asr. */
   madhab: Madhab;
+  /** Moon-sighting shift for the Hijri calendar (-1, 0 or +1 days). */
+  hijriAdjust: number;
   /** Whether the user wants (future) notifications. */
   notifPref: boolean;
 }

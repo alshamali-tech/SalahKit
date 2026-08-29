@@ -14,6 +14,7 @@ import { Card } from '../ui/Card';
 import { CountdownNext } from './CountdownNext';
 import { LocationPicker } from './LocationPicker';
 import { MethodSelector } from './MethodSelector';
+import { MethodParamsPanel } from './MethodParamsPanel';
 import type { CalcMethodId, Madhab } from '../../types';
 
 /**
@@ -148,6 +149,8 @@ export function PrayerTimes(): JSX.Element {
           </div>
         </div>
       </Card>
+
+      <MethodParamsPanel />
 
       <p className="flex flex-wrap items-center gap-2 text-xs text-[var(--muted)]">
         <Badge tone="success">{t('modulesUi.prayer.onDevice')}</Badge>

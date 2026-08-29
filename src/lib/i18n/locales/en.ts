@@ -333,4 +333,33 @@ export const en: TranslationKeys = {
     dismiss: 'Understood',
     readerNote: 'Tajweed colors are a learning aid — verify with a qualified teacher.',
   },
+  prayerParams: {
+    title: 'How these times are computed',
+    fajr: 'Fajr angle', isha: 'Isha angle', ishaInterval: 'Isha = Maghrib + interval',
+    asr: 'Asr shadow', rounding: 'Dhuhr +2 min, Maghrib +1 min safety margin',
+  },
+  hijriAdjust: {
+    title: 'Moon-sighting adjustment',
+    note: 'This calendar is Umm al-Qura arithmetic. If your authority begins the month a day earlier or later, shift the calendar — your local mosque decides.',
+    verify: 'Verify moon-sighting with your local authority',
+    days: 'days',
+  },
+  install: {
+    title: 'Install SalahKit',
+    sub: 'Installed apps survive the browser’s 7-day data expiry and work fully offline.',
+    installed: 'You’re running the installed app — your data is as safe as the OS allows.',
+    iosTitle: 'iPhone / iPad',
+    ios1: 'Open SalahKit in Safari.',
+    ios2: 'Tap the Share button (the square with the arrow).',
+    ios3: 'Choose “Add to Home Screen” and confirm.',
+    androidTitle: 'Android',
+    android1: 'Open SalahKit in Chrome.',
+    android2: 'Menu ⋮ → “Add to Home Screen” or “Install app”.',
+    desktopTitle: 'Desktop (Windows / Linux / macOS)',
+    desktop1: 'Click the install icon in the address bar, or Menu → “Install SalahKit”.',
+  },
+  clock: {
+    offA: 'Your device clock appears off by',
+    offB: '— countdowns may be wrong. Check your system time.',
+  },
 };

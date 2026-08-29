@@ -5,6 +5,7 @@ import { initLocale } from './lib/use-locale';
 import { initUpdateWatcher } from './lib/sw-update';
 import { useReminders } from './lib/use-reminders';
 import { ensurePersistentStorage, touchLastVisit } from './lib/utils/capabilities';
+import { ClockSkewNotice } from './components/app/ClockSkewNotice';
 import { isOnline, watchConnectivity } from './lib/utils/offline';
 import { buildPageTitle } from './lib/seo';
 import { SkipLink } from './components/ui/SkipLink';
@@ -164,6 +165,7 @@ export default function App(): JSX.Element {
         <>
           <Header />
           <OfflineBanner />
+          <ClockSkewNotice />
           <main id="main-content" className="min-w-0 flex-1">
             <Landing />
           </main>
@@ -172,6 +174,7 @@ export default function App(): JSX.Element {
         <>
           <Header />
           <OfflineBanner />
+          <ClockSkewNotice />
           <div className="mx-auto flex w-full max-w-7xl flex-1 items-start gap-6 px-4 py-6">
             <Sidebar />
             <main id="main-content" className="min-w-0 flex-1 scroll-mt-20">

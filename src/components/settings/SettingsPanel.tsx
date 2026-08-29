@@ -19,6 +19,7 @@ import { DonationModal } from '../donation/DonationModal';
 import { DataManager } from './DataManager';
 import { PrivacyInfo } from './PrivacyInfo';
 import { AboutPanel } from './AboutPanel';
+import { InstallGuide } from './InstallGuide';
 import { StorageHealth } from './StorageHealth';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
@@ -255,6 +256,7 @@ export function SettingsPanel(): JSX.Element {
   const { settingsOpen, setSettingsOpen, settings, updateSettings, theme, setTheme } = useApp();
   const { locale, t, setLocale } = useT();
   const [donateOpen, setDonateOpen] = useState(false);
+  const [installOpen, setInstallOpen] = useState(false);
 
   /** Applies a city selection to settings. */
   function onCityChange(cityId: string): void {
@@ -373,6 +375,20 @@ export function SettingsPanel(): JSX.Element {
           </section>
 
           <PrivacyInfo />
+          <Card>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-extrabold text-[var(--fg)]">{t('install.title')}</p>
+                <p className="mt-0.5 text-xs text-[var(--muted)]">{t('install.sub')}</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => setInstallOpen(true)}>
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                  <path d="M10 3v9m0 0l-3.2-3.2M10 12l3.2-3.2M4 16h12" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {t('install.title')}
+              </Button>
+            </div>
+          </Card>
           <VersionCard />
           <AboutPanel />
           <StorageHealth />
@@ -381,6 +397,7 @@ export function SettingsPanel(): JSX.Element {
         </div>
       </Modal>
       <DonationModal open={donateOpen} onClose={() => setDonateOpen(false)} />
+      <InstallGuide open={installOpen} onClose={() => setInstallOpen(false)} />
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   fetchHadithSection,
   HADITH_COLLECTIONS,
@@ -183,6 +183,32 @@ export function HadithLibraryFull({ favorites, onToggle }: HadithLibraryFullProp
   const [sectionData, setSectionData] = useState<{ meta: HadithSectionMeta; hadiths: RemoteHadith[] } | null>(null);
   const [loading, setLoading] = useState(false);
   const [missed, setMissed] = useState(false);
+  // Progressive windowing: only a bounded number of heavy cards mount
+  // at once, so long sections don't freeze mid-range phones.
+  const PAGE = 20;
+  const [visible, setVisible] = useState(PAGE);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  // Reset the window whenever a different section is opened.
+  useEffect(() => {
+    setVisible(PAGE);
+  }, [openSection, collId]);
+
+  // Auto-extend the window as the reader scrolls near the bottom.
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !sectionData) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setVisible((v) => Math.min(v + PAGE, sectionData.hadiths.length));
+        }
+      },
+      { rootMargin: '400px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [sectionData, visible]);
 
   const coll = useMemo(
     () => HADITH_COLLECTIONS.find((c) => c.id === collId) ?? HADITH_COLLECTIONS[0],
@@ -394,16 +420,29 @@ export function HadithLibraryFull({ favorites, onToggle }: HadithLibraryFullProp
               <span className="h-8 w-8 rounded-full border-[3px] border-[var(--border)] border-t-[var(--primary)] animate-spin" />
             </div>
           ) : sectionData ? (
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
-              {sectionData.hadiths.map((h) => (
-                <StreamedCard
-                  key={h.id}
-                  hadith={h}
-                  collection={coll}
-                  isFavorite={favorites.has(h.id)}
-                  onFavorite={() => onToggle(h.id, snapshotOf(h, coll))}
-                />
-              ))}
+            <div>
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
+                {sectionData.hadiths.slice(0, visible).map((h) => (
+                  <StreamedCard
+                    key={h.id}
+                    hadith={h}
+                    collection={coll}
+                    isFavorite={favorites.has(h.id)}
+                    onFavorite={() => onToggle(h.id, snapshotOf(h, coll))}
+                  />
+                ))}
+              </div>
+              {visible < sectionData.hadiths.length ? (
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <div ref={sentinelRef} aria-hidden="true" className="h-px w-full" />
+                  <p className="text-xs text-[var(--muted)] tnum">
+                    {visible} / {sectionData.hadiths.length}
+                  </p>
+                  <Button variant="outline" size="sm" onClick={() => setVisible((v) => Math.min(v + PAGE, sectionData.hadiths.length))}>
+                    Show more
+                  </Button>
+                </div>
+              ) : null}
             </div>
           ) : (
             <Card tone="outline" className="py-12 text-center">

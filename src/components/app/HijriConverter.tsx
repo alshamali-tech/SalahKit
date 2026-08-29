@@ -5,6 +5,7 @@ import { isValidHijri, isValidISODate, parseNumber } from '../../lib/core/valida
 import { formatFullDate, formatHijriLong, formatShortDate } from '../../lib/utils/format';
 import { fetchAlAdhanHijri } from '../../lib/external/aladhan';
 import { useApp } from '../../store';
+import { useT } from '../../lib/use-locale';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
@@ -17,7 +18,8 @@ import type { HijriDate } from '../../types';
  * @returns The rendered module.
  */
 export function HijriConverter(): JSX.Element {
-  const { online } = useApp();
+  const { online, settings, updateSettings } = useApp();
+  const { t } = useT();
   const [today] = useState(() => new Date());
   const [remote, setRemote] = useState<HijriDate | null>(null);
   const [gDate, setGDate] = useState(() => today.toISOString().slice(0, 10));
@@ -25,7 +27,12 @@ export function HijriConverter(): JSX.Element {
   const [hMonth, setHMonth] = useState('9');
   const [hDay, setHDay] = useState('1');
 
-  const localToday = useMemo(() => gregorianToHijri(today), [today]);
+  const adjust = settings.hijriAdjust ?? 0;
+  const localToday = useMemo(() => {
+    const shifted = new Date(today);
+    shifted.setDate(shifted.getDate() + adjust);
+    return gregorianToHijri(shifted);
+  }, [today, adjust]);
 
   useEffect(() => {
     let cancelled = false;
@@ -79,6 +86,40 @@ export function HijriConverter(): JSX.Element {
             )}
           </div>
         </div>
+      </Card>
+
+      <Card>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-extrabold text-[var(--fg)]">{t('hijriAdjust.title')}</p>
+            <p className="mt-0.5 max-w-xl text-xs leading-relaxed text-[var(--muted)]">{t('hijriAdjust.note')}</p>
+          </div>
+          <div className="flex items-center gap-1.5">
+            {([-1, 0, 1] as const).map((d) => (
+              <button
+                key={d}
+                type="button"
+                aria-pressed={adjust === d}
+                onClick={() => void updateSettings({ hijriAdjust: d })}
+                className={[
+                  'h-10 min-w-11 rounded-lg px-3 text-sm font-extrabold tnum transition-all duration-150',
+                  'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--primary)]',
+                  adjust === d
+                    ? 'bg-[var(--primary)] text-[var(--primary-fg)]'
+                    : 'border border-[var(--border)] bg-[var(--field)] text-[var(--muted)] hover:text-[var(--fg)]',
+                ].join(' ')}
+              >
+                {d > 0 ? `+${d}` : d}
+              </button>
+            ))}
+          </div>
+        </div>
+        <p className="mt-2.5 flex items-center gap-1.5 text-[11px] font-semibold text-[var(--warning)]">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+            <path d="M13.5 11.5A6 6 0 0 1 6.5 4.5a6 6 0 1 0 7 7z" strokeLinejoin="round" />
+          </svg>
+          {t('hijriAdjust.verify')}
+        </p>
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

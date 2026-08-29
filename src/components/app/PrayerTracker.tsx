@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { PRAYER_LABELS } from '../../lib/core/constants';
 import { toISODate } from '../../lib/core/validator';
+import { todayInCity } from '../../lib/core/city-time';
 import { getLogForDate, listPrayerLogs, upsertPrayerLog } from '../../lib/db/db';
 import { emitToast } from '../../lib/messaging';
+import { useApp } from '../../store';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -23,18 +25,23 @@ const TRACKED: readonly (keyof Pick<PrayerLogRow, 'fajr' | 'dhuhr' | 'asr' | 'ma
  * @returns The rendered module.
  */
 export function PrayerTracker(): JSX.Element {
+  const cityId = useApp((s) => s.settings.city);
   const [logs, setLogs] = useState<Record<string, PrayerLogRow>>({});
   const [note, setNote] = useState('');
   const snapshot = useRef<{ dateISO: string; previous: PrayerLogRow | null } | null>(null);
 
+  // Anchor "today" in the selected city's timezone (not the device's).
+  const todayISO = useMemo(() => todayInCity(cityId), [cityId]);
   const days = useMemo(() => {
     const out: Date[] = [];
+    const base = new Date(`${todayISO}T12:00:00`);
     for (let i = 6; i >= 0; i -= 1) {
-      out.push(new Date(Date.now() - i * 86400000));
+      const d = new Date(base);
+      d.setDate(d.getDate() - i);
+      out.push(d);
     }
     return out;
-  }, []);
-  const todayISO = toISODate();
+  }, [todayISO]);
 
   useEffect(() => {
     void listPrayerLogs().then((rows) => {

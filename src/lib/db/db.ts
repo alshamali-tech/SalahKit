@@ -43,6 +43,7 @@ export const DEFAULT_SETTINGS: SettingsRow = {
   city: DEFAULT_CITY_ID,
   theme: 'light',
   madhab: 'shafi',
+  hijriAdjust: 0,
   notifPref: false,
 };
 

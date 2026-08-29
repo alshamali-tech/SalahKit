@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { streakReport } from '../../../lib/core/streaks/streak';
 import type { DayCompletion } from '../../../lib/core/streaks/streak';
+import { todayInCity } from '../../../lib/core/city-time';
 import { listPrayerLogs } from '../../../lib/db/db';
+import { useApp } from '../../../store';
 import { useT } from '../../../lib/use-locale';
 import { Card } from '../../ui/Card';
 
@@ -13,6 +15,7 @@ const PRAYERS = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
  */
 export function StreakCard(): JSX.Element {
   const { t } = useT();
+  const cityId = useApp((s) => s.settings.city);
   const [report, setReport] = useState({ current: 0, best: 0, percent: 0 });
 
   useEffect(() => {
@@ -24,12 +27,14 @@ export function StreakCard(): JSX.Element {
         const done = PRAYERS.filter((p) => log[p]).length;
         days.set(log.dateISO, { done, total: PRAYERS.length });
       }
-      setReport(streakReport(days, new Date(), PRAYERS.length));
+      // Anchor "today" in the selected city's timezone, not the device's.
+      const today = new Date(`${todayInCity(cityId)}T12:00:00`);
+      setReport(streakReport(days, today, PRAYERS.length));
     });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [cityId]);
 
   return (
     <Card className="flex flex-col justify-between">
