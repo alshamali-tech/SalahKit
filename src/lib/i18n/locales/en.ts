@@ -333,6 +333,10 @@ export const en: TranslationKeys = {
     dismiss: 'Understood',
     readerNote: 'Tajweed colors are a learning aid — verify with a qualified teacher.',
   },
+  tajweed: {
+    warningTitle: 'Important: Learn from a qualified teacher',
+    warningBody: 'This tajweed engine is an educational tool that may contain errors. Always verify your recitation with a qualified teacher (sheikh) or by listening to authentic recitations. This tool is meant to supplement, not replace, proper tajweed instruction.',
+  },
   prayerParams: {
     title: 'How these times are computed',
     fajr: 'Fajr angle', isha: 'Isha angle', ishaInterval: 'Isha = Maghrib + interval',

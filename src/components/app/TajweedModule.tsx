@@ -102,6 +102,23 @@ export function TajweedModule(): JSX.Element {
         </div>
       </Card>
 
+      <Card tone="outline" className="border-[color-mix(in_srgb,var(--warning)_40%,var(--border))] bg-[color-mix(in_srgb,var(--warning)_8%,transparent)]">
+        <div className="flex items-start gap-3">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" className="mt-0.5 shrink-0 text-[var(--warning)]" aria-hidden="true">
+            <path d="M10 2l8 14H2L10 2z" strokeLinejoin="round" />
+            <path d="M10 8v4M10 14v1" strokeLinecap="round" />
+          </svg>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-extrabold text-[var(--warning)]">
+              {t('modulesUi.tajweed.warningTitle')}
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">
+              {t('modulesUi.tajweed.warningBody')}
+            </p>
+          </div>
+        </div>
+      </Card>
+
       <div className="sticky top-16 z-30 -mx-4 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--bg)_90%,transparent)] px-4 py-2 backdrop-blur-md">
         <div className="flex gap-1 overflow-x-auto" role="tablist" aria-label="Tajweed views">
           {ui.tabs.map((tb) => {

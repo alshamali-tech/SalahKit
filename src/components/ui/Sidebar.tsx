@@ -17,45 +17,51 @@ interface NavSection {
   items: NavItem[];
 }
 
-const SECTIONS: readonly NavSection[] = [
-  {
-    title: 'Daily',
-    items: [
-      { module: 'prayer', label: 'Prayer Times', d: 'M10 2.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15zM10 6v4l2.6 2.6' },
-      { module: 'qibla', label: 'Qibla Compass', d: 'M10 2.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15zM13.2 6.8l-1.9 4.5-4.5 1.9 1.9-4.5z' },
-      { module: 'hijri', label: 'Hijri Converter', d: 'M15 12.8A6.2 6.2 0 0 1 7.2 5a6.2 6.2 0 1 0 7.8 7.8z' },
-      { module: 'calendar', label: 'Hijri Calendar', d: 'M3 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM3 8h14M6.8 1.8V5M13.2 1.8V5' },
-      { module: 'tracker', label: 'Prayer Tracker', d: 'M3.5 5.5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2zM6.8 10.4l2.2 2.2 4.4-5' },
-    ],
-  },
-  {
-    title: 'Knowledge',
-    items: [
-      { module: 'quran', label: 'Quran Reader', d: 'M10 4.6C8.2 3.3 5.6 3 3.5 3.5v12c2.1-.5 4.7-.2 6.5 1.1 1.8-1.3 4.4-1.6 6.5-1.1v-12c-2.1-.5-4.7-.2-6.5 1.1zM10 4.6v12' },
-      { module: 'tajweed', label: 'Tajweed', d: 'M4 4h12v12H4zM7 7.4c1 1 2.5 1 3 0M11.5 7.4c.5 1 2 1 3 0M7.5 11h5M8.5 13.4h3' },
-      { module: 'arabic', label: 'Arabic Foundations', d: 'M13 4.5v9a2.5 2.5 0 0 1-2.5 2.5M10.4 3.4l5.2-1.8M5 15.5c1.5-1.8 2.3-4 2.3-6.5M5 9.2c1.2.2 2.3.7 3.1 1.5' },
-      { module: 'hadith', label: 'Hadith Library', d: 'M3.5 3.5h13v13h-13zM6.5 7h7M6.5 10h7M6.5 13h4.5' },
-      { module: 'duas', label: 'Duas & Adhkar', d: 'M10 16.2s-6.2-4-6.2-8.2a3.5 3.5 0 0 1 6.2-2 3.5 3.5 0 0 1 6.2 2c0 4.2-6.2 8.2-6.2 8.2z' },
-      { module: 'names', label: '99 Names', d: 'M10 2.3l2.3 4.7 5.1.8-3.7 3.6.9 5.1-4.6-2.4-4.6 2.4.9-5.1-3.7-3.6 5.1-.8z' },
-    ],
-  },
-  {
-    title: 'Practice',
-    items: [
-      { module: 'dhikr', label: 'Dhikr Counter', d: 'M10 2.8a7.2 7.2 0 1 0 0 14.4 7.2 7.2 0 0 0 0-14.4zM10 7.6a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8z' },
-      { module: 'zakat', label: 'Zakat Calculator', d: 'M10 2.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15zM10 6v8M7.7 8h3.6a1.6 1.6 0 0 1 0 3.2H8.7a1.6 1.6 0 0 0 0 3.2h3.6' },
-      { module: 'hifz', label: 'Hifz Trainer', d: 'M10 4.6C8.2 3.3 5.6 3 3.5 3.5v12c2.1-.5 4.7-.2 6.5 1.1 1.8-1.3 4.4-1.6 6.5-1.1v-12c-2.1-.5-4.7-.2-6.5 1.1zM10 4.6v12M7 9l2 2 4-4.6' },
-    ],
-  },
-  {
-    title: 'About',
-    items: [
-      { module: 'privacy', label: 'Privacy Policy', d: 'M10 2.3l6.2 2.5v5.1c0 4.1-2.8 6.7-6.2 7.8-3.4-1.1-6.2-3.7-6.2-7.8V4.8zM7.4 10l1.9 1.9 3.4-3.8' },
-      { module: 'terms', label: 'Terms of Service', d: 'M5 2.5h7l3 3.2V17.5H5zM12 2.5v3.2h3M7.5 9.5h5M7.5 12.5h5' },
-    ],
-  },
-];
-
+/**
+ * Builds the navigation sections with translated labels.
+ * @param t - Translation function.
+ * @returns Array of navigation sections.
+ */
+function buildSections(t: (key: string) => string): NavSection[] {
+  return [
+    {
+      title: t('sidebar.sections.daily'),
+      items: [
+        { module: 'prayer', label: t('modules.prayer'), d: 'M10 2.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15zM10 6v4l2.6 2.6' },
+        { module: 'qibla', label: t('modules.qibla'), d: 'M10 2.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15zM13.2 6.8l-1.9 4.5-4.5 1.9 1.9-4.5z' },
+        { module: 'hijri', label: t('modules.hijri'), d: 'M15 12.8A6.2 6.2 0 0 1 7.2 5a6.2 6.2 0 1 0 7.8 7.8z' },
+        { module: 'calendar', label: t('modules.calendar'), d: 'M3 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM3 8h14M6.8 1.8V5M13.2 1.8V5' },
+        { module: 'tracker', label: t('modules.tracker'), d: 'M3.5 5.5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2zM6.8 10.4l2.2 2.2 4.4-5' },
+      ],
+    },
+    {
+      title: t('sidebar.sections.knowledge'),
+      items: [
+        { module: 'quran', label: t('modules.quran'), d: 'M10 4.6C8.2 3.3 5.6 3 3.5 3.5v12c2.1-.5 4.7-.2 6.5 1.1 1.8-1.3 4.4-1.6 6.5-1.1v-12c-2.1-.5-4.7-.2-6.5 1.1zM10 4.6v12' },
+        { module: 'tajweed', label: t('modules.tajweed'), d: 'M4 4h12v12H4zM7 7.4c1 1 2.5 1 3 0M11.5 7.4c.5 1 2 1 3 0M7.5 11h5M8.5 13.4h3' },
+        { module: 'arabic', label: t('modules.arabic'), d: 'M13 4.5v9a2.5 2.5 0 0 1-2.5 2.5M10.4 3.4l5.2-1.8M5 15.5c1.5-1.8 2.3-4 2.3-6.5M5 9.2c1.2.2 2.3.7 3.1 1.5' },
+        { module: 'hadith', label: t('modules.hadith'), d: 'M3.5 3.5h13v13h-13zM6.5 7h7M6.5 10h7M6.5 13h4.5' },
+        { module: 'duas', label: t('modules.duas'), d: 'M10 16.2s-6.2-4-6.2-8.2a3.5 3.5 0 0 1 6.2-2 3.5 3.5 0 0 1 6.2 2c0 4.2-6.2 8.2-6.2 8.2z' },
+        { module: 'names', label: t('modules.names'), d: 'M10 2.3l2.3 4.7 5.1.8-3.7 3.6.9 5.1-4.6-2.4-4.6 2.4.9-5.1-3.7-3.6 5.1-.8z' },
+      ],
+    },
+    {
+      title: t('sidebar.sections.practice'),
+      items: [
+        { module: 'dhikr', label: t('modules.dhikr'), d: 'M10 2.8a7.2 7.2 0 1 0 0 14.4 7.2 7.2 0 0 0 0-14.4zM10 7.6a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8z' },
+        { module: 'zakat', label: t('modules.zakat'), d: 'M10 2.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15zM10 6v8M7.7 8h3.6a1.6 1.6 0 0 1 0 3.2H8.7a1.6 1.6 0 0 0 0 3.2h3.6' },
+        { module: 'hifz', label: t('modules.hifz'), d: 'M10 4.6C8.2 3.3 5.6 3 3.5 3.5v12c2.1-.5 4.7-.2 6.5 1.1 1.8-1.3 4.4-1.6 6.5-1.1v-12c-2.1-.5-4.7-.2-6.5 1.1zM10 4.6v12M7 9l2 2 4-4.6' },
+      ],
+    },
+    {
+      title: t('sidebar.sections.about'),
+      items: [
+        { module: 'privacy', label: t('modules.privacy'), d: 'M10 2.3l6.2 2.5v5.1c0 4.1-2.8 6.7-6.2 7.8-3.4-1.1-6.2-3.7-6.2-7.8V4.8zM7.4 10l1.9 1.9 3.4-3.8' },
+        { module: 'terms', label: t('modules.terms'), d: 'M5 2.5h7l3 3.2V17.5H5zM12 2.5v3.2h3M7.5 9.5h5M7.5 12.5h5' },
+      ],
+    },
+  ];
+}
 export interface SidebarProps {
   /** When provided, renders as a mobile drawer with backdrop. */
   onClose?: () => void;

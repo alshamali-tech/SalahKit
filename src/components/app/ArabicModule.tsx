@@ -13,25 +13,50 @@ type TabId = 'letters' | 'harakat' | 'grammar' | 'vocab';
  * Speaks Arabic text using the browser's speech synthesis. Voices load
  * asynchronously in most browsers, so we query (and warm) them first.
  * @param text - Arabic text to pronounce.
+ * @param onEnd - Optional callback when speech finishes.
  * @returns True when speech was started, false when unavailable.
  */
-export function speakArabic(text: string): boolean {
+export function speakArabic(text: string, onEnd?: () => void): boolean {
   try {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
     const synth = window.speechSynthesis;
     synth.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'ar-SA';
-    u.rate = 0.9;
+    u.rate = 0.85;
+    u.pitch = 1;
     // getVoices() can be empty until the 'voiceschanged' event fires;
     // calling it here triggers the load on browsers that defer it.
     const voices = synth.getVoices();
     const arVoice = voices.find((v) => v.lang.toLowerCase().startsWith('ar'));
-    if (arVoice) u.voice = arVoice;
+    if (arVoice) {
+      u.voice = arVoice;
+    } else {
+      // No Arabic voice available — use default but warn the user
+      const defaultVoice = voices.find((v) => v.default);
+      if (defaultVoice) u.voice = defaultVoice;
+    }
+    if (onEnd) {
+      u.onend = onEnd;
+      u.onerror = onEnd;
+    }
     synth.speak(u);
     return true;
   } catch {
     return false;
+  }
+}
+
+/**
+ * Stops any currently playing speech.
+ */
+export function stopArabic(): void {
+  try {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  } catch {
+    // Ignore errors
   }
 }
 
@@ -76,6 +101,7 @@ function firstCluster(word: string): string {
  * @returns The rendered detail card.
  */
 function LetterDetail({ letter }: { letter: ArabicLetter }): JSX.Element {
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const forms: { label: string; glyph: string; shown: boolean }[] = [
     { label: 'Isolated', glyph: letter.isolated, shown: true },
     { label: 'Initial', glyph: letter.initial, shown: letter.joins },
@@ -106,18 +132,42 @@ function LetterDetail({ letter }: { letter: ArabicLetter }): JSX.Element {
             <button
               type="button"
               onClick={() => {
-                if (!speakArabic(letter.example)) {
-                  emitToast({
-                    title: 'No speech voice available',
-                    body: 'Your browser or OS has no Arabic voice installed, so audio can’t play here.',
-                    tone: 'warning',
-                  });
+                if (isSpeaking) {
+                  stopArabic();
+                  setIsSpeaking(false);
+                } else {
+                  const started = speakArabic(letter.example, () => setIsSpeaking(false));
+                  if (started) {
+                    setIsSpeaking(true);
+                  } else {
+                    emitToast({
+                      title: 'No Arabic voice available',
+                      body: 'Your browser needs an Arabic voice installed. Check your system language settings.',
+                      tone: 'warning',
+                    });
+                  }
                 }
               }}
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[color-mix(in_srgb,var(--accent)_14%,transparent)] px-3 text-xs font-bold text-[var(--accent-strong)] hover:bg-[var(--accent)] hover:text-[#3b2305] transition-colors"
+              className={`inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-xs font-bold transition-all ${
+                isSpeaking
+                  ? 'bg-[var(--accent)] text-[#3b2305] hover:brightness-110 animate-pulse'
+                  : 'bg-[color-mix(in_srgb,var(--accent)_14%,transparent)] text-[var(--accent-strong)] hover:bg-[var(--accent)] hover:text-[#3b2305]'
+              }`}
             >
-              <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 4l10 6-10 6z" /></svg>
-              Hear it
+              {isSpeaking ? (
+                <>
+                  <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <rect x="6" y="5" width="3" height="10" rx="1" />
+                    <rect x="11" y="5" width="3" height="10" rx="1" />
+                  </svg>
+                  Stop
+                </>
+              ) : (
+                <>
+                  <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 4l10 6-10 6z" /></svg>
+                  Hear it
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -156,7 +206,7 @@ function LetterDetail({ letter }: { letter: ArabicLetter }): JSX.Element {
 /**
  * Arabic Foundations module: letters (with contextual forms), harakat,
  * Quran-focused grammar and starter vocabulary. Everything works
- * offline; “Hear it” uses the browser’s Arabic voice when installed.
+ * offline; "Hear it" uses the browser's Arabic voice when installed.
  * @returns The rendered module.
  */
 export function ArabicModule(): JSX.Element {

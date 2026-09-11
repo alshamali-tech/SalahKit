@@ -229,6 +229,8 @@ export interface TranslationKeys {
   contact?: { title: string; bugs: string; email: string; linkedin: string };
   /** Tajweed accuracy disclaimer (optional — locales fall back to English). */
   tajweedDisclaimer?: { title: string; body: string; dismiss: string; readerNote: string };
+  /** Tajweed warning banner (optional — English fallback). */
+  tajweed?: { warningTitle: string; warningBody: string };
   /** Method transparency on the prayer page (optional — English fallback). */
   prayerParams?: { title: string; fajr: string; isha: string; ishaInterval: string; asr: string; rounding: string };
   /** Hijri moon-sighting adjustment (optional — English fallback). */
