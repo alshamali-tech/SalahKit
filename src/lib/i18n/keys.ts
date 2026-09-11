@@ -231,6 +231,8 @@ export interface TranslationKeys {
   tajweedDisclaimer?: { title: string; body: string; dismiss: string; readerNote: string };
   /** Tajweed warning banner (optional — English fallback). */
   tajweed?: { warningTitle: string; warningBody: string };
+  /** Quran reader warning (optional — English fallback). */
+  quran?: { warningTitle: string; warningBody: string };
   /** Method transparency on the prayer page (optional — English fallback). */
   prayerParams?: { title: string; fajr: string; isha: string; ishaInterval: string; asr: string; rounding: string };
   /** Hijri moon-sighting adjustment (optional — English fallback). */

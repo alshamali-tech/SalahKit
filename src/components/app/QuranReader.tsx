@@ -12,6 +12,7 @@ import { TajweedToggle } from '../tajweed/TajweedToggle';
 import { useQuranPlayer } from '../../lib/quran-player-store';
 import { listQuranBookmarks, toggleQuranBookmark } from '../../lib/db/db';
 import { useApp } from '../../store';
+import { useT } from '../../lib/use-locale';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -40,6 +41,7 @@ function Divider(): JSX.Element {
 export function QuranReader(): JSX.Element {
   const online = useApp((s) => s.online);
   const { queue, index, status, playQueue } = useQuranPlayer();
+  const { t } = useT();
   const [surahNum, setSurahNum] = useState(1);
   const [lang, setLang] = useState<TranslationLang>('en');
   const [data, setData] = useState<FullSurah | null>(null);
@@ -175,6 +177,23 @@ export function QuranReader(): JSX.Element {
                 <Badge tone="success">On device</Badge>
               )}
               {!online && !loading ? <Badge tone="warning">Offline copy</Badge> : null}
+            </div>
+          </div>
+        </Card>
+
+        <Card tone="outline" className="border-[color-mix(in_srgb,var(--warning)_40%,var(--border))] bg-[color-mix(in_srgb,var(--warning)_8%,transparent)]">
+          <div className="flex items-start gap-3">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" className="mt-0.5 shrink-0 text-[var(--warning)]" aria-hidden="true">
+              <path d="M10 2l8 14H2L10 2z" strokeLinejoin="round" />
+              <path d="M10 8v4M10 14v1" strokeLinecap="round" />
+            </svg>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-extrabold text-[var(--warning)]">
+                {t('quran.warningTitle')}
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">
+                {t('quran.warningBody')}
+              </p>
             </div>
           </div>
         </Card>

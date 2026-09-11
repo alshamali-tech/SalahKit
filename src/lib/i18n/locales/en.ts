@@ -337,6 +337,10 @@ export const en: TranslationKeys = {
     warningTitle: 'Important: Learn from a qualified teacher',
     warningBody: 'This tajweed engine is an educational tool that may contain errors. Always verify your recitation with a qualified teacher (sheikh) or by listening to authentic recitations. This tool is meant to supplement, not replace, proper tajweed instruction.',
   },
+  quran: {
+    warningTitle: 'Important: Verify with authentic sources',
+    warningBody: 'This Quran reader is for educational purposes. Always verify recitation with a qualified teacher (sheikh) or authentic printed Mushaf. This tool supplements, not replaces, proper Quranic learning.',
+  },
   prayerParams: {
     title: 'How these times are computed',
     fajr: 'Fajr angle', isha: 'Isha angle', ishaInterval: 'Isha = Maghrib + interval',

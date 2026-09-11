@@ -110,10 +110,10 @@ export function TajweedModule(): JSX.Element {
           </svg>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-extrabold text-[var(--warning)]">
-              {t('modulesUi.tajweed.warningTitle')}
+              {t('tajweed.warningTitle')}
             </p>
             <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">
-              {t('modulesUi.tajweed.warningBody')}
+              {t('tajweed.warningBody')}
             </p>
           </div>
         </div>
