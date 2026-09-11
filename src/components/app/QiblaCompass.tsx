@@ -13,12 +13,6 @@ import {
 } from '../../lib/utils/heading';
 import { fetchDeclination } from '../../lib/external/declination';
 import { bundledDeclination, formatDeclination } from '../../lib/core/geomag/declination';
-
-/** Declination value plus where it came from (for the status card). */
-interface CompassDeclination {
-  value: number;
-  source: 'bundled' | 'noaa' | 'cache';
-}
 import { useApp } from '../../store';
 import { useT } from '../../lib/use-locale';
 import { Badge } from '../ui/Badge';
@@ -26,6 +20,12 @@ import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { Select } from '../ui/Select';
 import { QiblaDial } from './QiblaDial';
+
+/** Declination value plus where it came from (for the status card). */
+interface CompassDeclination {
+  value: number;
+  source: 'bundled' | 'noaa' | 'cache';
+}
 
 type CompassStatus = 'manual' | 'request-permission' | 'denied' | 'starting' | 'calibrating' | 'live' | 'stale';
 
