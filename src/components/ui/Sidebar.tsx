@@ -76,10 +76,7 @@ export function Sidebar({ onClose }: SidebarProps): JSX.Element {
   const { module, setModule, setSettingsOpen } = useApp();
   const { t } = useT();
   const kofi = DONATION_LINKS.find((l) => l.primary) ?? DONATION_LINKS[0];
-  const sectionKey: Record<string, string> = {
-    Daily: 'sidebar.sections.daily', Knowledge: 'sidebar.sections.knowledge',
-    Practice: 'sidebar.sections.practice', About: 'sidebar.sections.about',
-  };
+  const SECTIONS = buildSections(t);
 
   const nav = (
     <>
@@ -103,7 +100,7 @@ export function Sidebar({ onClose }: SidebarProps): JSX.Element {
         {SECTIONS.map((section) => (
           <div key={section.title}>
             <p className="px-2 pb-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-[var(--muted)]">
-              {t(sectionKey[section.title] ?? section.title)}
+              {section.title}
             </p>
             <ul className="space-y-0.5">
               {section.items.map((item) => {
