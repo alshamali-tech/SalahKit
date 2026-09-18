@@ -44,7 +44,7 @@
     "@vitest/coverage-v8": "^4.1.11",
     "eslint": "^8.57.0",
     "fake-indexeddb": "^6.2.5",
-    //"husky": "^9.1.7",
+    
     "jsdom": "^30.0.1",
     "lint-staged": "^15.2.10",
     "prettier": "^3.3.3",
