@@ -48,7 +48,7 @@ export function splitChunkRanges(ayahCount: number, chunkSize: number): ChunkRan
   }
   const last = ranges[ranges.length - 1];
   const prev = ranges[ranges.length - 2];
-  if (last && prev && last.end - last.start === 0 && prev.end - prev.start + 1 === size) {
+  if (last && prev && size > 1 && last.end - last.start === 0 && prev.end - prev.start + 1 === size) {
     prev.end = last.end;
     ranges.pop();
   }

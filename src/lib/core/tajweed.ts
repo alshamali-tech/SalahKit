@@ -418,9 +418,9 @@ function checkMadd(c: Cluster, clusters: Cluster[], i: number, lastIdx: number):
     const nextSameWord = next && next.wordId === c.wordId ? next : null;
     if (nextSameWord && (nextSameWord.marks.has(SHADDA) || (nextSameWord.marks.has(SUKUN) && !hasVowel(nextSameWord)))) {
       assign(c, 'madd-lazim');
-    } else if (nextSameWord && i + 1 === lastIdx && hasVowel(nextSameWord)) {
-      assign(c, 'madd-arrid');
     } else if (nextSameWord && HAMZA_CARRIERS.has(nextSameWord.base)) {
+      assign(c, 'madd-arrid');
+    } else if (nextSameWord && i + 1 === lastIdx && hasVowel(nextSameWord)) {
       assign(c, 'madd-wajib');
     } else if (afterHamza) {
       assign(c, 'madd-badal');
@@ -469,7 +469,7 @@ export function analyzeTajweed(text: string): TajweedSegment[] {
       assign(c, 'madd-lazim');
       continue;
     }
-    if (c.marks.has(DAGGER_ALIF) && !MADD_LETTERS.has(c.base)) {
+    if (c.marks.has(DAGGER_ALIF) && !MADD_LETTERS.has(c.base) && c.base !== LAM) {
       assign(c, 'madd');
       continue;
     }

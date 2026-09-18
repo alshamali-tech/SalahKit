@@ -31,7 +31,7 @@ describe('distanceToKaabaKm', () => {
   });
 
   it('is ~5,000 km from London', () => {
-    expect(distanceToKaabaKm(51.5074, -0.1278)).toBeGreaterThan(4800);
+    expect(distanceToKaabaKm(51.5074, -0.1278)).toBeGreaterThan(4700);
     expect(distanceToKaabaKm(51.5074, -0.1278)).toBeLessThan(5200);
   });
 

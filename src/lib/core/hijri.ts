@@ -77,7 +77,7 @@ export function jdnToHijri(jdn: number): HijriDate {
   l =
     l -
     Math.floor((30 - j) / 15) * Math.floor((17719 * j) / 50) -
-    Math.floor(j / 16) * Math.floor((15238 * l) / 43) +
+    Math.floor(j / 16) * Math.floor((15238 * j) / 43) +
     29;
   const month = Math.floor((24 * l) / 709);
   const day = l - Math.floor((709 * month) / 24);

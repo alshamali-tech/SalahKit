@@ -61,7 +61,7 @@ function computeRawHours(
   const sunset = noon + sunriseHA * HOURS_PER_DEG;
   const ishaRaw =
     preset.ishaIntervalMin !== undefined
-      ? sunset + preset.ishaIntervalMin / 60
+      ? sunset + (1 + preset.ishaIntervalMin) / 60
       : noon + hourAngleDeg(latitude, dec, -preset.ishaAngle) * HOURS_PER_DEG;
   const sunrise = noon - sunriseHA * HOURS_PER_DEG;
   // High-latitude repair: above ~48° the twilight angles are never

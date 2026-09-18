@@ -29,11 +29,11 @@ describe('SM-2 scheduler', () => {
   it('grades below 3 lapse the card back to day 1', () => {
     let c = review(newCard(0), 5, 0);
     c = review(c, 5, c.dueAt);
-    const long = c.intervalDays;
-    c = review(c, 2, c.dueAt);
+    const at = c.dueAt;
+    c = review(c, 2, at);
     expect(c.intervalDays).toBe(0);
     expect(c.lapses).toBe(1);
-    expect(c.dueAt).toBeLessThanOrEqual(long * DAY);
+    expect(c.dueAt).toBe(at + DAY);   // due tomorrow from the review instant
   });
 
   it('ease never drops below 1.3', () => {
