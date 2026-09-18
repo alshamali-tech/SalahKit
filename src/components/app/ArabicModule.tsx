@@ -69,7 +69,7 @@ export function speakArabic(text: string, onEnd?: () => void): boolean {
           emitToast({
             title: 'Could not play audio',
             body:
-              event.error === 'synthesis-failed' || event.error === 'voice-not-found'
+              event.error === 'synthesis-failed'
                 ? 'No Arabic voice is installed on this device. On Windows: Settings → Time & Language → add an Arabic language with Speech.'
                 : 'Your browser blocked speech playback. Try tapping again.',
             tone: 'warning',
