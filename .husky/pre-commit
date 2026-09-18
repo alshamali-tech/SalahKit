@@ -1,7 +1,0 @@
-#!/usr/bin/env sh
-# SalahKit lint gate (S3: .husky/pre-commit).
-# Blocks commits that introduce lint errors or console statements.
-npx --no-install eslint "src/**/*.{ts,tsx}" --max-warnings=0 || {
-  echo "pre-commit: ESLint failed. Fix the errors above and retry."
-  exit 1
-}

@@ -65,6 +65,12 @@ if (existsSync(swPath)) {
 check('offline.html exists', existsSync(pub('offline.html')));
 check('favicon.svg exists', existsSync(pub('favicon.svg')));
 check('og image exists', existsSync(pub('og-image.svg')));
+// PNG assets referenced by index.html, JSON-LD and the manifest must exist.
+check('og-image.png exists', existsSync(pub('og-image.png')));
+check('apple-touch-icon.png exists', existsSync(pub('apple-touch-icon.png')));
+check('favicon.png exists', existsSync(pub('favicon.png')));
+check('icon-192.png exists', existsSync(pub('icon-192.png')));
+check('icon-512.png exists', existsSync(pub('icon-512.png')));
 
 // 4. SEO files.
 const sitemap = pub('sitemap.xml');

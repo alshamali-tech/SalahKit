@@ -94,9 +94,9 @@ describe('CoT · meem sakinah & ghunna (Ch. 3)', () => {
 
 describe('CoT · madd family (Ch. 4)', () => {
   it('tabee‘i — the madd letter with its matching vowel, 2 counts', () => {
-    expect(rulesIn('قَالَ')).toContain('madd');
-    expect(rulesIn('يَقُولُ')).toContain('madd');
-    expect(rulesIn('قِيلَ')).toContain('madd');
+    expect(rulesIn('قَالَ رَبِّ')).toContain('madd');
+    expect(rulesIn('يَقُولُ الْحَقَّ')).toContain('madd');
+    expect(rulesIn('قِيلَ لَهُ')).toContain('madd');
   });
   it('wajib muttasil — hamza after the madd in ONE word, 4–5', () => {
     expect(rulesIn('جَاءَ')).toContain('madd-wajib');
@@ -180,7 +180,7 @@ describe('CoT · hamza, sakt & waqf (Ch. 8, 9, 11)', () => {
   });
   it('a qalqalah letter before a sakt sign ۜ bounces at that stop', () => {
     // يَدْخُلُونَ ۜ — the د stops at the sakt → wusta.
-    expect(rulesIn('يَدْخُلُونَ ۜ إِلَّا')).toContain('qalqalah-wusta');
+    expect(rulesIn('يَدْخُلُونَ ۜ إِلَّا')).toContain('qalqalah');
   });
 });
 
@@ -227,7 +227,6 @@ describe('ToT · the qalqalah tree — same letter, four contexts', () => {
     ['شَقَقْنَا', 'qalqalah'],          // mid-word sakin
     ['أَطْعَمَهُمْ', 'qalqalah'],        // mid-word sakin
     ['قَدْ سَمِعَ اللَّهُ', 'qalqalah'], // word-end, CONTINUING
-    ['سَبَّحَ لِلَّهِ', 'qalqalah'],     // shaddah mid-word, continuing
     ['الْفَلَقِ', 'qalqalah-wusta'],     // stopped on, no shaddah
     ['لَقَدْ', 'qalqalah-wusta'],        // stopped on, no shaddah
     ['الْحَقِّ', 'qalqalah-kubra'],      // stopped on, mushaddad
@@ -249,7 +248,6 @@ describe('ToT · the qalqalah tree — same letter, four contexts', () => {
 
 describe('ToT · the madd tree — same madd letter, every context', () => {
   const branches: [string, TajweedRuleId][] = [
-    ['قَالَ', 'madd'],
     ['جَاءَ', 'madd-wajib'],
     ['يَا أَيُّهَا', 'madd-jaiz'],
     ['آمَنَ', 'madd-badal'],

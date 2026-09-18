@@ -69,9 +69,9 @@ describe('nextPrayer / previousPrayer', () => {
   const today = computePrayerTimes(DATE, MAKKAH.lat, MAKKAH.lng, 'MWL', 'shafi');
   const tomorrow = computePrayerTimes(addDaysISO(DATE, 1), MAKKAH.lat, MAKKAH.lng, 'MWL', 'shafi');
 
-  it('finds sunrise after Fajr has passed', () => {
+  it('skips sunrise and finds Dhuhr after Fajr has passed', () => {
     const now = new Date(today.times.fajr.getTime() + 60000);
-    expect(nextPrayer(today, tomorrow, now).name).toBe('sunrise');
+    expect(nextPrayer(today, tomorrow, now).name).toBe('dhuhr');   // sunrise is not a prayer
   });
 
   it('finds Fajr itself before the day begins', () => {
@@ -83,7 +83,7 @@ describe('nextPrayer / previousPrayer', () => {
     const now = new Date(today.times.isha.getTime() + 60000);
     const next = nextPrayer(today, tomorrow, now);
     expect(next.name).toBe('fajr');
-    //expect(next.dateISO).toBe(tomorrow.dateISO);
+    expect(next.at.getTime()).toBe(tomorrow.times.fajr.getTime());
   });
 
   it('reports the previous prayer correctly mid-afternoon', () => {

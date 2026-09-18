@@ -1,10 +1,15 @@
 // @vitest-environment jsdom
 import '@testing-library/jest-dom/vitest';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { QuranReader } from '../../src/components/app/QuranReader';
 
 describe('QuranReader module (full mushaf)', () => {
+  beforeEach(() => {
+    // No network in tests: the reader must fall back to bundled surahs instantly.
+    vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('offline in tests'))));
+  });
+
   it('opens on Al-Fatihah with its metadata', () => {
     render(<QuranReader />);
     expect(screen.getByText(/Al-Fatihah/)).toBeInTheDocument();

@@ -5,6 +5,9 @@ prayer times, qibla, the full Quran with tajweed, Arabic foundations, Hijri
 calendar, dhikr counter, zakat calculator, duas, the 99 Names, a streamed
 hadith library, a spaced-repetition hifz trainer, and a prayer tracker.
 
+https://salahkit.app/
+https://salahkit.mamoonalshamali.workers.dev/
+
 **Free forever. No ads. No sign-up. No tracking. Works offline.**
 
 ## Philosophy

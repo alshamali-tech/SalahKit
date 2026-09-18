@@ -134,6 +134,7 @@ describe('juz coverage graph', () => {
     const fractions = juzCoverage(chunks);
     expect(fractions).toHaveLength(30);
     expect(fractions[0]).toBe(0);
+    expect(fractions[0]).toBeGreaterThan(0);
     expect(fractions[0]).toBeLessThan(1);
     expect(fractions[29]).toBeGreaterThan(0);
     expect(fractions[29]).toBeLessThan(1);

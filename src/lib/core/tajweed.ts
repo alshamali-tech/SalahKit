@@ -358,19 +358,25 @@ function checkLam(c: Cluster, clusters: Cluster[], i: number): boolean {
   return false;
 }
 
-/** Ra: tafkhim / tarqeeq, incl. the isti'la exception (مِرْصَادًا). */
+/** Ra: tafkhim / tarqeeq. Isti'la dominates after kasra (مِرْصَادًا is heavy). */
 function checkRa(c: Cluster, clusters: Cluster[], i: number): boolean {
   if (c.base !== RA) return false;
   if (c.marks.has(FATHA) || c.marks.has(DAMMA)) assign(c, 'ra-tafkhim');
   else if (c.marks.has(KASRA)) assign(c, 'ra-tarqeeq');
   else if (isSaakin(c)) {
     const prev = clusters[i - 1];
-    const next = clusters[i + 1];
     if (prev) {
       if (prev.marks.has(KASRA)) {
-        // Saakin ra after kasra before an isti'la letter (فِرْقٍ): both
-        // heavy and light are permitted — mark it as jawaz.
-        assign(c, next && ISTIALA_LETTERS.has(next.base) ? 'ra-jawaz' : 'ra-tarqeeq');
+        // Saakin ra after kasra: light — UNLESS an isti'la letter follows,
+        // which dominates and makes it heavy. The one documented two-faces
+        // exception is فِرْق (26:63): ra after kasra before qaf.
+        const next = clusters[i + 1];
+        const prevPrev = clusters[i - 2];
+        const isFirq =
+          next && next.base === '\u0642' &&
+          prevPrev && prevPrev.base === '\u0641' && prevPrev.wordId === c.wordId;
+        if (isFirq) assign(c, 'ra-jawaz');
+        else assign(c, 'ra-tafkhim');
       } else if (prev.base === YA && isSaakin(prev)) assign(c, 'ra-tarqeeq');
       else if (prev.marks.has(FATHA) || prev.marks.has(DAMMA)) assign(c, 'ra-tafkhim');
     }
@@ -395,15 +401,14 @@ function checkSilah(c: Cluster, clusters: Cluster[], i: number): boolean {
   return true;
 }
 
-/** The madd family (Category C), checked lazim → wajib → badal → jaiz. */
+/** The madd family (Category C): lazim → wajib → arrid → badal → jaiz. */
 function checkMadd(c: Cluster, clusters: Cluster[], i: number, lastIdx: number): boolean {
   if (c.base === ALEF_MADDA) {
     assign(c, 'madd-badal');
     return true;
   }
   if (!MADD_LETTERS.has(c.base)) return false;
-  // A combining maddah (ٓ U+0653) marks the 6-count madd lāzim of the
-  // fawātiḥ (يسٓ, the ي of which is a madd letter).
+  // Combining maddah (ٓ) on the fawātiḥ letters = 6-count lazim harfi.
   if (c.marks.has(MADDA)) {
     assign(c, 'madd-lazim');
     return true;
@@ -417,11 +422,11 @@ function checkMadd(c: Cluster, clusters: Cluster[], i: number, lastIdx: number):
     const next = clusters[i + 1];
     const nextSameWord = next && next.wordId === c.wordId ? next : null;
     if (nextSameWord && (nextSameWord.marks.has(SHADDA) || (nextSameWord.marks.has(SUKUN) && !hasVowel(nextSameWord)))) {
-      assign(c, 'madd-lazim');
+      assign(c, 'madd-lazim');                                    // shaddah/sukun after it
     } else if (nextSameWord && HAMZA_CARRIERS.has(nextSameWord.base)) {
-      assign(c, 'madd-arrid');
+      assign(c, 'madd-wajib');                                    // hamza in SAME word — wins over arrid
     } else if (nextSameWord && i + 1 === lastIdx && hasVowel(nextSameWord)) {
-      assign(c, 'madd-wajib');
+      assign(c, 'madd-arrid');                                    // stopping on the final letter
     } else if (afterHamza) {
       assign(c, 'madd-badal');
     } else {
