@@ -8,21 +8,43 @@
       name="description"
       content="Free, offline-first Islamic tools: prayer times, Qibla, Hijri calendar, Quran, dhikr counter and Zakat calculator. No ads, no sign-up, no tracking — a privacy-first alternative to Muslim Pro."
     />
+    <meta name="author" content="SalahKit" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+    <!-- PWA / platform -->
+    <meta name="application-name" content="SalahKit" />
+    <meta name="apple-mobile-web-app-title" content="SalahKit" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="theme-color" content="#0f766e" />
+    <meta name="msapplication-TileColor" content="#0f766e" />
+
+    <!-- Verification -->
     <meta name="google-site-verification" content="5pjmbKDDyPhSTilxfF1CPUtvEQsj__8W7dgKXpy1-0w" />
-    <meta
-      name="keywords"
-      content="free prayer times no ads, Muslim Pro alternative, offline Islamic tools, Hijri converter free, Qibla online, Zakat calculator no sign up, privacy Muslim app, Quran reader offline"
-    />
+
+    <!-- Canonical & language alternates (absolute URLs required).
+         Only keep the "ar" alternate if the Arabic version is
+         server-rendered at a stable URL; otherwise delete that line. -->
+    <link rel="canonical" href="https://salahkit.app/" />
+    <link rel="alternate" hreflang="en" href="https://salahkit.app/" />
+    <link rel="alternate" hreflang="ar" href="https://salahkit.app/?lang=ar" />
+    <link rel="alternate" hreflang="x-default" href="https://salahkit.app/" />
+
+    <!-- Icons & manifest
+         NOTE: create these PNGs — iOS/social crawlers do NOT support SVG:
+           /apple-touch-icon.png  → 180×180
+           /og-image.png          → 1200×630 -->
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <!-- Amiri Quran loads non-blocking from /theme-init.js (render-blocking
          font CSS would delay FCP); preconnects warm the connection early. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SalahKit" />
     <meta property="og:title" content="SalahKit – Free Offline Islamic Tools" />
@@ -30,15 +52,28 @@
       property="og:description"
       content="Prayer times, Qibla, Hijri calendar, Quran, dhikr, Zakat, duas and the 99 Names — free, offline, no ads, no sign-up."
     />
-    <meta property="og:image" content="/og-image.svg" />
+    <meta property="og:url" content="https://salahkit.app/" />
+    <meta property="og:image" content="https://salahkit.app/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="SalahKit – Free Offline Islamic Tools" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="ar_AR" />
+
+    <!-- Twitter / X (remove twitter:site & twitter:creator if @SalahKit doesn't exist) -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="SalahKit – Free Offline Islamic Tools" />
     <meta
       name="twitter:description"
       content="Free, offline-first Islamic toolkit. No ads. No sign-up. No tracking."
     />
-    <meta name="twitter:image" content="/og-image.svg" />
+    <meta name="twitter:image" content="https://salahkit.app/og-image.png" />
+    <meta name="twitter:image:alt" content="SalahKit – Free Offline Islamic Tools" />
+    <meta name="twitter:site" content="@SalahKit" />
+    <meta name="twitter:creator" content="@SalahKit" />
 
+    <!-- Structured data: SoftwareApplication (single merged block, no fake rating) -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -46,8 +81,182 @@
         "name": "SalahKit",
         "applicationCategory": "LifestyleApplication",
         "operatingSystem": "Web",
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "description": "Free, offline-first Islamic tools: prayer times, Qibla, Hijri calendar, Quran, dhikr counter and Zakat calculator. No ads, no sign-up, no tracking."
+        "url": "https://salahkit.app/",
+        "description": "Free, offline-first Islamic tools: prayer times, Qibla, Hijri calendar, Quran, dhikr counter and Zakat calculator. No ads, no sign-up, no tracking.",
+        "featureList": [
+          "Prayer Times",
+          "Qibla Direction",
+          "Hijri Calendar",
+          "Quran Reader",
+          "Dhikr Counter",
+          "Zakat Calculator",
+          "Duas & Adhkar",
+          "99 Names of Allah",
+          "Prayer Tracker",
+          "Hifz Trainer",
+          "Hadith Library",
+          "Tajweed Guide",
+          "Arabic Learning"
+        ],
+        "screenshot": "https://salahkit.app/og-image.png",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock",
+          "url": "https://salahkit.app/"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "SalahKit",
+          "url": "https://salahkit.app/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://salahkit.app/favicon.png",
+            "width": "512",
+            "height": "512"
+          }
+        },
+        "datePublished": "2025-01-01",
+        "dateModified": "2025-01-01",
+        "softwareVersion": "1.0.0",
+        "inLanguage": ["en", "ar"],
+        "isAccessibleForFree": true,
+        "isFamilyFriendly": true,
+        "keywords": "prayer times, Qibla, Hijri calendar, Quran, dhikr, Zakat, duas, 99 names, Islamic tools"
+      }
+    </script>
+
+    <!-- Structured data: Organization (remove sameAs entries that don't exist) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "SalahKit",
+        "url": "https://salahkit.app/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://salahkit.app/favicon.png",
+          "width": "512",
+          "height": "512"
+        },
+        "description": "Free, offline-first Islamic toolkit for prayer times, Qibla, Hijri calendar, Quran, dhikr, Zakat, duas and more.",
+        "sameAs": [
+          "https://github.com/salahkit",
+          "https://twitter.com/SalahKit"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "availableLanguage": ["en", "ar"],
+          "url": "https://salahkit.app/"
+        },
+        "knowsAbout": [
+          "Prayer Times",
+          "Qibla Direction",
+          "Hijri Calendar",
+          "Quran",
+          "Dhikr",
+          "Zakat",
+          "Duas",
+          "99 Names of Allah"
+        ]
+      }
+    </script>
+
+    <!-- Structured data: WebSite -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "SalahKit",
+        "url": "https://salahkit.app/",
+        "inLanguage": ["en", "ar"],
+        "publisher": {
+          "@type": "Organization",
+          "name": "SalahKit",
+          "url": "https://salahkit.app/"
+        }
+      }
+    </script>
+
+    <!-- Structured data: FAQ (deduplicated — keep these questions visible on the page too) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://salahkit.app/"
+        },
+        "inLanguage": "en",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How is SalahKit free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "SalahKit is built as sadaqah jariyah (ongoing charity). There are no ads, no subscriptions, and no data sales because there is nothing to sell. Everything runs in your browser. If it helps you, an optional donation via Ko-fi keeps the lights on. No guilt, no paywall, ever."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does SalahKit really work offline?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Prayer times, Qibla, the Hijri calendar, the Quran collection, duas and the 99 Names are computed or stored on your device. The optional AlAdhan refinement is the only network feature, and it degrades silently to the built-in algorithms when you are offline."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What happens to my data in SalahKit?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "It never leaves your device. Logs, tasbih counts and Zakat records live in your browser's IndexedDB. You can export everything as JSON, import it on another device, or wipe it completely from Settings. We have no servers, no accounts and no analytics — we could not read your data even if asked."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How accurate are the prayer times?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "They use the same open astronomical methods (solar declination, equation of time and hour-angle math) as major timetable authorities, with MWL, ISNA, Egyptian, Karachi and Umm al-Qura presets and Shafi'i/Hanafi Asr. They are typically within a minute of published timetables — still verify fasting and congregation times with your local mosque."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I install SalahKit as an app?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "SalahKit is a PWA: open it in your browser, then tap 'Add to Home Screen' or 'Install app' and it behaves like a native app — full screen, own icon, offline cache. No app store, no store fees, no update queue, no permission prompts."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my donation tax-deductible or required?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Donations are voluntary, one-way and handled entirely by the external provider (Ko-fi, Buy Me a Coffee or PayPal). They unlock nothing because there is nothing locked — every feature is free for everyone, forever."
+            }
+          }
+        ]
+      }
+    </script>
+
+    <!-- Structured data: Breadcrumb (homepage = single item only;
+         put real trails like Home > Tools > Prayer Times on each sub-page) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://salahkit.app/"
+          }
+        ]
       }
     </script>
 

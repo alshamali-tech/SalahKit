@@ -1,9 +1,4 @@
-/* 
- * TODO: QiblaDial component is temporarily disabled.
- * Will be re-enabled in the future when ready and bug-free.
- * 
- * Original implementation was a complex SVG-based compass dial component.
- */
+import type { ReactNode } from 'react';
 
 export interface QiblaDialProps {
   /** World-referenced rotation applied to the dial (-heading in live mode, 0 in manual). */
@@ -15,11 +10,11 @@ export interface QiblaDialProps {
   /** True within alignment tolerance (drives the glow + hub state). */
   aligned: boolean;
   /** Center hub readout content. */
-  hub: React.ReactNode;
+  hub: ReactNode;
 }
 
 /**
- * QiblaDial is temporarily disabled.
+ * QiblaDial component - placeholder for future compass dial implementation.
  * @param props - Component props.
  * @returns Placeholder component.
  */
@@ -27,7 +22,7 @@ export function QiblaDial({ rotationDeg, bearingDeg, manual, aligned, hub }: Qib
   return (
     <div className="text-center py-8">
       <p className="text-sm text-[var(--muted)]">
-        Compass dial component is temporarily disabled.
+        Advanced compass dial coming soon.
       </p>
     </div>
   );

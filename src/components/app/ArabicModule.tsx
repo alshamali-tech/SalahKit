@@ -10,43 +10,79 @@ import { HarakatSection, GrammarSection, VocabSection } from './arabic-sections'
 type TabId = 'letters' | 'harakat' | 'grammar' | 'vocab';
 
 /**
- * Speaks Arabic text using the browser's speech synthesis. Voices load
- * asynchronously in most browsers, so we query (and warm) them first.
+ * Speaks Arabic text using the browser's speech synthesis.
  * @param text - Arabic text to pronounce.
  * @param onEnd - Optional callback when speech finishes.
  * @returns True when speech was started, false when unavailable.
  */
 export function speakArabic(text: string, onEnd?: () => void): boolean {
   try {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return false;
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      console.warn('Speech synthesis not supported');
+      return false;
+    }
+
     const synth = window.speechSynthesis;
+    
+    // Cancel any ongoing speech
     synth.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ar-SA';
-    u.rate = 0.85;
-    u.pitch = 1;
-    // getVoices() can be empty until the 'voiceschanged' event fires;
-    // calling it here triggers the load on browsers that defer it.
-    const voices = synth.getVoices();
-    const arVoice = voices.find((v) => v.lang.toLowerCase().startsWith('ar'));
-    if (arVoice) {
-      u.voice = arVoice;
+    
+    // Wait a bit for voices to load if needed
+    const trySpeak = () => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ar-SA';
+      utterance.rate = 0.8;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      
+      // Try to find Arabic voice
+      const voices = synth.getVoices();
+      const arabicVoice = voices.find(v => 
+        v.lang.toLowerCase().startsWith('ar') || 
+        v.name.toLowerCase().includes('arabic')
+      );
+      
+      if (arabicVoice) {
+        utterance.voice = arabicVoice;
+      } else {
+        // Fallback to default voice
+        const defaultVoice = voices.find(v => v.default);
+        if (defaultVoice) {
+          utterance.voice = defaultVoice;
+        }
+      }
+      
+      if (onEnd) {
+        utterance.onend = onEnd;
+        utterance.onerror = (event) => {
+          console.warn('Speech synthesis error:', event);
+          if (onEnd) onEnd();
+        };
+      }
+      
+      synth.speak(utterance);
+      return true;
+    };
+    
+    // Check if voices are loaded
+    if (synth.getVoices().length === 0) {
+      // Voices not loaded yet, wait for them
+      synth.onvoiceschanged = () => {
+        synth.onvoiceschanged = null;
+        trySpeak();
+      };
+      // Set a timeout in case voiceschanged doesn't fire
+      setTimeout(trySpeak, 100);
     } else {
-      // No Arabic voice available — use default but warn the user
-      const defaultVoice = voices.find((v) => v.default);
-      if (defaultVoice) u.voice = defaultVoice;
+      trySpeak();
     }
-    if (onEnd) {
-      u.onend = onEnd;
-      u.onerror = onEnd;
-    }
-    synth.speak(u);
+    
     return true;
-  } catch {
+  } catch (error) {
+    console.error('Error in speakArabic:', error);
     return false;
   }
 }
-
 /**
  * Stops any currently playing speech.
  */
