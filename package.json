@@ -21,8 +21,7 @@
     "test:e2e": "playwright test",
     "validate": "node scripts/validate-data.mjs",
     "sitemap": "node scripts/generate-sitemap.js",
-    "setup": "node scripts/setup.mjs",
-    "prepare": "husky"
+    "setup": "node scripts/setup.mjs"
   },
   "dependencies": {
     "dexie": "^4.4.5",
