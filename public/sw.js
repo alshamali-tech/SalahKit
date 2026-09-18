@@ -5,7 +5,7 @@
  * Navigations are network-first (always fresh when online), static
  * assets cache-first with background refresh (instant offline).
  */
-const CACHE_VERSION = 'salahkit-v4';
+const CACHE_VERSION = 'salahkit-v5';
 
 /** App shell precached on install. */
 const PRECACHE_URLS = ['/', '/index.html', '/offline.html', '/manifest.json', '/favicon.svg'];
@@ -64,7 +64,13 @@ async function navigationStrategy(request) {
     if (cached) return cached;
     // Last resort: the styled offline page.
     const offline = await caches.match('/offline.html');
-    return offline || Response.error();
+    return (
+      offline ||
+      new Response('<h1>SalahKit is unavailable offline</h1><p>Reconnect and reload.</p>', {
+        status: 503,
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      })
+    );
   }
 }
 

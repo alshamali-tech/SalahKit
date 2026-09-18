@@ -18,7 +18,7 @@ export const SOURCES: readonly { name: string; url: string }[] = [
  * @returns The rendered panel.
  */
 export function AboutPanel(): JSX.Element {
-  const { t, locale } = useT();
+  const { locale } = useT();
   const about = locale.dict.about ?? en.about;
   if (!about) return <Card />;
   const descs = about.sourceDescs ?? [];

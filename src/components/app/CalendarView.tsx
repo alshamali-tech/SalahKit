@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { gregorianToHijri, hijriMonthLength, hijriMonthName, hijriToGregorian } from '../../lib/core/hijri';
 import { HIJRI_MONTHS_AR } from '../../lib/core/constants';
 import { toISODate } from '../../lib/core/validator';
-import { useApp } from '../../store';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';

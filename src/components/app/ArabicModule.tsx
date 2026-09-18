@@ -11,75 +11,97 @@ type TabId = 'letters' | 'harakat' | 'grammar' | 'vocab';
 
 /**
  * Speaks Arabic text using the browser's speech synthesis.
+ *
+ * Chrome-specific handling baked in:
+ *  - Chrome silently swallows an utterance submitted in the SAME tick as
+ *    cancel(), so speak() is deferred one macrotask (~60ms — still well
+ *    inside Chrome's ~5s user-activation window).
+ *  - Chrome's synthesis can get stuck in a 'paused' state; resume()
+ *    before speaking clears it.
+ *  - Desktop Chrome only exposes OS-installed voices. When no Arabic
+ *    voice exists we fall back to the default voice rather than doing
+ *    nothing, and real failures surface via onError → toast.
  * @param text - Arabic text to pronounce.
- * @param onEnd - Optional callback when speech finishes.
+ * @param onEnd - Optional callback when speech finishes or fails.
  * @returns True when speech was started, false when unavailable.
  */
 export function speakArabic(text: string, onEnd?: () => void): boolean {
   try {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      console.warn('Speech synthesis not supported');
       return false;
     }
 
     const synth = window.speechSynthesis;
-    
-    // Cancel any ongoing speech
     synth.cancel();
-    
-    // Wait a bit for voices to load if needed
-    const trySpeak = () => {
+
+    let started = false;
+
+    const speakNow = (): void => {
+      if (started) return;
+      started = true;
+
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'ar-SA';
       utterance.rate = 0.8;
       utterance.pitch = 1.0;
       utterance.volume = 1.0;
-      
-      // Try to find Arabic voice
+
       const voices = synth.getVoices();
-      const arabicVoice = voices.find(v => 
-        v.lang.toLowerCase().startsWith('ar') || 
+      // Prefer a true Arabic voice (handles ar, ar-SA, ar_SA, ar-EG…).
+      const arabicVoice = voices.find((v) =>
+        v.lang.replace('_', '-').toLowerCase().startsWith('ar') ||
         v.name.toLowerCase().includes('arabic')
       );
-      
-      if (arabicVoice) {
-        utterance.voice = arabicVoice;
-      } else {
-        // Fallback to default voice
-        const defaultVoice = voices.find(v => v.default);
-        if (defaultVoice) {
-          utterance.voice = defaultVoice;
-        }
-      }
-      
-      if (onEnd) {
-        utterance.onend = onEnd;
-        utterance.onerror = (event) => {
-          console.warn('Speech synthesis error:', event);
-          if (onEnd) onEnd();
-        };
-      }
-      
-      synth.speak(utterance);
-      return true;
-    };
-    
-    // Check if voices are loaded
-    if (synth.getVoices().length === 0) {
-      // Voices not loaded yet, wait for them
-      synth.onvoiceschanged = () => {
-        synth.onvoiceschanged = null;
-        trySpeak();
+      // Fall back to the platform default so the user still hears
+      // *something* instead of silence on Chrome desktops with no
+      // Arabic voice installed.
+      const chosen = arabicVoice ?? voices.find((v) => v.default) ?? voices[0];
+      if (chosen) utterance.voice = chosen;
+
+      utterance.onend = () => {
+        if (onEnd) onEnd();
       };
-      // Set a timeout in case voiceschanged doesn't fire
-      setTimeout(trySpeak, 100);
-    } else {
-      trySpeak();
-    }
-    
+      utterance.onerror = (event) => {
+        // 'interrupted'/'canceled' are normal lifecycle events (Stop
+        // button, navigation, replacement utterance). Anything else is
+        // a genuine failure worth telling the user about.
+        if (event.error !== 'interrupted' && event.error !== 'canceled') {
+          emitToast({
+            title: 'Could not play audio',
+            body:
+              event.error === 'synthesis-failed' || event.error === 'voice-not-found'
+                ? 'No Arabic voice is installed on this device. On Windows: Settings → Time & Language → add an Arabic language with Speech.'
+                : 'Your browser blocked speech playback. Try tapping again.',
+            tone: 'warning',
+          });
+        }
+        if (onEnd) onEnd();
+      };
+
+      // Chrome workaround: the engine can be left 'paused' after a
+      // cancel(); resume() before speak() guarantees audio starts.
+      synth.resume();
+      synth.speak(utterance);
+    };
+
+    const begin = (): void => {
+      if (synth.getVoices().length === 0) {
+        // Voices load asynchronously on Chrome's first use: whichever
+        // path fires first speaks; the `started` guard blocks the other.
+        synth.onvoiceschanged = () => {
+          synth.onvoiceschanged = null;
+          speakNow();
+        };
+        setTimeout(speakNow, 300);
+      } else {
+        speakNow();
+      }
+    };
+
+    // One-tick delay after cancel() — the Chrome cancel→speak race fix.
+    setTimeout(begin, 60);
     return true;
-  } catch (error) {
-    console.error('Error in speakArabic:', error);
+  } catch {
     return false;
   }
 }

@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { SIFAAT, SIFAAT_LETTERS, traitsOfLetter, sifahZone } from '../../lib/core/sifaat-data';
-import type { Sifah } from '../../lib/core/sifaat-data';
 import { Card } from '../ui/Card';
 
 const OPPOSING_PAIRS = [

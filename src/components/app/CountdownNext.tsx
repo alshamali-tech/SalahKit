@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useWallClock } from '../../lib/utils/wallclock';
 import { addDaysISO, computePrayerTimes, nextPrayer, previousPrayer } from '../../lib/core/prayer-engine';
-import { PRAYER_LABELS, TICK_INTERVAL_MS } from '../../lib/core/constants';
+import { PRAYER_LABELS } from '../../lib/core/constants';
 import { gregorianToHijri } from '../../lib/core/hijri';
 import { toISODate } from '../../lib/core/validator';
 import { findCity } from '../../lib/core/geo';
@@ -41,7 +41,7 @@ export function CountdownNext(): JSX.Element {
   const prev = useMemo(() => previousPrayer(today, now), [today, now]);
   const span = Math.max(1, next.at.getTime() - prev.at.getTime());
   const progress = Math.min(100, Math.max(0, ((now.getTime() - prev.at.getTime()) / span) * 100));
-  const hijri = useMemo(() => gregorianToHijri(now), [todayISO]); // eslint-disable-line react-hooks/exhaustive-deps
+  const hijri = useMemo(() => gregorianToHijri(now), [todayISO]);
   const city = findCity(settings.city);
 
   return (

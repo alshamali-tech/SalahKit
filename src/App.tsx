@@ -1,13 +1,13 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { useApp } from './store';
-import { watchRoute } from './lib/router';
+import { routeToPath, watchRoute } from './lib/router';
 import { initLocale } from './lib/use-locale';
 import { initUpdateWatcher } from './lib/sw-update';
 import { useReminders } from './lib/use-reminders';
 import { ensurePersistentStorage, touchLastVisit } from './lib/utils/capabilities';
 import { ClockSkewNotice } from './components/app/ClockSkewNotice';
 import { isOnline, watchConnectivity } from './lib/utils/offline';
-import { buildPageTitle } from './lib/seo';
+import { buildMetaDescription, buildPageTitle, getAppBaseUrl } from './lib/seo';
 import { SkipLink } from './components/ui/SkipLink';
 import { Header } from './components/ui/Header';
 import { Sidebar } from './components/ui/Sidebar';
@@ -97,13 +97,13 @@ function ModuleView({ module }: { module: ModuleId }): JSX.Element {
 }
 
 /**
- * SalahKit application shell (S8 routes via hash router): landing
- * page at /, tool shell at /tools/[module], legal pages, ambient
- * layered background, toasts, donation prompt and settings.
+ * SalahKit application shell (S8 routes via the history router):
+ * landing page at /, tool shell at /tools/[module], legal pages,
+ * ambient layered background, toasts, donation prompt and settings.
  * @returns The root component.
  */
 export default function App(): JSX.Element {
-  const { view, module, booted, boot, syncFromHash, sidebarOpen, setSidebarOpen, setOnline } =
+  const { view, module, booted, boot, syncFromRoute, sidebarOpen, setSidebarOpen, setOnline } =
     useApp();
 
   // Reminder loop: prayer / adhkar / hifz notifications while open.
@@ -121,17 +121,48 @@ export default function App(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    syncFromHash();
-    return watchRoute(syncFromHash);
-  }, [syncFromHash]);
+    syncFromRoute();
+    return watchRoute(syncFromRoute);
+  }, [syncFromRoute]);
 
   useEffect(() => {
     setOnline(isOnline());
     return watchConnectivity(setOnline);
   }, [setOnline]);
 
+  // Per-route document head: title, canonical and meta description
+  // follow the active view so every clean URL describes itself.
   useEffect(() => {
+    const base = getAppBaseUrl().replace(/\/$/, '');
+    const path = view === 'landing' ? '/' : routeToPath({ view: 'tools', module });
+    const url = `${base}${path === '/' ? '/' : path}`;
+
     document.title = view === 'landing' ? buildPageTitle() : buildPageTitle(module);
+
+    let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+    canonical.href = url;
+
+    let ogUrl = document.querySelector<HTMLMetaElement>('meta[property="og:url"]');
+    if (!ogUrl) {
+      ogUrl = document.createElement('meta');
+      ogUrl.setAttribute('property', 'og:url');
+      document.head.appendChild(ogUrl);
+    }
+    ogUrl.content = url;
+
+    let description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    if (!description) {
+      description = document.createElement('meta');
+      description.name = 'description';
+      document.head.appendChild(description);
+    }
+    description.content = view === 'landing' ? buildMetaDescription() : buildMetaDescription(module);
+
     try {
       window.scrollTo({ top: 0 });
     } catch {

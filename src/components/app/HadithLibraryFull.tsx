@@ -182,7 +182,6 @@ export function HadithLibraryFull({ favorites, onToggle }: HadithLibraryFullProp
   const [openSection, setOpenSection] = useState<number | null>(null);
   const [sectionData, setSectionData] = useState<{ meta: HadithSectionMeta; hadiths: RemoteHadith[] } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [missed, setMissed] = useState(false);
   // Progressive windowing: only a bounded number of heavy cards mount
   // at once, so long sections don't freeze mid-range phones.
   const PAGE = 20;
@@ -236,7 +235,6 @@ export function HadithLibraryFull({ favorites, onToggle }: HadithLibraryFullProp
     setTitles({});
     setOpenSection(null);
     setSectionData(null);
-    setMissed(false);
     void (async () => {
       for (let i = 0; i < coll.sections; i += 4) {
         if (cancelled) return;
@@ -249,9 +247,6 @@ export function HadithLibraryFull({ favorites, onToggle }: HadithLibraryFullProp
             if (r) next[`${coll.id}-${r.meta.section}`] = r.meta;
           });
           return next;
-        });
-        results.forEach((r) => {
-          if (!r) setMissed(true);
         });
       }
     })();

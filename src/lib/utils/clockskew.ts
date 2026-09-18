@@ -5,7 +5,7 @@
  * the countdown is wrong and the user deserves a warning.
  */
 
-/** Probe endpoint: the Quran CDN root (keyless, already in CSP). */
+/** Probe endpoint: the Quran CDN root (keyless; allowed by connect-src in public/_headers). */
 const PROBE_URL = 'https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/1.mp3';
 /** Offset above which we warn (ms). */
 export const SKEW_WARN_MS = 2 * 60 * 1000;

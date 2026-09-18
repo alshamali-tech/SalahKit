@@ -17,9 +17,6 @@ export interface ModuleIconProps {
  * @param props - module, path data and size.
  * @returns An inline SVG.
  */
-const ARABIC_STACK =
-  '"Amiri Quran", "Scheherazade New", "Amiri", "Traditional Arabic", "Geeza Pro", serif';
-
 export function ModuleIcon({ module, d, size = 20 }: ModuleIconProps): JSX.Element {
   if (module === 'arabic') {
     // A single alef (ا): tall vertical stroke with a small foot, drawn

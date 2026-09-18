@@ -6,9 +6,11 @@
  * consonantal skeleton of what was said against the ayah's skeleton.
  */
 
-/** Combining marks & decorative signs stripped before comparison. */
-const STRIP_RE =
-  /[\u064B-\u0652\u0653-\u065F\u0670\u06D6-\u06ED\u06DD\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06EC\u0640\u200F\u200E]/g;
+/** Combining marks & decorative signs stripped before comparison.
+ *  The character class intentionally matches each combining mark
+ *  individually — that is the whole point of the normalization. */
+// eslint-disable-next-line no-misleading-character-class
+const STRIP_RE = /[\u064B-\u0652\u0653-\u065F\u0670\u06D6-\u06ED\u06DD\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06EC\u0640\u200F\u200E]/g;
 
 /**
  * Reduces Arabic text to its consonantal skeleton.

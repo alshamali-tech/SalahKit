@@ -1,16 +1,16 @@
 /**
  * Global app state (S2: Zustand client store).
  * Settings persist to IndexedDB (optimistic); theme lives in
- * localStorage only (S6). Route state mirrors location.hash (S8).
+ * localStorage only (S6). Route state mirrors location.pathname (S8).
  */
 import { create } from 'zustand';
 import { DEFAULT_SETTINGS, getSettings, saveSettings } from './lib/db/db';
 import { applyThemeToDocument, getStoredTheme, setStoredTheme } from './lib/utils/storage';
-import { navigate, parseHash, routeToPath } from './lib/router';
+import { navigate, parsePath, routeToPath } from './lib/router';
 import type { ModuleId, SettingsRow, ThemeMode } from './types';
 
 export interface AppState {
-  /** 'landing' (route /) or 'tools' (routes /tools, /privacy, /terms). */
+  /** 'landing' (route /) or 'tools' (routes /tools/*, /privacy, /terms). */
   view: 'landing' | 'tools';
   /** Active tool module. */
   module: ModuleId;
@@ -26,7 +26,7 @@ export interface AppState {
   settingsOpen: boolean;
   /** True once settings/theme finished loading. */
   booted: boolean;
-  syncFromHash: () => void;
+  syncFromRoute: () => void;
   setModule: (module: ModuleId) => void;
   boot: () => Promise<void>;
   updateSettings: (patch: Partial<SettingsRow>) => Promise<void>;
@@ -36,15 +36,19 @@ export interface AppState {
   setSettingsOpen: (open: boolean) => void;
 }
 
+/** Reads the initial route from the current pathname (SSR-safe). */
+function initialRoute(): { view: 'landing' | 'tools'; module: ModuleId } {
+  if (typeof window === 'undefined') return { view: 'landing', module: 'prayer' };
+  const route = parsePath(window.location.pathname);
+  if (route.view === 'landing') return { view: 'landing', module: 'prayer' };
+  return { view: 'tools', module: route.module };
+}
+
 /**
  * Root Zustand store.
  */
 export const useApp = create<AppState>((set, get) => ({
-  view: typeof window !== 'undefined' ? parseHash(window.location.hash).view : 'landing',
-  module:
-    typeof window !== 'undefined'
-      ? (parseHash(window.location.hash) as { module?: ModuleId }).module ?? 'prayer'
-      : 'prayer',
+  ...initialRoute(),
   settings: { ...DEFAULT_SETTINGS },
   theme: 'light',
   online: true,
@@ -52,8 +56,8 @@ export const useApp = create<AppState>((set, get) => ({
   settingsOpen: false,
   booted: false,
 
-  syncFromHash: () => {
-    const route = parseHash(window.location.hash);
+  syncFromRoute: () => {
+    const route = parsePath(window.location.pathname);
     if (route.view === 'landing') {
       set({ view: 'landing' });
       return;

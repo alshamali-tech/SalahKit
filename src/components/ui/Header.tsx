@@ -12,7 +12,7 @@ import { LanguageSwitcher } from './LanguageSwitcher';
  * @returns The rendered header bar.
  */
 export function Header(): JSX.Element {
-  const { view, online, setSettingsOpen, setSidebarOpen, module } = useApp();
+  const { online, setSettingsOpen, setSidebarOpen, module } = useApp();
   const { t } = useT();
   const kofi = DONATION_LINKS.find((l) => l.primary) ?? DONATION_LINKS[0];
 

@@ -11,7 +11,7 @@ import type { Page } from '@playwright/test';
  * @param path - Route path without the leading '#', e.g. '/dashboard'.
  */
 export async function gotoRoute(page: Page, path: string): Promise<void> {
-  await page.goto(`/#${path}`);
+  await page.goto(path);
   await page.waitForSelector('#main-content', { state: 'attached' });
 }
 

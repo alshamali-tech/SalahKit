@@ -99,7 +99,7 @@ export function VoiceRecall({ ayahs, revealed, onReveal, tajweedOn }: VoiceRecal
       activeRef.current = null;
       spokenRef.current = '';
     }
-  }, [micStatus]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [micStatus]);
 
   const voiceBlocked = micStatus === 'denied' || micStatus === 'unsupported' || micStatus === 'insecure';
 

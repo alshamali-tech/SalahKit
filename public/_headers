@@ -1,5 +1,4 @@
-# SalahKit security headers — the static-hosting equivalent of server
-# middleware. Applied to every response by Cloudflare Pages / Netlify.
+# SalahKit security headers — applied to every response by Cloudflare Pages.
 #
 # Audit notes:
 #  - microphone is delegated to (self): the Hifz voice-recall step uses
@@ -11,6 +10,8 @@
 #  - CSP carries NO 'unsafe-inline': the theme bootstrap is an external
 #    file (/theme-init.js) and all other styles are build-time CSS or
 #    CSSOM writes, which CSP always permits.
+#  - cdn.islamic.network appears in BOTH media-src (audio playback) and
+#    connect-src (the clock-skew HEAD probe in utils/clockskew.ts).
 #  - object-src 'none' kills plugin-based injection; base-uri and
 #    form-action are pinned to 'self'; upgrade-insecure-requests forces
 #    HTTPS on any stray sub-resource reference.
@@ -23,4 +24,4 @@
   Strict-Transport-Security: max-age=63072000; includeSubDomains
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: same-origin
-  Content-Security-Policy: default-src 'self'; script-src 'self'; worker-src 'self'; style-src 'self' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; media-src 'self' https://cdn.islamic.network https://audio.islamic.network; connect-src 'self' https://api.aladhan.com https://api.alquran.cloud https://www.ngdc.noaa.gov https://cdn.jsdelivr.net; manifest-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self'; worker-src 'self'; style-src 'self' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; media-src 'self' https://cdn.islamic.network https://audio.islamic.network; connect-src 'self' https://api.aladhan.com https://api.alquran.cloud https://www.ngdc.noaa.gov https://cdn.jsdelivr.net https://cdn.islamic.network; manifest-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests

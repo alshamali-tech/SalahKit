@@ -3,7 +3,6 @@ import { compassPoint, distanceToKaabaKm, qiblaBearingDeg } from '../../lib/core
 import { CITIES, findCity } from '../../lib/core/geo';
 import { formatDistanceKm } from '../../lib/utils/format';
 import { useApp } from '../../store';
-import { useT } from '../../lib/use-locale';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
 import { Select } from '../ui/Select';
@@ -15,7 +14,6 @@ import { Select } from '../ui/Select';
  */
 export function QiblaCompass(): JSX.Element {
   const { settings, updateSettings } = useApp();
-  const { t } = useT();
   const [selectedCity, setSelectedCity] = useState(settings.city);
 
   const city = findCity(selectedCity);

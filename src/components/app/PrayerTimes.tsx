@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { computePrayerTimes, nextPrayer } from '../../lib/core/prayer-engine';
+import { addDaysISO, computePrayerTimes, nextPrayer } from '../../lib/core/prayer-engine';
 import { PRAYER_LABELS, PRAYER_LABELS_AR, PRAYER_ORDER } from '../../lib/core/constants';
 import { toISODate } from '../../lib/core/validator';
 import { findCity } from '../../lib/core/geo';
@@ -50,7 +50,18 @@ export function PrayerTimes(): JSX.Element {
     () => computePrayerTimes(todayISO, settings.latitude, settings.longitude, settings.calcMethod, settings.madhab),
     [todayISO, settings.latitude, settings.longitude, settings.calcMethod, settings.madhab]
   );
-  const next = useMemo(() => nextPrayer(today, today, now), [today, now]);
+  const tomorrow = useMemo(
+    () =>
+      computePrayerTimes(
+        addDaysISO(todayISO, 1),
+        settings.latitude,
+        settings.longitude,
+        settings.calcMethod,
+        settings.madhab
+      ),
+    [todayISO, settings.latitude, settings.longitude, settings.calcMethod, settings.madhab]
+  );
+  const next = useMemo(() => nextPrayer(today, tomorrow, now), [today, tomorrow, now]);
   const city = findCity(settings.city);
 
   /** Applies a calculation method. */

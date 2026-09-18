@@ -42,7 +42,7 @@ export function Hero(): JSX.Element {
     [todayISO, settings]
   );
   const next = useMemo(() => nextPrayer(today, tomorrow, now), [today, tomorrow, now]);
-  const hijri = useMemo(() => gregorianToHijri(now), [todayISO]); // eslint-disable-line react-hooks/exhaustive-deps
+  const hijri = useMemo(() => gregorianToHijri(now), [todayISO]);
   const city = findCity(settings.city);
 
   return (

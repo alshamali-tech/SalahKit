@@ -18,7 +18,7 @@ export interface QiblaDialProps {
  * @param props - Component props.
  * @returns Placeholder component.
  */
-export function QiblaDial({ rotationDeg, bearingDeg, manual, aligned, hub }: QiblaDialProps): JSX.Element {
+export function QiblaDial(_props: QiblaDialProps): JSX.Element {
   return (
     <div className="text-center py-8">
       <p className="text-sm text-[var(--muted)]">
