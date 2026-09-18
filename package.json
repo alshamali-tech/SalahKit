@@ -6,7 +6,7 @@
   "description": "Free, offline-first Islamic toolkit: prayer times, Qibla, Hijri calendar, Quran, dhikr, Zakat and more. No ads, no sign-up, no tracking.",
   "license": "MIT",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "dev": "vite",
